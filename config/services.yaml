@@ -28,7 +28,7 @@ services:
     # please note that last definitions always *replace* previous ones
     
     # serializer pour json
-    # get_set_method_normalizer:
-    #     class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
-    #     public: false
-    #     tags: [serializer.normalizer]
+    get_set_method_normalizer:
+        class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
+        public: false
+        tags: [serializer.normalizer]
