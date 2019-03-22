@@ -99,6 +99,19 @@ class UserController extends AbstractController
         // je récupère mon user connecté grâce à l'id du user passée en url
         $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
 
+        if (!$thisUser){
+            return $this->json(
+                [
+                    'code' => 404,
+                    'message' => 'Le user id n\'existe pas',
+                    'errors' => [],
+                    'data' => [
+                    ],
+                    //'token' => 'youpi',
+                    //'userid' => 'youpi',
+                ]
+            );
+        }
 
         return $this->json(
             [
