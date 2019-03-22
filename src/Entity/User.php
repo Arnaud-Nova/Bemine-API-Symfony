@@ -43,6 +43,11 @@ class User implements UserInterface
      */
     private $wedding;
 
+    /**
+    * @ORM\Column(type="string", unique=true)
+    */
+    private $apiToken;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -141,6 +146,26 @@ class User implements UserInterface
     public function setWedding(?Wedding $wedding): self
     {
         $this->wedding = $wedding;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of apiToken
+     */ 
+    public function getApiToken()
+    {
+        return $this->apiToken;
+    }
+
+    /**
+     * Set the value of apiToken
+     *
+     * @return self
+     */ 
+    public function setApiToken($apiToken)
+    {
+        $this->apiToken = $apiToken;
 
         return $this;
     }
