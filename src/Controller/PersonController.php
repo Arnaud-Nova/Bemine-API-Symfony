@@ -27,6 +27,20 @@ class PersonController extends AbstractController
         //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
         
+        if (!$guests){
+            return $this->json(
+                [
+                    'code' => 404,
+                    'message' => 'Le wedding id n\'existe pas',
+                    'errors' => [],
+                    'data' => [
+                    ],
+                    //'token' => 'youpi',
+                    //'userid' => 'youpi',
+                ]
+            );
+        }
+        
         return $this->json(
             [
                 'code' => 200,
@@ -56,6 +70,19 @@ class PersonController extends AbstractController
 
         $wedding = $weddingRepository->find($id);
         
+        if (!$wedding){
+            return $this->json(
+                [
+                    'code' => 404,
+                    'message' => 'Le wedding id n\'existe pas',
+                    'errors' => [],
+                    'data' => [
+                    ],
+                    //'token' => 'youpi',
+                    //'userid' => 'youpi',
+                ]
+            );
+        }
 
         $person = new Person();
         $person->setLastname($contentDecode->lastname);
