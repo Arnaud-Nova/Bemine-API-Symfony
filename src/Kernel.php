@@ -8,7 +8,6 @@ use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\RouteCollectionBuilder;
-use App\DependencyInjection\Security\Factory\WsseFactory;
 
 class Kernel extends BaseKernel
 {
@@ -47,9 +46,4 @@ class Kernel extends BaseKernel
         $routes->import($confDir.'/{routes}'.self::CONFIG_EXTS, '/', 'glob');
     }
 
-    public function build(ContainerBuilder $container)
-    {
-        $extension = $container->getExtension('security');
-        $extension->addSecurityListenerFactory(new WsseFactory());
-    }
 }
