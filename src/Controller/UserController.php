@@ -25,8 +25,8 @@ class UserController extends AbstractController
         //je récupère mes données du front
         $email = $contentDecode->email;
         
+        //si l'email existe déjà en base, je renvoie un message
         $alreayUser = $userRepository->findByEmail($email);
-        
         if ($alreayUser){
             return $this->json(
                 [
@@ -38,10 +38,7 @@ class UserController extends AbstractController
                     //'userid' => '',
                 ]
             );
-
         }
-        
-        
         
         //je récupère le reste de mes données du front
         $urlAvatar = $contentDecode->urlAvatar;
@@ -78,7 +75,7 @@ class UserController extends AbstractController
         $person->setLastname($lastname);
         $person->setMenu('ADULTE');
         $person->setWedding($wedding);
-        $person->setAttendance(true);
+        $person->setAttendance(1);
         
         //je crée le deuxième marié
         $personSpouse = new Person();
@@ -87,7 +84,7 @@ class UserController extends AbstractController
         $personSpouse->setNewlyweds(true);
         $personSpouse->setMenu('ADULTE');
         $personSpouse->setWedding($wedding);
-        $personSpouse->setAttendance(true);
+        $personSpouse->setAttendance(1);
         
         $entityManager->persist($user);
         $entityManager->persist($wedding);

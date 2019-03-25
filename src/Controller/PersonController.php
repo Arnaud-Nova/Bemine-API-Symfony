@@ -19,8 +19,10 @@ class PersonController extends AbstractController
     public function index(PersonRepository $personRepository, $id)
     {
         
-        //mariés exclus de ces comptes
+       
         $guests = $personRepository->findAllQueryBuilder($id);
+
+         //mariés exclus de ces comptes
         $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
         $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);
         $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($id);
