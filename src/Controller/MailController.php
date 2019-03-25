@@ -31,7 +31,7 @@ class MailController extends AbstractController
                 'code' => 200,
                 'message' => 'youpi',
                 'errors' => [],
-                'data' => [
+                '' => [
                     'contactsGroup' => $contactsGroup,
                     'countTotalGuests' => $countTotalGuests,
                     'countPresent' => $countPresent,

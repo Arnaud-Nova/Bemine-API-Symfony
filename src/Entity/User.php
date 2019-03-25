@@ -7,6 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class User implements UserInterface
 {
@@ -73,13 +74,12 @@ class User implements UserInterface
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
+    public function getRoles()
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roleCode = json_decode($this->roles)->code;
+        $roles = [$roleCode];
 
-        return array_unique($roles);
+        return $roles;
     }
 
     public function setRoles($roles): self
@@ -143,5 +143,21 @@ class User implements UserInterface
         $this->wedding = $wedding;
 
         return $this;
+    }
+
+    /**
+     * @ORM\PrePersist 
+     * @ORM\PreUpdate
+     */
+    public function defaultValues()
+    {
+        if (empty($this->roles)) {
+             $roles = '{"name": "Couple", "code": "ROLE_COUPLE"}';
+             $this->roles = $roles;
+        }
+
+        if (!isset($this->isActive)) {
+            $this->isActive = true;
+        }
     }
 }
