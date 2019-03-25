@@ -53,9 +53,15 @@ class Event
      */
     private $weddings;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\GuestGroup", mappedBy="event")
+     */
+    private $guestGroups;
+
     public function __construct()
     {
         $this->weddings = new ArrayCollection();
+        $this->guestGroups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -156,6 +162,34 @@ class Event
     {
         if ($this->weddings->contains($wedding)) {
             $this->weddings->removeElement($wedding);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GuestGroup[]
+     */
+    public function getGuestGroups(): Collection
+    {
+        return $this->guestGroups;
+    }
+
+    public function addGuestGroup(GuestGroup $guestGroup): self
+    {
+        if (!$this->guestGroups->contains($guestGroup)) {
+            $this->guestGroups[] = $guestGroup;
+            $guestGroup->addEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGuestGroup(GuestGroup $guestGroup): self
+    {
+        if ($this->guestGroups->contains($guestGroup)) {
+            $this->guestGroups->removeElement($guestGroup);
+            $guestGroup->removeEvent($this);
         }
 
         return $this;

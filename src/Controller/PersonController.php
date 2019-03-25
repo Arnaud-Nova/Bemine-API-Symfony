@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Event;
 use App\Entity\Person;
 use App\Entity\GuestGroup;
+use App\Repository\EventRepository;
 use App\Repository\PersonRepository;
 use App\Repository\WeddingRepository;
 use App\Repository\GuestGroupRepository;
@@ -20,7 +22,6 @@ class PersonController extends AbstractController
     public function index(PersonRepository $personRepository, $id)
     {
         
-       
         $guests = $personRepository->findAllQueryBuilder($id);
 
          //mariés exclus de ces comptes
@@ -65,7 +66,7 @@ class PersonController extends AbstractController
     /**
      * @Route("/brides/guests/new/wedding/{id}", name="new", requirements={"id"="\d+"}, methods={"GET", "POST"})
      */
-    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id)
+    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
@@ -95,6 +96,12 @@ class PersonController extends AbstractController
 
         $guestGroup = new GuestGroup();
         $guestGroup->setWedding($wedding);
+
+        //j'assigne les events au groupe
+        // foreach
+        // dd($contentDecode->events);
+        // $events = ;
+        // $guestGroup->addEvent($events);
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($person);
