@@ -8,12 +8,15 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Doctrine\ORM\EntityManagerInterface;
+use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     private $em;
+    private $clientRegistry;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, ClientRegistry $clientRegistry)
     {
         $this->em = $em;
     }
@@ -53,6 +56,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
+        
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
 

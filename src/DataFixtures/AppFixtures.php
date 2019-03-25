@@ -68,6 +68,7 @@ class AppFixtures extends Fixture
         $person1->setFirstname($generator->firstName());
         $person1->setWedding($wedding1);
         $person1->setNewlyweds(true);
+        $person1->setAttendance(1);
 
         $person2 = new Person();
         $person2->setLastname($generator->lastName());
