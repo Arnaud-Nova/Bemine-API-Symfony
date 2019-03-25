@@ -35,6 +35,8 @@ class GuestGroupRepository extends ServiceEntityRepository
         return $qb->getArrayResult();
     }
 
+     
+
     // /**
     //  * @return GuestGroup[] Returns an array of GuestGroup objects
     //  */

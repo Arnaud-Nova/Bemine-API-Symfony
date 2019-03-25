@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Person;
 use App\Entity\GuestGroup;
+use App\Repository\EventRepository;
 use App\Repository\PersonRepository;
 use App\Repository\WeddingRepository;
 use App\Repository\GuestGroupRepository;
@@ -20,7 +21,6 @@ class PersonController extends AbstractController
     public function index(PersonRepository $personRepository, $id)
     {
         
-       
         $guests = $personRepository->findAllQueryBuilder($id);
 
          //mariés exclus de ces comptes
@@ -95,6 +95,12 @@ class PersonController extends AbstractController
 
         $guestGroup = new GuestGroup();
         $guestGroup->setWedding($wedding);
+
+        //j'assigne les events au groupe
+        // foreach
+        // dd($contentDecode->events);
+        // $events = ;
+        // $guestGroup->addEvent($events);
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($person);

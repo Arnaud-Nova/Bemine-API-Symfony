@@ -55,11 +55,17 @@ class GuestGroup
      */
     private $mailGuestGroups;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="guestGroups")
+     */
+    private $event;
+
     public function __construct()
     {
         $this->people = new ArrayCollection();
         $this->gifts = new ArrayCollection();
         $this->mailGuestGroups = new ArrayCollection();
+        $this->event = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -203,6 +209,32 @@ class GuestGroup
             if ($mailGuestGroup->getGuestGroup() === $this) {
                 $mailGuestGroup->setGuestGroup(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Event[]
+     */
+    public function getEvent(): Collection
+    {
+        return $this->event;
+    }
+
+    public function addEvent(Event $event): self
+    {
+        if (!$this->event->contains($event)) {
+            $this->event[] = $event;
+        }
+
+        return $this;
+    }
+
+    public function removeEvent(Event $event): self
+    {
+        if ($this->event->contains($event)) {
+            $this->event->removeElement($event);
         }
 
         return $this;
