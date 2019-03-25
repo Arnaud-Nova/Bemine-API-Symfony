@@ -29,19 +29,22 @@ class UserController extends AbstractController
         $lastname = $contentDecode->lastname;
         $spouseFirstname = $contentDecode->spouseFirstname;
         $spouseLastname = $contentDecode->spouseLastname;
+        $weddingDate = $contentDecode->date;
         
         //Je crée une nouvelle instance de wedding car chaque nouveau user implique la création de son wedding.
         $wedding = new Wedding();
+        $wedding->setDate(\DateTime::createFromFormat('Y-m-d', $weddingDate));
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($wedding);
-       
+        
         // $wedding->setDate(date($contentDecode->date));
         // dd($wedding);
         
         //je crée mon nouveau user 
         $user = new User();
         //petite interrogation sur la récupération du password
-        $encodedPassword = $passwordEncoder->encodePassword($user, $user->getPassword());
+        // $encodedPassword = $passwordEncoder->encodePassword($user, $user->getPassword());
+        $encodedPassword = $passwordEncoder->encodePassword($user, $contentDecode->password);
         $user->setPassword($encodedPassword);
         $user->setEmail($email);
         $user->setUrlAvatar($urlAvatar);
@@ -56,7 +59,7 @@ class UserController extends AbstractController
         $person->setMenu('ADULTE');
         $person->setWedding($wedding);
         $person->setAttendance(true);
-
+        
         //je crée le deuxième marié
         $personSpouse = new Person();
         $personSpouse->setFirstname($spouseFirstname);
@@ -65,26 +68,27 @@ class UserController extends AbstractController
         $personSpouse->setMenu('ADULTE');
         $personSpouse->setWedding($wedding);
         $personSpouse->setAttendance(true);
-
+        
         $entityManager->persist($user);
         $entityManager->persist($wedding);
         $entityManager->persist($person);
         $entityManager->persist($personSpouse);
         $entityManager->flush();
-        // dd($user);
-
+        
         //je set mon flash message avec symfo, voir si c'est fait avec react ou pas
         $this->addFlash(
             'success',
             'Votre compte a bien été crée, merci de vous connecter.'
         );
+
+        $userId = $user->getId();
                  
         return $this->json(
             [
                 'code' => 200,
                 'message' => 'youpi',
                 'errors' => [],
-                'data' => $user,
+                'data' => $userId,
                 //'token' => 'youpi',
                 //'userid' => '',
             ]
