@@ -9,16 +9,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
-use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
+// use KnpU\OAuth2ClientBundle\Client\ClientRegistry;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
     private $em;
-    private $clientRegistry;
+    // private $clientRegistry;
 
-    public function __construct(EntityManagerInterface $em, ClientRegistry $clientRegistry)
+    public function __construct(EntityManagerInterface $em
+            // , ClientRegistry $clientRegistry
+        )
     {
         $this->em = $em;
+        // $this->clientRegistry = $clientRegistry;
     }
 
     public function supports(Request $request)

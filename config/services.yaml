@@ -32,3 +32,12 @@ services:
         class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
         public: false
         tags: [serializer.normalizer]
+    
+    App\Security\Authentication\Provider\WsseProvider:
+        arguments:
+            $cachePool: '@cache.app'
+        public: false
+
+    App\Security\Firewall\WsseListener:
+        arguments: ['@security.token_storage', '@security.authentication.manager']
+        public: false
