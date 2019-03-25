@@ -16,7 +16,7 @@ class UserController extends AbstractController
     /**
      * @Route("/signup", name="signup", methods={"POST"})
      */
-    public function signup(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function signup(Request $request, UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
@@ -24,6 +24,26 @@ class UserController extends AbstractController
    
         //je récupère mes données du front
         $email = $contentDecode->email;
+        
+        $alreayUser = $userRepository->findByEmail($email);
+        
+        if ($alreayUser){
+            return $this->json(
+                [
+                    'code' => 200,
+                    'message' => 'l\'email du user existe déjà',
+                    'errors' => [],
+                    '' => '',
+                    //'token' => 'youpi',
+                    //'userid' => '',
+                ]
+            );
+
+        }
+        
+        
+        
+        //je récupère le reste de mes données du front
         $urlAvatar = $contentDecode->urlAvatar;
         $firstname = $contentDecode->firstname;
         $lastname = $contentDecode->lastname;
@@ -88,7 +108,7 @@ class UserController extends AbstractController
                 'code' => 200,
                 'message' => 'youpi',
                 'errors' => [],
-                'data' => $userId,
+                '' => $userId,
                 //'token' => 'youpi',
                 //'userid' => '',
             ]
@@ -109,7 +129,7 @@ class UserController extends AbstractController
                     'code' => 404,
                     'message' => 'Le user id n\'existe pas',
                     'errors' => [],
-                    'data' => [
+                    '' => [
                     ],
                     //'token' => 'youpi',
                     //'userid' => 'youpi',
@@ -122,7 +142,7 @@ class UserController extends AbstractController
                 'code' => 200,
                 'message' => 'youpi',
                 'errors' => [],
-                'data' => $thisUser,
+                '' => $thisUser,
                 //'token' => 'youpi',
                 //'userid' => 'youpi',
             ]
