@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Event;
 use App\Entity\Person;
 use App\Entity\GuestGroup;
 use App\Repository\EventRepository;
@@ -66,7 +65,7 @@ class PersonController extends AbstractController
     /**
      * @Route("/brides/guests/new/wedding/{id}", name="new", requirements={"id"="\d+"}, methods={"GET", "POST"})
      */
-    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository)
+    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
