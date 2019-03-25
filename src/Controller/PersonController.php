@@ -36,7 +36,7 @@ class PersonController extends AbstractController
                     'code' => 404,
                     'message' => 'Le wedding id n\'existe pas',
                     'errors' => [],
-                    '' => [
+                    'data' => [
                     ],
                     //'token' => 'youpi',
                     //'userid' => 'youpi',
@@ -49,7 +49,7 @@ class PersonController extends AbstractController
                 'code' => 200,
                 'message' => 'youpi',
                 'errors' => [],
-                '' => [
+                'data' => [
                     'guests' => $guests,
                     'countTotalGuests' => $countTotalGuests,
                     'countPresent' => $countPresent,
@@ -79,7 +79,7 @@ class PersonController extends AbstractController
                     'code' => 404,
                     'message' => 'Le wedding id n\'existe pas',
                     'errors' => [],
-                    '' => [
+                    'data' => [
                     ],
                     //'token' => 'youpi',
                     //'userid' => 'youpi',
@@ -187,7 +187,7 @@ class PersonController extends AbstractController
                 'code' => 200,
                 'message' => 'youpi',
                 'errors' => [],
-                '' => [
+                'data' => [
                     
                 ],
                 //'token' => 'youpi',

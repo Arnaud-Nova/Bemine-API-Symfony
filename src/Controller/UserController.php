@@ -33,7 +33,7 @@ class UserController extends AbstractController
                     'code' => 200,
                     'message' => 'l\'email du user existe déjà',
                     'errors' => [],
-                    '' => '',
+                    'data' => '',
                     //'token' => 'youpi',
                     //'userid' => '',
                 ]
@@ -105,7 +105,7 @@ class UserController extends AbstractController
                 'code' => 200,
                 'message' => 'youpi',
                 'errors' => [],
-                '' => $userId,
+                'data' => $userId,
                 //'token' => 'youpi',
                 //'userid' => '',
             ]
@@ -126,7 +126,7 @@ class UserController extends AbstractController
                     'code' => 404,
                     'message' => 'Le user id n\'existe pas',
                     'errors' => [],
-                    '' => [
+                    'data' => [
                     ],
                     //'token' => 'youpi',
                     //'userid' => 'youpi',
@@ -139,7 +139,7 @@ class UserController extends AbstractController
                 'code' => 200,
                 'message' => 'youpi',
                 'errors' => [],
-                '' => $thisUser,
+                'data' => $thisUser,
                 //'token' => 'youpi',
                 //'userid' => 'youpi',
             ]
