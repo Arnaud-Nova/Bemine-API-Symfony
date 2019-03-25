@@ -25,13 +25,14 @@ class GuestGroupRepository extends ServiceEntityRepository
     public function findAllQueryBuilder()
     {
         $qb = $this->createQueryBuilder('g')
-            ->select('g', 'mgg')
+            ->select('g', 'mgg', 'p')
             ->leftJoin('g.mailGuestGroups', 'mgg')
             ->leftJoin('g.people', 'p')
-            ->addSelect('p.attendance')
+            ->getQuery()
+            ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
-        return $qb->getQuery()->getArrayResult();
+        return $qb->getArrayResult();
     }
 
     // /**

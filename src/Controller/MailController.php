@@ -18,6 +18,7 @@ class MailController extends AbstractController
         
         $contactsGroup = $guestGroupRepository->findAllQueryBuilder($id);
         
+        
         //mariés exclus de ces comptes
         $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
         $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);

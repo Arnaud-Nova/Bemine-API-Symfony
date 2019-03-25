@@ -98,8 +98,6 @@ class PersonRepository extends ServiceEntityRepository
         return $qb->getQuery()->getArrayResult();
     }
 
-
-
     // /**
     //  * @return Person[] Returns an array of Person objects
     //  */
