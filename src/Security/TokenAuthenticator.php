@@ -48,7 +48,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         // no credential check is needed in this case
 
         // return true to cause authentication success
-        return true;
+        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
