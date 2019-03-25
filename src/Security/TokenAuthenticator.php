@@ -11,43 +11,76 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
+    private $em;
+
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+    }
+
     public function supports(Request $request)
     {
-        // todo
+        return $request->headers->has('X-AUTH-TOKEN');
     }
 
     public function getCredentials(Request $request)
     {
-        // todo
+        return [
+            'token' => $request->headers->get('X-AUTH-TOKEN'),
+        ];
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        // todo
+        $apiToken = $credentials['token'];
+
+        if (null === $apiToken) {
+            return;
+        }
+        // if a User object, checkCredentials() is called
+        return $this->em->getRepository(User::class)
+            ->findOneBy(['apiToken' => $apiToken]);
     }
 
     public function checkCredentials($credentials, UserInterface $user)
     {
-        // todo
+        // check credentials - e.g. make sure the password is valid
+        // no credential check is needed in this case
+
+        // return true to cause authentication success
+        return true;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        // todo
+        $data = [
+            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+
+            // or to translate this message
+            // $this->translator->trans($exception->getMessageKey(), $exception->getMessageData())
+        ];
+
+        return new JsonResponse($data, Response::HTTP_FORBIDDEN);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        // todo
+        // on success, let the request continue
+        return null;
     }
 
     public function start(Request $request, AuthenticationException $authException = null)
     {
-        // todo
+        $data = [
+            // you might translate this message
+            'message' => 'Vous devez être authentifié pour accéder à ces données'
+        ];
+
+        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
     public function supportsRememberMe()
     {
-        // todo
+        return false;
     }
 }
