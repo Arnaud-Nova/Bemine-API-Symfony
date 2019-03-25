@@ -20,7 +20,6 @@ security:
             anonymous: true
             guard:
                 authenticators:
-                    # - App\Security\LoginFormAuthenticator
                     - App\Security\TokenAuthenticator
                 entry_point: App\Security\TokenAuthenticator
 
@@ -37,11 +36,6 @@ security:
             # where to redirect after logout
             # target: app_any_route
         
-        wsse_secured:
-            pattern:   ^/api/
-            stateless: true
-            wsse:      true
-
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
