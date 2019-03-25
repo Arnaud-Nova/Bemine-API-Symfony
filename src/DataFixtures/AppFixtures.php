@@ -24,6 +24,7 @@ class AppFixtures extends Fixture
     
     public function load(ObjectManager $manager)
     {
+        
         $couple1 = new User();
         $couple1->setEmail('couple1@test.fr');
         $encodedPassword = $this->passwordEncoder->encodePassword($couple1, 'couple1');
@@ -68,24 +69,28 @@ class AppFixtures extends Fixture
         $person1->setFirstname($generator->firstName());
         $person1->setWedding($wedding1);
         $person1->setNewlyweds(true);
+        $person1->setAttendance(1);
 
         $person2 = new Person();
         $person2->setLastname($generator->lastName());
         $person2->setFirstname($generator->firstName());
         $person2->setWedding($wedding1);
         $person2->setNewlyweds(true);
+        $person2->setAttendance(1);
 
         $person3 = new Person();
         $person3->setLastname($generator->lastName());
         $person3->setFirstname($generator->firstName());
         $person3->setWedding($wedding2);
         $person3->setNewlyweds(true);
+        $person3->setAttendance(1);
 
         $person4 = new Person();
         $person4->setLastname($generator->lastName());
         $person4->setFirstname($generator->firstName());
         $person4->setWedding($wedding2);
         $person4->setNewlyweds(true);
+        $person4->setAttendance(1);
 
         $manager->persist($person1);
         $manager->persist($person2);
@@ -139,6 +144,7 @@ class AppFixtures extends Fixture
                     $person->setFirstname($generator->firstName());
                     $person->setWedding($wedding1);
                     $person->setNewlyweds(false);
+                    $person->setAttendance(array_rand([0, 1, 2], 1));
                     $guestGroup->addPerson($person);
                     $guestGroup->setWedding($wedding1);
                     if ($n == 0) {
@@ -161,6 +167,7 @@ class AppFixtures extends Fixture
                     $person->setFirstname($generator->firstName());
                     $person->setWedding($wedding2);
                     $person->setNewlyweds(false);
+                    $person->setAttendance(array_rand([0, 1, 2], 1));
                     $guestGroup->addPerson($person);
                     $guestGroup->setWedding($wedding2);
                     if ($n == 0) {
