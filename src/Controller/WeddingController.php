@@ -25,13 +25,13 @@ class WeddingController extends AbstractController
     //     );
     // }
     
-    /**
-     * @Route("/wedding", name="wedding")
-     */
-    public function index()
-    {
-        return $this->render('wedding/index.html.twig', [
-            'controller_name' => 'WeddingController',
-        ]);
-    }
+    // /**
+    //  * @Route("/wedding", name="wedding")
+    //  */
+    // public function index()
+    // {
+    //     return $this->render('wedding/index.html.twig', [
+    //         'controller_name' => 'WeddingController',
+    //     ]);
+    // }
 }

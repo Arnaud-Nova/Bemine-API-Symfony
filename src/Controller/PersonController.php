@@ -6,6 +6,7 @@ use App\Entity\Person;
 use App\Entity\GuestGroup;
 use App\Repository\PersonRepository;
 use App\Repository\WeddingRepository;
+use App\Repository\GuestGroupRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -105,9 +106,73 @@ class PersonController extends AbstractController
 
         $person->setGuestGroup($guestGroup);
         $entityManager->persist($person);
+
+        //j'ajoute 0 ou plusieurs accompagnants
+        $i = 1;
+        $addPerson = '$addPerson'.$i;
+       
+        while ($i){
+            $addPersonFirstname = 'addPersonFirstname'.$i;
+            $addPersonLastname = 'addPersonLastname'.$i;
+            if (isset($contentDecode->{$addPersonLastname})){
+                $addPerson = new Person();
+                $addPerson->setLastname($contentDecode->{$addPersonLastname});
+                $addPerson->setFirstname($contentDecode->{$addPersonFirstname});
+                $addPerson->setWedding($wedding);
+                $addPerson->setNewlyweds(0);
+                $addPerson->setGuestGroup($guestGroup);
+
+                $entityManager->persist($addPerson);
+                $i++;
+            } else { 
+                break;    
+            }
+        }
         
         $entityManager->flush();
-       
+
+        return $this->json(
+            [
+                'code' => 200,
+                'message' => 'youpi',
+                'errors' => [],
+                'data' => [
+                    
+                ],
+                //'token' => 'youpi',
+                //'userid' => 'youpi',
+            ]
+        );
+    }
+
+    /**
+     * @Route("/brides/guests/edit/{id}", name="edit", requirements={"id"="\d+"}, methods={"GET", "POST"})
+     */
+    public function edit(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id)
+    {
+        $guestGroup = $personRepository->findByGuestGroup($id);
+
+        dd($guestGroup);
+        
+        if (!$guestGroup){
+            return $this->json(
+                [
+                    'code' => 404,
+                    'message' => 'Le guestGroupId n\'existe pas',
+                    'errors' => [],
+                    'data' => [
+                    ],
+                    //'token' => 'youpi',
+                    //'userid' => 'youpi',
+                ]
+            );
+        }
+
+        //je récupère les données du front dans l'objet request.
+        $content = $request->getContent();
+        $contentDecode = json_decode($content);
+
+        
         
         return $this->json(
             [
