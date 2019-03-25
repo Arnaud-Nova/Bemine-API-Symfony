@@ -24,7 +24,6 @@ class AppFixtures extends Fixture
     
     public function load(ObjectManager $manager)
     {
-        
         $couple1 = new User();
         $couple1->setEmail('couple1@test.fr');
         $encodedPassword = $this->passwordEncoder->encodePassword($couple1, 'couple1');
@@ -144,7 +143,7 @@ class AppFixtures extends Fixture
                     $person->setFirstname($generator->firstName());
                     $person->setWedding($wedding1);
                     $person->setNewlyweds(false);
-                    $person->setAttendance(array_rand([0, 1, 2], 1));
+                    $person->setAttendance($this->randomAttendance());
                     $guestGroup->addPerson($person);
                     $guestGroup->setWedding($wedding1);
                     if ($n == 0) {
@@ -167,7 +166,7 @@ class AppFixtures extends Fixture
                     $person->setFirstname($generator->firstName());
                     $person->setWedding($wedding2);
                     $person->setNewlyweds(false);
-                    $person->setAttendance(array_rand([0, 1, 2], 1));
+                    $person->setAttendance($this->randomAttendance());
                     $guestGroup->addPerson($person);
                     $guestGroup->setWedding($wedding2);
                     if ($n == 0) {
@@ -218,5 +217,12 @@ class AppFixtures extends Fixture
         }
 
         return $string;
+    }
+
+    public function randomAttendance()
+    {
+        $values= [0, 1, 2];
+
+        return array_rand($values, 1);
     }
 }
