@@ -3,3 +3,7 @@
 #    controller: App\Controller\DefaultController::index
 app_logout:
     path: /logout
+
+api_login_check:
+    path: /login_check
+    methods: [POST]
