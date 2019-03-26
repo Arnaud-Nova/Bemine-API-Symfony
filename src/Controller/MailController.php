@@ -9,6 +9,7 @@ use App\Repository\GuestGroupRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MailController extends AbstractController
 {
@@ -36,7 +37,7 @@ class MailController extends AbstractController
         //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
 
-        $data = $this->json(
+        $data = 
             [
                 'contactsGroup' => $contactsGroup,
                 'countTotalGuests' => $countTotalGuests,
@@ -44,10 +45,9 @@ class MailController extends AbstractController
                 'countAbsent' => $countAbsent,
                 'countWaiting' => $countWaiting
             ]
-        );
+        ;
 
-        $response = new Response($data, 200);
-        $response->headers->set('Content-Type', 'application/json');
+        $response = new JsonResponse($data, 200);
        
         return $response;
     }

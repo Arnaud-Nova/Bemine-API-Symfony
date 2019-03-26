@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends AbstractController
 {
@@ -96,18 +97,17 @@ class UserController extends AbstractController
         );
 
         $userId = $user->getId();
-
-        $data = $this->json(
+        
+        $data = 
             [
                 'userId' => $userId
             ]
-        );
+        ;
 
-        $response = new Response($data, 200);
-        $response->headers->set('Content-Type', 'application/json');
+        $response = new JsonResponse($data, 200);
        
         return $response;
-        
+
     }
 
     /**
@@ -126,14 +126,13 @@ class UserController extends AbstractController
             return $response;
         }
 
-        $data = $this->json(
+        $data = 
             [
                 'thisUser' => $thisUser
             ]
-        );
+        ;
 
-        $response = new Response($data, 200);
-        $response->headers->set('Content-Type', 'application/json');
+        $response = new JsonResponse($data, 200);
        
         return $response;
     }

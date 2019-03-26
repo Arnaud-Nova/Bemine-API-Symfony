@@ -33,11 +33,11 @@ class PersonController extends AbstractController
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
         
         if (!$guests){
-            $message = ['Le wedding id n\'existe pas'];
-            $response = new JsonResponse($message, 404);
-            // $response = new Response($message, 404);
-            // $response->headers->set('Content-Type', 'application/json');
-           
+            $message = 'Le wedding id n\'existe pas';
+
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+
             return $response;
         }
         
@@ -52,9 +52,6 @@ class PersonController extends AbstractController
         ;
 
         $response = new JsonResponse($data, 200);
-
-        
-        // $response->headers->set('Content-Type', 'application/json');
        
         return $response;
 
@@ -128,10 +125,9 @@ class PersonController extends AbstractController
 
         $entityManager->flush();
 
-        $response = new Response('', 200);
-        $response->headers->set('Content-Type', 'application/json');
-       
+        $response = new JsonResponse('', 200);       
         return $response;
+
     }
 
     /**
@@ -155,11 +151,7 @@ class PersonController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        
-        
-        $response = new Response('', 200);
-        $response->headers->set('Content-Type', 'application/json');
-       
+        $response = new JsonResponse('', 200);       
         return $response;
     }
 }
