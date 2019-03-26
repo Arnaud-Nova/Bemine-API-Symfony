@@ -34,8 +34,9 @@ class PersonController extends AbstractController
         
         if (!$guests){
             $message = 'Le wedding id n\'existe pas';
-            $response = new Response($message, 404);
-            $response->headers->set('Content-Type', 'application/json');
+            $response = new JsonResponse($message, 404);
+            // $response = new Response($message, 404);
+            // $response->headers->set('Content-Type', 'application/json');
            
             return $response;
         }
