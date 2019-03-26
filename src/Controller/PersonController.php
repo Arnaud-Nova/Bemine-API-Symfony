@@ -65,7 +65,7 @@ class PersonController extends AbstractController
     /**
      * @Route("/brides/guests/new/wedding/{id}", name="new", requirements={"id"="\d+"}, methods={"GET", "POST"})
      */
-    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id)
+    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
@@ -97,9 +97,17 @@ class PersonController extends AbstractController
         $guestGroup->setWedding($wedding);
 
         //j'assigne les events au groupe
+
         for ($i = 1; $i <= 4; $i++){
-            foreach ($contentDecode->events as $event){
-                $guestGroup->addEvent($event->$i);
+            foreach ($contentDecode->events as $eventValue){
+                $participate = $eventValue->$i;
+                    $event = $eventRepository->find($i);
+                    // dd($participate, $event);
+                    if ($participate == true){
+                        // dd($participate, $event);
+                        $guestGroup->addEvent($event);
+                    }
+                
             } 
 
         } 
