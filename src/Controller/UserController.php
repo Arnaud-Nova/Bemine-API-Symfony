@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends AbstractController
 {
@@ -28,16 +29,12 @@ class UserController extends AbstractController
         //si l'email existe déjà en base, je renvoie un message
         $alreayUser = $userRepository->findByEmail($email);
         if ($alreayUser){
-            return $this->json(
-                [
-                    'code' => 200,
-                    'message' => 'l\'email du user existe déjà',
-                    'errors' => [],
-                    'data' => '',
-                    //'token' => 'youpi',
-                    //'userid' => '',
-                ]
-            );
+            $message = 'l\'email du user existe déjà';
+            $response = new Response($message, 200);
+            $response->headers->set('Content-Type', 'application/json');
+           
+            return $response;
+            
         }
         
         //je récupère le reste de mes données du front
@@ -99,17 +96,18 @@ class UserController extends AbstractController
         );
 
         $userId = $user->getId();
-                 
-        return $this->json(
+
+        $data = $this->json(
             [
-                'code' => 200,
-                'message' => 'youpi',
-                'errors' => [],
-                'data' => $userId,
-                //'token' => 'youpi',
-                //'userid' => '',
+                'userId' => $userId
             ]
         );
+
+        $response = new Response($data, 200);
+        $response->headers->set('Content-Type', 'application/json');
+       
+        return $response;
+        
     }
 
     /**
@@ -121,28 +119,22 @@ class UserController extends AbstractController
         $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
 
         if (!$thisUser){
-            return $this->json(
-                [
-                    'code' => 404,
-                    'message' => 'Le user id n\'existe pas',
-                    'errors' => [],
-                    'data' => [
-                    ],
-                    //'token' => 'youpi',
-                    //'userid' => 'youpi',
-                ]
-            );
+            $message = 'Le user id n\'existe pas';
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+           
+            return $response;
         }
 
-        return $this->json(
+        $data = $this->json(
             [
-                'code' => 200,
-                'message' => 'youpi',
-                'errors' => [],
-                'data' => $thisUser,
-                //'token' => 'youpi',
-                //'userid' => 'youpi',
+                'thisUser' => $thisUser
             ]
         );
+
+        $response = new Response($data, 200);
+        $response->headers->set('Content-Type', 'application/json');
+       
+        return $response;
     }
 }
