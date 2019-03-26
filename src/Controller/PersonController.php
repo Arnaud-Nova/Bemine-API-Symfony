@@ -11,6 +11,8 @@ use App\Repository\GuestGroupRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class PersonController extends AbstractController
@@ -31,35 +33,28 @@ class PersonController extends AbstractController
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
         
         if (!$guests){
-            return $this->json(
-                [
-                    'code' => 404,
-                    'message' => 'Le wedding id n\'existe pas',
-                    'errors' => [],
-                    'data' => [
-                    ],
-                    //'token' => 'youpi',
-                    //'userid' => 'youpi',
-                ]
-            );
+            $message = 'Le wedding id n\'existe pas';
+
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
         }
         
-        return $this->json(
+        $data = 
             [
-                'code' => 200,
-                'message' => 'youpi',
-                'errors' => [],
-                'data' => [
-                    'guests' => $guests,
-                    'countTotalGuests' => $countTotalGuests,
-                    'countPresent' => $countPresent,
-                    'countAbsent' => $countAbsent,
-                    'countWaiting' => $countWaiting
-                ],
-                //'token' => 'youpi',
-                //'userid' => 'youpi',
+                'guests' => $guests,
+                'countTotalGuests' => $countTotalGuests,
+                'countPresent' => $countPresent,
+                'countAbsent' => $countAbsent,
+                'countWaiting' => $countWaiting
             ]
-        );
+        ;
+
+        $response = new JsonResponse($data, 200);
+       
+        return $response;
+
     }
 
     /**
@@ -74,17 +69,11 @@ class PersonController extends AbstractController
         $wedding = $weddingRepository->find($id);
         
         if (!$wedding){
-            return $this->json(
-                [
-                    'code' => 404,
-                    'message' => 'Le wedding id n\'existe pas',
-                    'errors' => [],
-                    'data' => [
-                    ],
-                    //'token' => 'youpi',
-                    //'userid' => 'youpi',
-                ]
-            );
+            $message = 'Le wedding id n\'existe pas';
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+           
+            return $response;
         }
 
         $person = new Person();
@@ -107,9 +96,7 @@ class PersonController extends AbstractController
                         // dd($participate, $event);
                         $guestGroup->addEvent($event);
                     }
-                
             } 
-
         } 
 
         $entityManager = $this->getDoctrine()->getManager();
@@ -136,21 +123,11 @@ class PersonController extends AbstractController
             $entityManager->persist($addPerson);
         } 
 
-
         $entityManager->flush();
 
-        return $this->json(
-            [
-                'code' => 200,
-                'message' => 'youpi',
-                'errors' => [],
-                'data' => [
-                    
-                ],
-                //'token' => 'youpi',
-                //'userid' => 'youpi',
-            ]
-        );
+        $response = new JsonResponse('', 200);       
+        return $response;
+
     }
 
     /**
@@ -163,36 +140,18 @@ class PersonController extends AbstractController
         dd($guestGroup);
         
         if (!$guestGroup){
-            return $this->json(
-                [
-                    'code' => 404,
-                    'message' => 'Le guestGroupId n\'existe pas',
-                    'errors' => [],
-                    'data' => [
-                    ],
-                    //'token' => 'youpi',
-                    //'userid' => 'youpi',
-                ]
-            );
+            $message = 'Le guestGroupId n\'existe pas';
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+           
+            return $response;
         }
 
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        
-        
-        return $this->json(
-            [
-                'code' => 200,
-                'message' => 'youpi',
-                'errors' => [],
-                'data' => [
-                    
-                ],
-                //'token' => 'youpi',
-                //'userid' => 'youpi',
-            ]
-        );
+        $response = new JsonResponse('', 200);       
+        return $response;
     }
 }
