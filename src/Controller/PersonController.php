@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class PersonController extends AbstractController
@@ -39,7 +40,7 @@ class PersonController extends AbstractController
             return $response;
         }
         
-        $data = $this->json(
+        $data = 
             [
                 'guests' => $guests,
                 'countTotalGuests' => $countTotalGuests,
@@ -47,10 +48,12 @@ class PersonController extends AbstractController
                 'countAbsent' => $countAbsent,
                 'countWaiting' => $countWaiting
             ]
-        );
+        ;
 
-        $response = new Response($data, 200);
-        $response->headers->set('Content-Type', 'application/json');
+        $response = new JsonResponse($data, 200);
+
+        
+        // $response->headers->set('Content-Type', 'application/json');
        
         return $response;
 
