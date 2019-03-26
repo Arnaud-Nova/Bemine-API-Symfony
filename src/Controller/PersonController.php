@@ -33,7 +33,7 @@ class PersonController extends AbstractController
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
         
         if (!$guests){
-            $message = 'Le wedding id n\'existe pas';
+            $message = ['Le wedding id n\'existe pas'];
             $response = new JsonResponse($message, 404);
             // $response = new Response($message, 404);
             // $response->headers->set('Content-Type', 'application/json');
