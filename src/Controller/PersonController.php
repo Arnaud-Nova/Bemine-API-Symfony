@@ -65,7 +65,7 @@ class PersonController extends AbstractController
     /**
      * @Route("/brides/guests/new/wedding/{id}", name="new", requirements={"id"="\d+"}, methods={"GET", "POST"})
      */
-    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id)
+    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
@@ -97,10 +97,20 @@ class PersonController extends AbstractController
         $guestGroup->setWedding($wedding);
 
         //j'assigne les events au groupe
-        // foreach
-        // dd($contentDecode->events);
-        // $events = ;
-        // $guestGroup->addEvent($events);
+
+        for ($i = 1; $i <= 4; $i++){
+            foreach ($contentDecode->events as $eventValue){
+                $participate = $eventValue->$i;
+                    $event = $eventRepository->find($i);
+                    // dd($participate, $event);
+                    if ($participate == true){
+                        // dd($participate, $event);
+                        $guestGroup->addEvent($event);
+                    }
+                
+            } 
+
+        } 
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($person);
@@ -114,29 +124,19 @@ class PersonController extends AbstractController
 
         $person->setGuestGroup($guestGroup);
         $entityManager->persist($person);
-
-        //j'ajoute 0 ou plusieurs accompagnants
-        $i = 1;
-        $addPerson = '$addPerson'.$i;
-       
-        while ($i){
-            $addPersonFirstname = 'addPersonFirstname'.$i;
-            $addPersonLastname = 'addPersonLastname'.$i;
-            if (isset($contentDecode->{$addPersonLastname})){
-                $addPerson = new Person();
-                $addPerson->setLastname($contentDecode->{$addPersonLastname});
-                $addPerson->setFirstname($contentDecode->{$addPersonFirstname});
-                $addPerson->setWedding($wedding);
-                $addPerson->setNewlyweds(0);
-                $addPerson->setGuestGroup($guestGroup);
-
-                $entityManager->persist($addPerson);
-                $i++;
-            } else { 
-                break;    
-            }
-        }
         
+        foreach ($contentDecode->people as $person){
+            $addPerson = new Person();
+            $addPerson->setLastname($person->lastname);
+            $addPerson->setFirstname($person->firstname);
+            $addPerson->setWedding($wedding);
+            $addPerson->setNewlyweds(0);
+            $addPerson->setGuestGroup($guestGroup);
+
+            $entityManager->persist($addPerson);
+        } 
+
+
         $entityManager->flush();
 
         return $this->json(
