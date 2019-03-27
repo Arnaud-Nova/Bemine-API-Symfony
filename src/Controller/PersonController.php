@@ -60,7 +60,7 @@ class PersonController extends AbstractController
     /**
      * @Route("/brides/guests/new/wedding/{id}", name="new", requirements={"id"="\d+"}, methods={"GET", "POST"})
      */
-    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository)
+    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository, GuestGroupRepository $guestGroupRepository)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
@@ -87,22 +87,28 @@ class PersonController extends AbstractController
         $guestGroup->setWedding($wedding);
 
         //j'assigne les events au groupe
+        $events = $eventRepository->findEventsByWedding($id);
 
-        // for ($i = 1; $i <= 4; $i++){
-        //     foreach ($contentDecode->events as $eventValue){
-        //         $participate = $eventValue->$i;
-        //             $event = $eventRepository->find($i);
-        //             // dd($participate, $event);
-        //             if ($participate == true){
-        //                 // dd($participate, $event);
-        //                 $guestGroup->addEvent($event);
-        //             }
-        //     } 
-        // } 
+        foreach ($contentDecode->events as $eventId=>$eventValue){
+                if ($eventValue === true){
+                    $thisEvent = $eventRepository->find($eventId);
+                    $guestGroup->addEvent($thisEvent);
+                }
+            }
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($person);
         $guestGroup->setContactPerson($person);
+
+        $alreayUser = $guestGroupRepository->findByEmail($contentDecode->email);
+        if ($alreayUser){
+            $message = 'l\'email du user existe déjà';
+            $response = new Response($message, 200);
+            $response->headers->set('Content-Type', 'application/json');
+           
+            return $response;
+            
+        }
 
         if ($contentDecode->email){
             $guestGroup->setEmail($contentDecode->email);
@@ -127,7 +133,13 @@ class PersonController extends AbstractController
 
         $entityManager->flush();
 
-        $response = new JsonResponse('', 200);       
+        $data = 
+            [
+                'events' => $events
+            ]
+        ;
+
+        $response = new JsonResponse($data, 200);       
         return $response;
 
     }
