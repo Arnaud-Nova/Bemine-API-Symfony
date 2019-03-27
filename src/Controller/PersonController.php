@@ -9,40 +9,44 @@ use App\Repository\WeddingRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class PersonController extends AbstractController
 {
     /**
-     * @Route("/brides/guests/list/wedding/{id}", name="index", requirements={"id"="\d+"}, methods={"GET", "POST"})
+     * @Route("/brides/guests/list/wedding/{id}", name="index", requirements={"id"="\d+"}, methods={"GET"})
      */
     public function index(PersonRepository $personRepository, $id)
     {
         
-        //mariés exclus de ces comptes
         $guests = $personRepository->findAllQueryBuilder($id);
+         //mariés exclus de ces comptes
         $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
         $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);
         $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($id);
         //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
         
-        return $this->json(
+        if (!$guests){
+            $message = 'Le wedding id n\'existe pas';
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+        }
+        
+        $data = 
             [
-                'code' => 200,
-                'message' => 'youpi',
-                'errors' => [],
-                'data' => [
-                    'guests' => $guests,
-                    'countTotalGuests' => $countTotalGuests,
-                    'countPresent' => $countPresent,
-                    'countAbsent' => $countAbsent,
-                    'countWaiting' => $countWaiting
-                ],
-                //'token' => 'youpi',
-                //'userid' => 'youpi',
+                'guests' => $guests,
+                'countTotalGuests' => $countTotalGuests,
+                'countPresent' => $countPresent,
+                'countAbsent' => $countAbsent,
+                'countWaiting' => $countWaiting
             ]
-        );
+        ;
+        $response = new JsonResponse($data, 200);
+       
+        return $response;
     }
 
     /**
