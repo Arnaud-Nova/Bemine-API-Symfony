@@ -3,15 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Event;
 use App\Entity\Person;
 use App\Entity\Wedding;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends AbstractController
 {
@@ -52,16 +53,33 @@ class UserController extends AbstractController
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($wedding);
 
-        //je crée mes events types
+        //j'initialise les events type de mon mariage
         
-        $event = new Event();
-        $event->setName('Cérémonie');
-        
-        
-        
-        // $wedding->setDate(date($contentDecode->date));
-        // dd($wedding);
-        
+        $event1 = new Event();
+        $event1->setName('Cérémonie');
+        $event1->setWedding($wedding);
+        $event1->setActive(false);
+
+        $event2 = new Event();
+        $event2->setName('Vin d\'honneur');
+        $event2->setWedding($wedding);
+        $event2->setActive(false);
+
+        $event3 = new Event();
+        $event3->setName('Réception');
+        $event3->setWedding($wedding);
+        $event3->setActive(false);
+
+        $event4 = new Event();
+        $event4->setName('Brunch');
+        $event4->setWedding($wedding);
+        $event4->setActive(false);
+
+        $entityManager->persist($event1);
+        $entityManager->persist($event2);
+        $entityManager->persist($event3);
+        $entityManager->persist($event4);
+
         //je crée mon nouveau user 
         $user = new User();
         //petite interrogation sur la récupération du password
