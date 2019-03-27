@@ -23,46 +23,56 @@ class Event
      */
     private $name;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $address;
+    // /**
+    //  * @ORM\Column(type="string", length=255, nullable=true)
+    //  */
+    // private $address;
+
+    // /**
+    //  * @ORM\Column(type="integer", nullable=true)
+    //  */
+    // private $postcode;
+
+    // /**
+    //  * @ORM\Column(type="string", length=80, nullable=true)
+    //  */
+    // private $city;
+
+    // /**
+    //  * @ORM\Column(type="datetime", nullable=true)
+    //  */
+    // private $schedule;
+
+    // /**
+    //  * @ORM\Column(type="text", nullable=true)
+    //  */
+    // private $informations;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\WeddingEvent", mappedBy="event")
      */
-    private $postcode;
-
-    /**
-     * @ORM\Column(type="string", length=80, nullable=true)
-     */
-    private $city;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $schedule;
-
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
-    private $informations;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Wedding", inversedBy="events")
-     */
-    private $weddings;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\GuestGroup", mappedBy="event")
-     */
-    private $guestGroups;
+    private $weddingEvents;
 
     public function __construct()
     {
-        $this->weddings = new ArrayCollection();
-        $this->guestGroups = new ArrayCollection();
+        $this->weddingEvents = new ArrayCollection();
     }
+
+    // /**
+    //  * @ORM\ManyToMany(targetEntity="App\Entity\Wedding", inversedBy="events")
+    //  */
+    // private $weddings;
+
+    // /**
+    //  * @ORM\ManyToMany(targetEntity="App\Entity\GuestGroup", mappedBy="event")
+    //  */
+    // private $guestGroups;
+
+    // public function __construct()
+    // {
+    //     // $this->weddings = new ArrayCollection();
+    //     // $this->guestGroups = new ArrayCollection();
+    // }
 
     public function getId(): ?int
     {
@@ -81,117 +91,148 @@ class Event
         return $this;
     }
 
-    public function getAddress(): ?string
-    {
-        return $this->address;
-    }
+    // public function getAddress(): ?string
+    // {
+    //     return $this->address;
+    // }
 
-    public function setAddress(?string $address): self
-    {
-        $this->address = $address;
+    // public function setAddress(?string $address): self
+    // {
+    //     $this->address = $address;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getPostcode(): ?int
-    {
-        return $this->postcode;
-    }
+    // public function getPostcode(): ?int
+    // {
+    //     return $this->postcode;
+    // }
 
-    public function setPostcode(?int $postcode): self
-    {
-        $this->postcode = $postcode;
+    // public function setPostcode(?int $postcode): self
+    // {
+    //     $this->postcode = $postcode;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getCity(): ?string
-    {
-        return $this->city;
-    }
+    // public function getCity(): ?string
+    // {
+    //     return $this->city;
+    // }
 
-    public function setCity(?string $city): self
-    {
-        $this->city = $city;
+    // public function setCity(?string $city): self
+    // {
+    //     $this->city = $city;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getSchedule(): ?\DateTimeInterface
-    {
-        return $this->schedule;
-    }
+    // public function getSchedule(): ?\DateTimeInterface
+    // {
+    //     return $this->schedule;
+    // }
 
-    public function setSchedule(?\DateTimeInterface $schedule): self
-    {
-        $this->schedule = $schedule;
+    // public function setSchedule(?\DateTimeInterface $schedule): self
+    // {
+    //     $this->schedule = $schedule;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function getInformations(): ?string
-    {
-        return $this->informations;
-    }
+    // public function getInformations(): ?string
+    // {
+    //     return $this->informations;
+    // }
 
-    public function setInformations(?string $informations): self
-    {
-        $this->informations = $informations;
+    // public function setInformations(?string $informations): self
+    // {
+    //     $this->informations = $informations;
 
-        return $this;
-    }
-
-    /**
-     * @return Collection|Wedding[]
-     */
-    public function getWeddings(): Collection
-    {
-        return $this->weddings;
-    }
-
-    public function addWedding(Wedding $wedding): self
-    {
-        if (!$this->weddings->contains($wedding)) {
-            $this->weddings[] = $wedding;
-        }
-
-        return $this;
-    }
-
-    public function removeWedding(Wedding $wedding): self
-    {
-        if ($this->weddings->contains($wedding)) {
-            $this->weddings->removeElement($wedding);
-        }
-
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
-     * @return Collection|GuestGroup[]
+     * @return Collection|WeddingEvent[]
      */
-    public function getGuestGroups(): Collection
+    public function getWeddingEvents(): Collection
     {
-        return $this->guestGroups;
+        return $this->weddingEvents;
     }
 
-    public function addGuestGroup(GuestGroup $guestGroup): self
+    public function addWeddingEvent(WeddingEvent $weddingEvent): self
     {
-        if (!$this->guestGroups->contains($guestGroup)) {
-            $this->guestGroups[] = $guestGroup;
-            $guestGroup->addEvent($this);
+        if (!$this->weddingEvents->contains($weddingEvent)) {
+            $this->weddingEvents[] = $weddingEvent;
+            $weddingEvent->setEvent($this);
         }
 
         return $this;
     }
 
-    public function removeGuestGroup(GuestGroup $guestGroup): self
+    public function removeWeddingEvent(WeddingEvent $weddingEvent): self
     {
-        if ($this->guestGroups->contains($guestGroup)) {
-            $this->guestGroups->removeElement($guestGroup);
-            $guestGroup->removeEvent($this);
+        if ($this->weddingEvents->contains($weddingEvent)) {
+            $this->weddingEvents->removeElement($weddingEvent);
+            // set the owning side to null (unless already changed)
+            if ($weddingEvent->getEvent() === $this) {
+                $weddingEvent->setEvent(null);
+            }
         }
 
         return $this;
     }
+
+    // /**
+    //  * @return Collection|Wedding[]
+    //  */
+    // public function getWeddings(): Collection
+    // {
+    //     return $this->weddings;
+    // }
+
+    // public function addWedding(Wedding $wedding): self
+    // {
+    //     if (!$this->weddings->contains($wedding)) {
+    //         $this->weddings[] = $wedding;
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeWedding(Wedding $wedding): self
+    // {
+    //     if ($this->weddings->contains($wedding)) {
+    //         $this->weddings->removeElement($wedding);
+    //     }
+
+    //     return $this;
+    // }
+
+    // /**
+    //  * @return Collection|GuestGroup[]
+    //  */
+    // public function getGuestGroups(): Collection
+    // {
+    //     return $this->guestGroups;
+    // }
+
+    // public function addGuestGroup(GuestGroup $guestGroup): self
+    // {
+    //     if (!$this->guestGroups->contains($guestGroup)) {
+    //         $this->guestGroups[] = $guestGroup;
+    //         $guestGroup->addEvent($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeGuestGroup(GuestGroup $guestGroup): self
+    // {
+    //     if ($this->guestGroups->contains($guestGroup)) {
+    //         $this->guestGroups->removeElement($guestGroup);
+    //         $guestGroup->removeEvent($this);
+    //     }
+
+    //     return $this;
+    // }
 }

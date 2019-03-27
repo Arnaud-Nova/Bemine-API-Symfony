@@ -43,10 +43,10 @@ class Wedding
      */
     private $guestGroups;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="weddings")
-     */
-    private $events;
+    // /**
+    //  * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="weddings")
+    //  */
+    // private $events;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Gift", mappedBy="wedding")
@@ -58,14 +58,20 @@ class Wedding
      */
     private $people;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\WeddingEvent", mappedBy="wedding")
+     */
+    private $weddingEvents;
+
     public function __construct()
     {
         $this->photos = new ArrayCollection();
         $this->receptionTables = new ArrayCollection();
         $this->guestGroups = new ArrayCollection();
-        $this->events = new ArrayCollection();
+        // $this->events = new ArrayCollection();
         $this->gifts = new ArrayCollection();
         $this->people = new ArrayCollection();
+        $this->weddingEvents = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -196,33 +202,33 @@ class Wedding
         return $this;
     }
 
-    /**
-     * @return Collection|Event[]
-     */
-    public function getEvents(): Collection
-    {
-        return $this->events;
-    }
+    // /**
+    //  * @return Collection|Event[]
+    //  */
+    // public function getEvents(): Collection
+    // {
+    //     return $this->events;
+    // }
 
-    public function addEvent(Event $event): self
-    {
-        if (!$this->events->contains($event)) {
-            $this->events[] = $event;
-            $event->addWedding($this);
-        }
+    // public function addEvent(Event $event): self
+    // {
+    //     if (!$this->events->contains($event)) {
+    //         $this->events[] = $event;
+    //         $event->addWedding($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeEvent(Event $event): self
-    {
-        if ($this->events->contains($event)) {
-            $this->events->removeElement($event);
-            $event->removeWedding($this);
-        }
+    // public function removeEvent(Event $event): self
+    // {
+    //     if ($this->events->contains($event)) {
+    //         $this->events->removeElement($event);
+    //         $event->removeWedding($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * @return Collection|Gift[]
@@ -280,6 +286,37 @@ class Wedding
             // set the owning side to null (unless already changed)
             if ($person->getWedding() === $this) {
                 $person->setWedding(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|WeddingEvent[]
+     */
+    public function getWeddingEvents(): Collection
+    {
+        return $this->weddingEvents;
+    }
+
+    public function addWeddingEvent(WeddingEvent $weddingEvent): self
+    {
+        if (!$this->weddingEvents->contains($weddingEvent)) {
+            $this->weddingEvents[] = $weddingEvent;
+            $weddingEvent->setWedding($this);
+        }
+
+        return $this;
+    }
+
+    public function removeWeddingEvent(WeddingEvent $weddingEvent): self
+    {
+        if ($this->weddingEvents->contains($weddingEvent)) {
+            $this->weddingEvents->removeElement($weddingEvent);
+            // set the owning side to null (unless already changed)
+            if ($weddingEvent->getWedding() === $this) {
+                $weddingEvent->setWedding(null);
             }
         }
 

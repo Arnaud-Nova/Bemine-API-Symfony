@@ -87,17 +87,17 @@ class PersonController extends AbstractController
 
         //j'assigne les events au groupe
 
-        for ($i = 1; $i <= 4; $i++){
-            foreach ($contentDecode->events as $eventValue){
-                $participate = $eventValue->$i;
-                    $event = $eventRepository->find($i);
-                    // dd($participate, $event);
-                    if ($participate == true){
-                        // dd($participate, $event);
-                        $guestGroup->addEvent($event);
-                    }
-            } 
-        } 
+        // for ($i = 1; $i <= 4; $i++){
+        //     foreach ($contentDecode->events as $eventValue){
+        //         $participate = $eventValue->$i;
+        //             $event = $eventRepository->find($i);
+        //             // dd($participate, $event);
+        //             if ($participate == true){
+        //                 // dd($participate, $event);
+        //                 $guestGroup->addEvent($event);
+        //             }
+        //     } 
+        // } 
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($person);

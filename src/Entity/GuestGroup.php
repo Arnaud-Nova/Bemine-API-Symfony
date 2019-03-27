@@ -56,16 +56,22 @@ class GuestGroup
     private $mailGuestGroups;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="guestGroups")
+     * @ORM\ManyToMany(targetEntity="App\Entity\WeddingEvent", inversedBy="guestGroups")
      */
-    private $event;
+    private $weddingEvent;
+
+    // /**
+    //  * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="guestGroups")
+    //  */
+    // private $event;
 
     public function __construct()
     {
         $this->people = new ArrayCollection();
         $this->gifts = new ArrayCollection();
         $this->mailGuestGroups = new ArrayCollection();
-        $this->event = new ArrayCollection();
+        $this->weddingEvent = new ArrayCollection();
+        // $this->event = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -215,28 +221,54 @@ class GuestGroup
     }
 
     /**
-     * @return Collection|Event[]
+     * @return Collection|WeddingEvent[]
      */
-    public function getEvent(): Collection
+    public function getWeddingEvent(): Collection
     {
-        return $this->event;
+        return $this->weddingEvent;
     }
 
-    public function addEvent(Event $event): self
+    public function addWeddingEvent(WeddingEvent $weddingEvent): self
     {
-        if (!$this->event->contains($event)) {
-            $this->event[] = $event;
+        if (!$this->weddingEvent->contains($weddingEvent)) {
+            $this->weddingEvent[] = $weddingEvent;
         }
 
         return $this;
     }
 
-    public function removeEvent(Event $event): self
+    public function removeWeddingEvent(WeddingEvent $weddingEvent): self
     {
-        if ($this->event->contains($event)) {
-            $this->event->removeElement($event);
+        if ($this->weddingEvent->contains($weddingEvent)) {
+            $this->weddingEvent->removeElement($weddingEvent);
         }
 
         return $this;
     }
+
+    // /**
+    //  * @return Collection|Event[]
+    //  */
+    // public function getEvent(): Collection
+    // {
+    //     return $this->event;
+    // }
+
+    // public function addEvent(Event $event): self
+    // {
+    //     if (!$this->event->contains($event)) {
+    //         $this->event[] = $event;
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeEvent(Event $event): self
+    // {
+    //     if ($this->event->contains($event)) {
+    //         $this->event->removeElement($event);
+    //     }
+
+    //     return $this;
+    // }
 }
