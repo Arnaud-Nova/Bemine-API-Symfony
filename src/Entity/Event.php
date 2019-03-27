@@ -19,9 +19,14 @@ class Event
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Wedding", inversedBy="events")
      */
-    private $name;
+    private $wedding;
+
+    // /**
+    //  * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="events")
+    //  */
+    // private $event;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -49,13 +54,28 @@ class Event
     private $informations;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Wedding", inversedBy="events")
+     * @ORM\ManyToMany(targetEntity="App\Entity\GuestGroup", mappedBy="event")
      */
-    private $weddings;
+    private $guestGroups;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $active;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $map;
+
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    private $name;
 
     public function __construct()
     {
-        $this->weddings = new ArrayCollection();
+        $this->guestGroups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -63,14 +83,26 @@ class Event
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getWedding(): ?Wedding
     {
-        return $this->name;
+        return $this->wedding;
     }
 
-    public function setName(string $name): self
+    public function setWedding(?Wedding $wedding): self
     {
-        $this->name = $name;
+        $this->wedding = $wedding;
+
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): self
+    {
+        $this->event = $event;
 
         return $this;
     }
@@ -80,7 +112,7 @@ class Event
         return $this->address;
     }
 
-    public function setAddress(?string $address): self
+    public function setAddress(string $address): self
     {
         $this->address = $address;
 
@@ -92,7 +124,7 @@ class Event
         return $this->postcode;
     }
 
-    public function setPostcode(?int $postcode): self
+    public function setPostcode(int $postcode): self
     {
         $this->postcode = $postcode;
 
@@ -104,7 +136,7 @@ class Event
         return $this->city;
     }
 
-    public function setCity(?string $city): self
+    public function setCity(string $city): self
     {
         $this->city = $city;
 
@@ -136,27 +168,65 @@ class Event
     }
 
     /**
-     * @return Collection|Wedding[]
+     * @return Collection|GuestGroup[]
      */
-    public function getWeddings(): Collection
+    public function getGuestGroups(): Collection
     {
-        return $this->weddings;
+        return $this->guestGroups;
     }
 
-    public function addWedding(Wedding $wedding): self
+    public function addGuestGroup(GuestGroup $guestGroup): self
     {
-        if (!$this->weddings->contains($wedding)) {
-            $this->weddings[] = $wedding;
+        if (!$this->guestGroups->contains($guestGroup)) {
+            $this->guestGroups[] = $guestGroup;
+            $guestGroup->addEvent($this);
         }
 
         return $this;
     }
 
-    public function removeWedding(Wedding $wedding): self
+    public function removeGuestGroup(GuestGroup $guestGroup): self
     {
-        if ($this->weddings->contains($wedding)) {
-            $this->weddings->removeElement($wedding);
+        if ($this->guestGroups->contains($guestGroup)) {
+            $this->guestGroups->removeElement($guestGroup);
+            $guestGroup->removeEvent($this);
         }
+
+        return $this;
+    }
+
+    public function getActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setActive(?bool $isActive): self
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    public function getMap(): ?string
+    {
+        return $this->map;
+    }
+
+    public function setMap(?string $map): self
+    {
+        $this->map = $map;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

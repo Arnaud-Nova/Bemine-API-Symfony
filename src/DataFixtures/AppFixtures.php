@@ -75,18 +75,21 @@ class AppFixtures extends Fixture
         $person2->setFirstname($generator->firstName());
         $person2->setWedding($wedding1);
         $person2->setNewlyweds(true);
+        $person2->setAttendance(1);
 
         $person3 = new Person();
         $person3->setLastname($generator->lastName());
         $person3->setFirstname($generator->firstName());
         $person3->setWedding($wedding2);
         $person3->setNewlyweds(true);
+        $person3->setAttendance(1);
 
         $person4 = new Person();
         $person4->setLastname($generator->lastName());
         $person4->setFirstname($generator->firstName());
         $person4->setWedding($wedding2);
         $person4->setNewlyweds(true);
+        $person4->setAttendance(1);
 
         $manager->persist($person1);
         $manager->persist($person2);
@@ -95,16 +98,16 @@ class AppFixtures extends Fixture
 
 
         $event1 = new Event();
-        $event1->setName('Réception');
+        $event1->setName('Cérémonie');
 
         $event2 = new Event();
-        $event2->setName('Brunch');
+        $event2->setName('Vin d\'honneur');
 
         $event3 = new Event();
-        $event3->setName('Vin d\'honneur');
+        $event3->setName('Réception');
 
         $event4 = new Event();
-        $event4->setName('Cérémonie');
+        $event4->setName('Brunch');
 
         $manager->persist($event1);
         $manager->persist($event2);
@@ -140,6 +143,7 @@ class AppFixtures extends Fixture
                     $person->setFirstname($generator->firstName());
                     $person->setWedding($wedding1);
                     $person->setNewlyweds(false);
+                    $person->setAttendance($this->randomAttendance());
                     $guestGroup->addPerson($person);
                     $guestGroup->setWedding($wedding1);
                     if ($n == 0) {
@@ -162,6 +166,7 @@ class AppFixtures extends Fixture
                     $person->setFirstname($generator->firstName());
                     $person->setWedding($wedding2);
                     $person->setNewlyweds(false);
+                    $person->setAttendance($this->randomAttendance());
                     $guestGroup->addPerson($person);
                     $guestGroup->setWedding($wedding2);
                     if ($n == 0) {
@@ -212,5 +217,12 @@ class AppFixtures extends Fixture
         }
 
         return $string;
+    }
+
+    public function randomAttendance()
+    {
+        $values= [0, 1, 2];
+
+        return array_rand($values, 1);
     }
 }

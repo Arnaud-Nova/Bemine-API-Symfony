@@ -19,16 +19,35 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
+     /**
+     * 
+     */
+    public function findThisWedding($id)
+    {
+        $qb = $this->createQueryBuilder('we')
+            ->select('we')
+            // ->select('we', 'e.name as eventName')
+            ->leftJoin('we.wedding', 'w')
+            // ->leftJoin('we.event', 'e')
+            ->where('w.id = :myId')
+            ->setParameter('myId', $id)
+            ->getQuery()
+            ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
+
     // /**
-    //  * @return Event[] Returns an array of Event objects
+    //  * @return WeddingEvent[] Returns an array of WeddingEvent objects
     //  */
     /*
     public function findByExampleField($value)
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
+        return $this->createQueryBuilder('w')
+            ->andWhere('w.exampleField = :val')
             ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
+            ->orderBy('w.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
@@ -37,10 +56,10 @@ class EventRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Event
+    public function findOneBySomeField($value): ?WeddingEvent
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
+        return $this->createQueryBuilder('w')
+            ->andWhere('w.exampleField = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()
