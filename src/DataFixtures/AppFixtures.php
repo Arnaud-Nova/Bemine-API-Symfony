@@ -98,16 +98,16 @@ class AppFixtures extends Fixture
 
 
         $event1 = new Event();
-        $event1->setName('Réception');
+        $event1->setName('Cérémonie');
 
         $event2 = new Event();
-        $event2->setName('Brunch');
+        $event2->setName('Vin d\'honneur');
 
         $event3 = new Event();
-        $event3->setName('Vin d\'honneur');
+        $event3->setName('Réception');
 
         $event4 = new Event();
-        $event4->setName('Cérémonie');
+        $event4->setName('Brunch');
 
         $manager->persist($event1);
         $manager->persist($event2);

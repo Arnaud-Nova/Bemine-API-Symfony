@@ -66,6 +66,7 @@ class GuestGroup
         $this->gifts = new ArrayCollection();
         $this->mailGuestGroups = new ArrayCollection();
         $this->event = new ArrayCollection();
+        // $this->event = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -239,4 +240,5 @@ class GuestGroup
 
         return $this;
     }
+
 }

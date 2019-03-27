@@ -18,9 +18,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class PersonController extends AbstractController
 {
     /**
-     * @Route("/brides/guests/list/wedding/{id}", name="index", requirements={"id"="\d+"}, methods={"GET"})
+     * @Route("/brides/guests/list/wedding/{id}", name="indexGuests", requirements={"id"="\d+"}, methods={"GET"})
      */
-    public function index(PersonRepository $personRepository, $id)
+    public function indexGuests(PersonRepository $personRepository, $id)
     {
         
         $guests = $personRepository->findAllQueryBuilder($id);
@@ -81,23 +81,24 @@ class PersonController extends AbstractController
         $person->setFirstname($contentDecode->firstname);
         $person->setWedding($wedding);
         $person->setNewlyweds(0);
+        $person->setAttendance(0);
 
         $guestGroup = new GuestGroup();
         $guestGroup->setWedding($wedding);
 
         //j'assigne les events au groupe
 
-        for ($i = 1; $i <= 4; $i++){
-            foreach ($contentDecode->events as $eventValue){
-                $participate = $eventValue->$i;
-                    $event = $eventRepository->find($i);
-                    // dd($participate, $event);
-                    if ($participate == true){
-                        // dd($participate, $event);
-                        $guestGroup->addEvent($event);
-                    }
-            } 
-        } 
+        // for ($i = 1; $i <= 4; $i++){
+        //     foreach ($contentDecode->events as $eventValue){
+        //         $participate = $eventValue->$i;
+        //             $event = $eventRepository->find($i);
+        //             // dd($participate, $event);
+        //             if ($participate == true){
+        //                 // dd($participate, $event);
+        //                 $guestGroup->addEvent($event);
+        //             }
+        //     } 
+        // } 
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($person);
@@ -119,6 +120,7 @@ class PersonController extends AbstractController
             $addPerson->setWedding($wedding);
             $addPerson->setNewlyweds(0);
             $addPerson->setGuestGroup($guestGroup);
+            $addPerson->setAttendance(0);
 
             $entityManager->persist($addPerson);
         } 
