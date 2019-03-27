@@ -51,6 +51,13 @@ class UserController extends AbstractController
         $wedding->setDate(\DateTime::createFromFormat('Y-m-d', $weddingDate));
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($wedding);
+
+        //je crée mes events types
+        
+        $event = new Event();
+        $event->setName('Cérémonie');
+        
+        
         
         // $wedding->setDate(date($contentDecode->date));
         // dd($wedding);

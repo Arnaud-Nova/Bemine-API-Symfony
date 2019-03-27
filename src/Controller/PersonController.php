@@ -81,6 +81,7 @@ class PersonController extends AbstractController
         $person->setFirstname($contentDecode->firstname);
         $person->setWedding($wedding);
         $person->setNewlyweds(0);
+        $person->setAttendance(0);
 
         $guestGroup = new GuestGroup();
         $guestGroup->setWedding($wedding);
@@ -119,6 +120,7 @@ class PersonController extends AbstractController
             $addPerson->setWedding($wedding);
             $addPerson->setNewlyweds(0);
             $addPerson->setGuestGroup($guestGroup);
+            $addPerson->setAttendance(0);
 
             $entityManager->persist($addPerson);
         } 

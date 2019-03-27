@@ -54,27 +54,6 @@ class WeddingController extends AbstractController
             // dump($event);
         }
         
-        
-       
-        // dd($contentDecode);
-        
-        // dd($newlyweds);
-        // foreach ($newlyweds as $newlywed){
-        //     $newlywedOne = $personRepository->find($newlywed['id']);
-        //     dd($newlywedOne);
-        //     // dd($newlywedOne->getFirstname());
-        //     foreach ($contentDecode->newlyweds as $decodeNewlywed){
-        //         // dump($decodeNewlywed);
-        //         $newlywedOne->setFirstname($decodeNewlywed->firstname);
-        //         $newlywedOne->setLastname($decodeNewlywed->lastname);
-        //         // $thisWedding->setDate($contentDecode->date);
-        //     }
-                
-            
-        //     $entityManager = $this->getDoctrine()->getManager();
-        //     $entityManager->persist($newlywedOne);
-        // }
-        // $entityManager->flush();
         $data = 
             [
             //  'eventsType' => $eventsType,
@@ -99,44 +78,49 @@ class WeddingController extends AbstractController
         $eventsWedding = $weddingEventRepository->findThisWedding($id);
         // $eventsType = $eventRepository->findAllEvents();
         
-        // dd($contentDecode->events);
         
         foreach ($contentDecode->events as $oneEventDecode){
             $weddingEvent = $weddingEventRepository->find($oneEventDecode->id);
             // $weddingEvent->setDate();
-            $weddingEvent->setAddress($oneEventDecode->address);
-            $weddingEvent->setPostcode($oneEventDecode->postcode);
-            $weddingEvent->setCity($oneEventDecode->city);
-            $weddingEvent->setSchedule($oneEventDecode->schedule);
-            $weddingEvent->setInformations($oneEventDecode->informations);
+            if ($oneEventDecode->address){
+                $weddingEvent->setAddress($oneEventDecode->address);
+            }
+            if ($oneEventDecode->postcode){
+                $weddingEvent->setPostcode($oneEventDecode->postcode);
+            }
+            if ($oneEventDecode->city){
+                $weddingEvent->setCity($oneEventDecode->city);
+            }
+            if ($oneEventDecode->schedule){
+                $weddingEvent->setSchedule($oneEventDecode->schedule);
+            }
+            if ($oneEventDecode->informations){
+                $weddingEvent->setInformations($oneEventDecode->informations);
+            }
             $weddingEvent->setActive($oneEventDecode->active);
+            // dd($weddingEvent);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($weddingEvent);
         }
+
+        foreach ($contentDecode->newlyweds as $newlywedDecode){
+            $newlywed = $personRepository->find($newlywedDecode->id);
+            $newlywed->setFirstname($newlywedDecode->firstname);
+            $newlywed->setLastname($newlywedDecode->lastname);
+            //voir la date !!!
+
+        }
+
         $entityManager->flush();
         
-        // dd($contentDecode);
         
-        
-        // dd($newlyweds);
-        // foreach ($newlyweds as $newlywed){
-        //     $newlywedOne = $personRepository->find($newlywed['id']);
-        //     dd($newlywedOne);
-        //     // dd($newlywedOne->getFirstname());
-        //     foreach ($contentDecode->newlyweds as $decodeNewlywed){
-        //         // dump($decodeNewlywed);
-        //         $newlywedOne->setFirstname($decodeNewlywed->firstname);
-        //         $newlywedOne->setLastname($decodeNewlywed->lastname);
-        //         // $thisWedding->setDate($contentDecode->date);
-        //     }
-                
             
         
         $data = 
             [
             //  'eventsType' => $eventsType,
-             'events' => $allEvents,
-             'newlyweds' => $newlyweds   
+            //  'events' => $allEvents,
+            //  'newlyweds' => $newlyweds   
             ]
         ;
         $response = new JsonResponse($data, 200);
