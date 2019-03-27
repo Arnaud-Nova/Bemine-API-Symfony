@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Repository\EventRepository;
 use App\Repository\PersonRepository;
 use App\Repository\WeddingRepository;
-use App\Repository\WeddingEventRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,12 +16,12 @@ class WeddingController extends AbstractController
     /**
      * @Route("/brides/mywedding/index/wedding/{id}", name="index", requirements={"id"="\d+"}, methods={"GET", "POST"})
      */
-    public function index(PersonRepository $personRepository, $id, WeddingEventRepository $weddingEventRepository, Request $request, EventRepository $eventRepository)
+    public function index(PersonRepository $personRepository, $id, Request $request, EventRepository $eventRepository)
     { 
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
-        $eventsWedding = $weddingEventRepository->findThisWedding($id);
+        $eventsWedding = $eventRepository->findThisWedding($id);
         // $eventsType = $eventRepository->findAllEvents();
         
         $newlyweds = $personRepository->findByNewlyweds($id);
@@ -69,18 +68,18 @@ class WeddingController extends AbstractController
     /**
      * @Route("/brides/mywedding/edit/wedding/{id}", name="edit", requirements={"id"="\d+"}, methods={"POST"})
      */
-    public function edit(PersonRepository $personRepository, $id, WeddingEventRepository $weddingEventRepository, Request $request, EventRepository $eventRepository)
+    public function edit(PersonRepository $personRepository, $id, Request $request, EventRepository $eventRepository)
     { 
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $eventsWedding = $weddingEventRepository->findThisWedding($id);
+        $eventsWedding = $eventRepository->findThisWedding($id);
         // $eventsType = $eventRepository->findAllEvents();
         
         
         foreach ($contentDecode->events as $oneEventDecode){
-            $weddingEvent = $weddingEventRepository->find($oneEventDecode->id);
+            $weddingEvent = $eventRepository->find($oneEventDecode->id);
             // $weddingEvent->setDate();
             if ($oneEventDecode->address){
                 $weddingEvent->setAddress($oneEventDecode->address);

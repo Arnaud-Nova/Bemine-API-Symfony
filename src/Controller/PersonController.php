@@ -18,9 +18,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class PersonController extends AbstractController
 {
     /**
-     * @Route("/brides/guests/list/wedding/{id}", name="index", requirements={"id"="\d+"}, methods={"GET"})
+     * @Route("/brides/guests/list/wedding/{id}", name="indexGuests", requirements={"id"="\d+"}, methods={"GET"})
      */
-    public function index(PersonRepository $personRepository, $id)
+    public function indexGuests(PersonRepository $personRepository, $id)
     {
         
         $guests = $personRepository->findAllQueryBuilder($id);

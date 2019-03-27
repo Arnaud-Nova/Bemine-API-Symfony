@@ -59,9 +59,9 @@ class Wedding
     private $people;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\WeddingEvent", mappedBy="wedding")
+     * @ORM\OneToMany(targetEntity="App\Entity\Event", mappedBy="wedding")
      */
-    private $weddingEvents;
+    private $events;
 
     public function __construct()
     {
@@ -71,7 +71,7 @@ class Wedding
         // $this->events = new ArrayCollection();
         $this->gifts = new ArrayCollection();
         $this->people = new ArrayCollection();
-        $this->weddingEvents = new ArrayCollection();
+        $this->events = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -202,34 +202,6 @@ class Wedding
         return $this;
     }
 
-    // /**
-    //  * @return Collection|Event[]
-    //  */
-    // public function getEvents(): Collection
-    // {
-    //     return $this->events;
-    // }
-
-    // public function addEvent(Event $event): self
-    // {
-    //     if (!$this->events->contains($event)) {
-    //         $this->events[] = $event;
-    //         $event->addWedding($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeEvent(Event $event): self
-    // {
-    //     if ($this->events->contains($event)) {
-    //         $this->events->removeElement($event);
-    //         $event->removeWedding($this);
-    //     }
-
-    //     return $this;
-    // }
-
     /**
      * @return Collection|Gift[]
      */
@@ -293,30 +265,30 @@ class Wedding
     }
 
     /**
-     * @return Collection|WeddingEvent[]
+     * @return Collection|Event[]
      */
-    public function getWeddingEvents(): Collection
+    public function getEvents(): Collection
     {
-        return $this->weddingEvents;
+        return $this->events;
     }
 
-    public function addWeddingEvent(WeddingEvent $weddingEvent): self
+    public function addEvent(Event $event): self
     {
-        if (!$this->weddingEvents->contains($weddingEvent)) {
-            $this->weddingEvents[] = $weddingEvent;
-            $weddingEvent->setWedding($this);
+        if (!$this->events->contains($event)) {
+            $this->events[] = $event;
+            $event->setWedding($this);
         }
 
         return $this;
     }
 
-    public function removeWeddingEvent(WeddingEvent $weddingEvent): self
+    public function removeEvent(Event $event): self
     {
-        if ($this->weddingEvents->contains($weddingEvent)) {
-            $this->weddingEvents->removeElement($weddingEvent);
+        if ($this->events->contains($event)) {
+            $this->events->removeElement($event);
             // set the owning side to null (unless already changed)
-            if ($weddingEvent->getWedding() === $this) {
-                $weddingEvent->setWedding(null);
+            if ($event->getWedding() === $this) {
+                $event->setWedding(null);
             }
         }
 
