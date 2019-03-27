@@ -118,7 +118,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/brides/profil/{userId}", name="profil", methods={"GET"})
+     * @Route("/brides/profil/{userId}", name="profil", methods={"GET", "POST"})
      */
     public function profil(UserRepository $userRepository, $userId)
     {

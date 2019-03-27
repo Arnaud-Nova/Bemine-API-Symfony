@@ -13,28 +13,33 @@ security:
                 property: email
         # used to reload user from session & other features (e.g. switch_user)
     firewalls:
+        login:
+            pattern:  ^/login
+            stateless: true
+            anonymous: true
+            provider: app_user_provider
+            json_login:
+                check_path:               /login_check
+                success_handler:          lexik_jwt_authentication.handler.authentication_success
+                failure_handler:          lexik_jwt_authentication.handler.authentication_failure
+
+        api:
+            pattern:   ^/brides
+            stateless: true
+            anonymous: false
+            provider: app_user_provider
+            guard:
+                authenticators:
+                    - lexik_jwt_authentication.jwt_token_authenticator
+
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             anonymous: true
-            guard:
-                authenticators:
-                    - App\Security\LoginFormAuthenticator
-
-            # activate different ways to authenticate
-
-            # http_basic: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-
-            # form_login: true
-            # https://symfony.com/doc/current/security/form_login_setup.html
-
-            logout:
-                path:   app_logout
-            # where to redirect after logout
-            # target: app_any_route
-
+            json_login:
+                check_path: /api/login
+        
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
