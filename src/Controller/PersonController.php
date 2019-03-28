@@ -11,30 +11,19 @@ use App\Repository\GuestGroupRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-<<<<<<< HEAD
-=======
 use Symfony\Component\HttpFoundation\Response;
->>>>>>> d129dfad5814fd0fa724bb606990150fd21cfb5b
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class PersonController extends AbstractController
 {
     /**
-<<<<<<< HEAD
-     * @Route("/brides/guests/list/wedding/{id}", name="index", requirements={"id"="\d+"}, methods={"GET"})
-=======
      * @Route("/brides/guests/list/wedding/{id}", name="indexGuests", requirements={"id"="\d+"}, methods={"GET"})
->>>>>>> d129dfad5814fd0fa724bb606990150fd21cfb5b
      */
     public function indexGuests(PersonRepository $personRepository, $id)
     {
         
         $guests = $personRepository->findAllQueryBuilder($id);
-<<<<<<< HEAD
-=======
-
->>>>>>> d129dfad5814fd0fa724bb606990150fd21cfb5b
          //mariés exclus de ces comptes
         $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
         $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);
@@ -44,15 +33,10 @@ class PersonController extends AbstractController
         
         if (!$guests){
             $message = 'Le wedding id n\'existe pas';
-<<<<<<< HEAD
-            $response = new Response($message, 404);
-            $response->headers->set('Content-Type', 'application/json');
-=======
 
             $response = new Response($message, 404);
             $response->headers->set('Content-Type', 'application/json');
 
->>>>>>> d129dfad5814fd0fa724bb606990150fd21cfb5b
             return $response;
         }
         
@@ -65,17 +49,9 @@ class PersonController extends AbstractController
                 'countWaiting' => $countWaiting
             ]
         ;
-<<<<<<< HEAD
         $response = new JsonResponse($data, 200);
        
         return $response;
-=======
-
-        $response = new JsonResponse($data, 200);
-       
-        return $response;
-
->>>>>>> d129dfad5814fd0fa724bb606990150fd21cfb5b
     }
 
     /**
