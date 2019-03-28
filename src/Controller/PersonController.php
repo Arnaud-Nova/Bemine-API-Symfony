@@ -94,11 +94,11 @@ class PersonController extends AbstractController
         $events = $eventRepository->findEventsByWedding($id);
 
         foreach ($contentDecode->events as $eventId=>$eventValue){
-                if ($eventValue === true){
-                    $thisEvent = $eventRepository->find($eventId);
-                    $guestGroup->addEvent($thisEvent);
-                }
+            if ($eventValue === true){
+                $thisEvent = $eventRepository->find($eventId);
+                $guestGroup->addEvent($thisEvent);
             }
+        }
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($person);
@@ -165,7 +165,7 @@ class PersonController extends AbstractController
     {
         // $guestGroup = $personRepository->findByGuestGroup($id);
         $guestGroup = $guestGroupRepository->find($id);
-
+        
         if (!$guestGroup){
             $data = 
             [
@@ -203,7 +203,7 @@ class PersonController extends AbstractController
         // dd($guestGroup);
 
         $entityManager->flush();
-        $guestGroupArray = $guestGroupRepository->findByGuestGroupQueryBuilder($id);
+        $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($id);
         
         $data = 
             [
