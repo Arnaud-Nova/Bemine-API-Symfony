@@ -170,10 +170,12 @@ class User implements UserInterface
         $this->apiToken = $apiToken;
 
         return $this;
-
-     * @ORM\PrePersist 
-     * @ORM\PreUpdate
-     */
+    }
+    
+    /**
+    * @ORM\PrePersist 
+    * @ORM\PreUpdate
+    */
     public function defaultValues()
     {
         if (empty($this->roles)) {
