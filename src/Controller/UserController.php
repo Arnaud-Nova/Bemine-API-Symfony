@@ -34,7 +34,7 @@ class UserController extends AbstractController
 
             $data = 
             [
-                'message' => 'l\'email du user existe déjà.'
+                'message' => 'Il y a déjà un compte associé à cet email. Merci de vous connecter ou de vous inscrire avec une autre adresse email.'
             ]
             ;
 
