@@ -28,7 +28,7 @@ class Person
     private $firstname;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $attendance;
 
@@ -133,12 +133,12 @@ class Person
         return $this;
     }
 
-    public function getAttendance(): ?bool
+    public function getAttendance(): ?int
     {
         return $this->attendance;
     }
 
-    public function setAttendance(?bool $attendance): self
+    public function setAttendance(?int $attendance): self
     {
         $this->attendance = $attendance;
 

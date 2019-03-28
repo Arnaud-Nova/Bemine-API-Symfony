@@ -4,23 +4,37 @@ namespace App\Controller;
 
 use App\Entity\Person;
 use App\Entity\GuestGroup;
+use App\Repository\EventRepository;
 use App\Repository\PersonRepository;
 use App\Repository\WeddingRepository;
+use App\Repository\GuestGroupRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+<<<<<<< HEAD
+=======
+use Symfony\Component\HttpFoundation\Response;
+>>>>>>> d129dfad5814fd0fa724bb606990150fd21cfb5b
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class PersonController extends AbstractController
 {
     /**
+<<<<<<< HEAD
      * @Route("/brides/guests/list/wedding/{id}", name="index", requirements={"id"="\d+"}, methods={"GET"})
+=======
+     * @Route("/brides/guests/list/wedding/{id}", name="indexGuests", requirements={"id"="\d+"}, methods={"GET"})
+>>>>>>> d129dfad5814fd0fa724bb606990150fd21cfb5b
      */
-    public function index(PersonRepository $personRepository, $id)
+    public function indexGuests(PersonRepository $personRepository, $id)
     {
         
         $guests = $personRepository->findAllQueryBuilder($id);
+<<<<<<< HEAD
+=======
+
+>>>>>>> d129dfad5814fd0fa724bb606990150fd21cfb5b
          //mariés exclus de ces comptes
         $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
         $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);
@@ -30,8 +44,15 @@ class PersonController extends AbstractController
         
         if (!$guests){
             $message = 'Le wedding id n\'existe pas';
+<<<<<<< HEAD
             $response = new Response($message, 404);
             $response->headers->set('Content-Type', 'application/json');
+=======
+
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+
+>>>>>>> d129dfad5814fd0fa724bb606990150fd21cfb5b
             return $response;
         }
         
@@ -44,15 +65,23 @@ class PersonController extends AbstractController
                 'countWaiting' => $countWaiting
             ]
         ;
+<<<<<<< HEAD
         $response = new JsonResponse($data, 200);
        
         return $response;
+=======
+
+        $response = new JsonResponse($data, 200);
+       
+        return $response;
+
+>>>>>>> d129dfad5814fd0fa724bb606990150fd21cfb5b
     }
 
     /**
      * @Route("/brides/guests/new/wedding/{id}", name="new", requirements={"id"="\d+"}, methods={"GET", "POST"})
      */
-    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id)
+    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
@@ -60,15 +89,37 @@ class PersonController extends AbstractController
 
         $wedding = $weddingRepository->find($id);
         
+        if (!$wedding){
+            $message = 'Le wedding id n\'existe pas';
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+           
+            return $response;
+        }
 
         $person = new Person();
         $person->setLastname($contentDecode->lastname);
         $person->setFirstname($contentDecode->firstname);
         $person->setWedding($wedding);
         $person->setNewlyweds(0);
+        $person->setAttendance(0);
 
         $guestGroup = new GuestGroup();
         $guestGroup->setWedding($wedding);
+
+        //j'assigne les events au groupe
+
+        // for ($i = 1; $i <= 4; $i++){
+        //     foreach ($contentDecode->events as $eventValue){
+        //         $participate = $eventValue->$i;
+        //             $event = $eventRepository->find($i);
+        //             // dd($participate, $event);
+        //             if ($participate == true){
+        //                 // dd($participate, $event);
+        //                 $guestGroup->addEvent($event);
+        //             }
+        //     } 
+        // } 
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($person);
@@ -83,20 +134,47 @@ class PersonController extends AbstractController
         $person->setGuestGroup($guestGroup);
         $entityManager->persist($person);
         
+        foreach ($contentDecode->people as $person){
+            $addPerson = new Person();
+            $addPerson->setLastname($person->lastname);
+            $addPerson->setFirstname($person->firstname);
+            $addPerson->setWedding($wedding);
+            $addPerson->setNewlyweds(0);
+            $addPerson->setGuestGroup($guestGroup);
+            $addPerson->setAttendance(0);
+
+            $entityManager->persist($addPerson);
+        } 
+
         $entityManager->flush();
-       
+
+        $response = new JsonResponse('', 200);       
+        return $response;
+
+    }
+
+    /**
+     * @Route("/brides/guests/edit/{id}", name="edit", requirements={"id"="\d+"}, methods={"GET", "POST"})
+     */
+    public function edit(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id)
+    {
+        $guestGroup = $personRepository->findByGuestGroup($id);
+
+        dd($guestGroup);
         
-        return $this->json(
-            [
-                'code' => 200,
-                'message' => 'youpi',
-                'errors' => [],
-                'data' => [
-                    
-                ],
-                //'token' => 'youpi',
-                //'userid' => 'youpi',
-            ]
-        );
+        if (!$guestGroup){
+            $message = 'Le guestGroupId n\'existe pas';
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+           
+            return $response;
+        }
+
+        //je récupère les données du front dans l'objet request.
+        $content = $request->getContent();
+        $contentDecode = json_decode($content);
+
+        $response = new JsonResponse('', 200);       
+        return $response;
     }
 }

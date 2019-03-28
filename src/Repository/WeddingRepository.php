@@ -19,6 +19,7 @@ class WeddingRepository extends ServiceEntityRepository
         parent::__construct($registry, Wedding::class);
     }
 
+   
     // /**
     //  * @return Wedding[] Returns an array of Wedding objects
     //  */

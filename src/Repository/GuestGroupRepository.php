@@ -22,17 +22,22 @@ class GuestGroupRepository extends ServiceEntityRepository
     /**
      * @return GuestGroup[] Returns an array of GuestGroup objects
      */
-    public function findAllQueryBuilder()
+    public function findGroupsQueryBuilder($id)
     {
         $qb = $this->createQueryBuilder('g')
-            ->select('g', 'mgg')
+            ->select('g', 'mgg', 'p')
             ->leftJoin('g.mailGuestGroups', 'mgg')
             ->leftJoin('g.people', 'p')
-            ->addSelect('p.attendance')
+            ->where('p.wedding = :myId')
+            ->setParameter('myId', $id)
+            ->getQuery()
+            ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
-        return $qb->getQuery()->getArrayResult();
+        return $qb->getArrayResult();
     }
+
+     
 
     // /**
     //  * @return GuestGroup[] Returns an array of GuestGroup objects
