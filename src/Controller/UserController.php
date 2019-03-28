@@ -25,17 +25,21 @@ class UserController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
    
-        dd($contentDecode);
         //je récupère mes données du front
         $email = $contentDecode->email;
         
         //si l'email existe déjà en base, je renvoie un message
         $alreayUser = $userRepository->findByEmail($email);
         if ($alreayUser){
-            $message = 'l\'email du user existe déjà';
-            $response = new Response($message, 200);
-            $response->headers->set('Content-Type', 'application/json');
-           
+
+            $data = 
+            [
+                'message' => 'l\'email du user existe déjà.'
+            ]
+            ;
+
+            $response = new JsonResponse($data, 400);
+        
             return $response;
             
         }
@@ -144,10 +148,15 @@ class UserController extends AbstractController
         $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
 
         if (!$thisUser){
-            $message = 'Le user id n\'existe pas';
-            $response = new Response($message, 404);
-            $response->headers->set('Content-Type', 'application/json');
-           
+            
+            $data = 
+            [
+                'message' => 'Le user id n\'existe pas.'
+            ]
+            ;
+            
+            $response = new JsonResponse($data, 400);
+        
             return $response;
         }
 

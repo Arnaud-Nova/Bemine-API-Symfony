@@ -69,10 +69,14 @@ class PersonController extends AbstractController
         $wedding = $weddingRepository->find($id);
         
         if (!$wedding){
-            $message = 'Le wedding id n\'existe pas';
-            $response = new Response($message, 404);
-            $response->headers->set('Content-Type', 'application/json');
-           
+            $data = 
+            [
+                'message' => 'Le wedding id n\'existe pas.'
+            ]
+            ;
+            
+            $response = new JsonResponse($data, 400);
+        
             return $response;
         }
 
@@ -102,10 +106,14 @@ class PersonController extends AbstractController
 
         $alreayUser = $guestGroupRepository->findByEmail($contentDecode->email);
         if ($alreayUser){
-            $message = 'l\'email du user existe déjà';
-            $response = new Response($message, 200);
-            $response->headers->set('Content-Type', 'application/json');
-           
+            $data = 
+            [
+                'message' => 'l\'email du user existe déjà.'
+            ]
+            ;
+
+            $response = new JsonResponse($data, 400);
+        
             return $response;
             
         }
@@ -156,10 +164,14 @@ class PersonController extends AbstractController
         $guestGroup = $guestGroupRepository->find($id);
 
         if (!$guestGroup){
-            $message = 'Le guestGroupId n\'existe pas';
-            $response = new Response($message, 404);
-            $response->headers->set('Content-Type', 'application/json');
-           
+            $data = 
+            [
+                'message' => 'Le guestGroupId n\'existe pas'
+            ]
+            ;
+
+            $response = new JsonResponse($data, 400);
+        
             return $response;
         }
 
@@ -209,10 +221,14 @@ class PersonController extends AbstractController
         $guestGroup = $guestGroupRepository->find($id);
 
         if (!$guestGroup){
-            $message = 'Le guestGroupId n\'existe pas';
-            $response = new Response($message, 404);
-            $response->headers->set('Content-Type', 'application/json');
-           
+            $data = 
+            [
+                'message' => 'Le guestGroupId n\'existe pas'
+            ]
+            ;
+
+            $response = new JsonResponse($data, 400);
+        
             return $response;
         }
 

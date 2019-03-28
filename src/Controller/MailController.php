@@ -22,10 +22,14 @@ class MailController extends AbstractController
         $wedding = $weddingRepository->find($id);
         
         if (!$wedding){
-            $message = 'Le wedding id n\'existe pas';
-            $response = new Response($message, 404);
-            $response->headers->set('Content-Type', 'application/json');
-           
+            $data = 
+            [
+                'message' => 'Le wedding id n\'existe pas.'
+            ]
+            ;
+            
+            $response = new JsonResponse($data, 400);
+        
             return $response;
         }
         
