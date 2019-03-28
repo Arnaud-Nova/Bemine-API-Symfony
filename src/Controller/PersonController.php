@@ -133,9 +133,12 @@ class PersonController extends AbstractController
 
         $entityManager->flush();
 
+        $guestGroupId = $guestGroup->getId();
+        $guestGroupCreated = $guestGroupRepository->findByGuestGroupIdQueryBuilder($guestGroupId);
+
         $data = 
             [
-                'events' => $events
+                'guestGroupCreated' => $guestGroupCreated
             ]
         ;
 
@@ -182,8 +185,6 @@ class PersonController extends AbstractController
             $entityManager->persist($personBdd);
         }
         
-        
-        
         // dd($guestGroup);
 
         $entityManager->flush();
@@ -191,7 +192,7 @@ class PersonController extends AbstractController
         
         $data = 
             [
-                'group' => $guestGroupArray
+                'guestGroupEdited' => $guestGroupArray
             ]
         ;
 

@@ -25,6 +25,7 @@ class UserController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
    
+        dd($contentDecode);
         //je récupère mes données du front
         $email = $contentDecode->email;
         
@@ -40,12 +41,12 @@ class UserController extends AbstractController
         }
         
         //je récupère le reste de mes données du front
-        $urlAvatar = $contentDecode->urlAvatar;
-        $firstname = $contentDecode->firstname;
-        $lastname = $contentDecode->lastname;
-        $spouseFirstname = $contentDecode->spouseFirstname;
-        $spouseLastname = $contentDecode->spouseLastname;
-        $weddingDate = $contentDecode->date;
+        // $urlAvatar = $contentDecode->urlAvatar;
+        $firstname = $contentDecode->firstnameUser;
+        $lastname = $contentDecode->nameUser;
+        $spouseFirstname = $contentDecode->firstnamePartner;
+        $spouseLastname = $contentDecode->namePartner;
+        $weddingDate = $contentDecode->weddingDate;
         
         //Je crée une nouvelle instance de wedding car chaque nouveau user implique la création de son wedding.
         $wedding = new Wedding();
@@ -87,7 +88,7 @@ class UserController extends AbstractController
         $encodedPassword = $passwordEncoder->encodePassword($user, $contentDecode->password);
         $user->setPassword($encodedPassword);
         $user->setEmail($email);
-        $user->setUrlAvatar($urlAvatar);
+        // $user->setUrlAvatar($urlAvatar);
         $user->setWedding($wedding);
         // $user->setRoles(['ROLE_USER']);
         
@@ -121,11 +122,10 @@ class UserController extends AbstractController
             'Votre compte a bien été crée, merci de vous connecter.'
         );
 
-        $userId = $user->getId();
         
         $data = 
             [
-                'userId' => $userId
+                'message' => 'Votre compte a bien été crée.'
             ]
         ;
 
