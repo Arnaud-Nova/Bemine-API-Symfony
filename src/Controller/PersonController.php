@@ -141,12 +141,15 @@ class PersonController extends AbstractController
 
         $entityManager->flush();
 
-        $guestGroupId = $guestGroup->getId();
-        $guestGroupCreated = $guestGroupRepository->findByGuestGroupIdQueryBuilder($guestGroupId);
+        // $guestGroupId = $guestGroup->getId();
+        // $guestGroupCreated = $guestGroupRepository->findByGuestGroupIdQueryBuilder($guestGroupId);
+
+        $eventsType = $eventRepository->findEventsByWedding($id);
 
         $data = 
             [
-                'guestGroupCreated' => $guestGroupCreated
+                // 'guestGroupCreated' => $guestGroupCreated,
+                'events' => $eventsType
             ]
         ;
 

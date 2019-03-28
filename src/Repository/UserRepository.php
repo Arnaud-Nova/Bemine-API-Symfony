@@ -25,12 +25,14 @@ class UserRepository extends ServiceEntityRepository
     public function findUserProfilQueryBuilder($userId)
     {
         $qb = $this->createQueryBuilder('u')
-            ->select('u.email', 'u.password', 'u.urlAvatar')
+            ->select('u.id as userId','u.email')
             ->where('u.id = :userId')
             ->setParameter('userId', $userId)
+            ->getQuery()
+            ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
-        return $qb->getQuery()->getArrayResult();
+        return $qb->getArrayResult();
     }
     // /**
     //  * @return User[] Returns an array of User objects

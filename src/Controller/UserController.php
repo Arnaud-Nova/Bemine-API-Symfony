@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Person;
 use App\Entity\Wedding;
 use App\Repository\UserRepository;
+use App\Repository\PersonRepository;
+use App\Repository\WeddingRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -140,9 +143,9 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/brides/profil/{userId}", name="profil", methods={"GET"})
+     * @Route("/brides/profil/{userId}/{id}", name="profil", methods={"GET"})
      */
-    public function profil(UserRepository $userRepository, $userId)
+    public function profil(UserRepository $userRepository, $userId, $id, PersonRepository $personRepository, WeddingRepository $weddingRepository)
     {
         // je récupère mon user connecté grâce à l'id du user passée en url
         $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
@@ -160,9 +163,91 @@ class UserController extends AbstractController
             return $response;
         }
 
+        
+
+        $newlyweds = $personRepository->findByNewlyweds($id);
+        $thisWeddingArray = $weddingRepository->findThisWedding($id);
+
+
+
         $data = 
             [
-                'thisUser' => $thisUser
+                'thisUser' => $thisUser,
+                'newlyweds' => $newlyweds,
+                'wedding' => $thisWeddingArray
+            ]
+        ;
+
+        $response = new JsonResponse($data, 200);
+       
+        return $response;
+    }
+
+    /**
+     * @Route("/brides/profil/edit/{userId}/{id}", name="editProfil", methods={"GET", "POST"})
+     */
+    public function editProfil(UserRepository $userRepository, $userId, $id, PersonRepository $personRepository, WeddingRepository $weddingRepository, Request $request)
+    {
+
+        //je récupère les données du front dans l'objet request.
+        $content = $request->getContent();
+        $contentDecode = json_decode($content);
+
+        // je récupère mon user connecté grâce à l'id du user passée en url
+        $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
+
+        if (!$thisUser){
+            
+            $data = 
+            [
+                'message' => 'Le user id n\'existe pas.'
+            ]
+            ;
+            
+            $response = new JsonResponse($data, 400);
+        
+            return $response;
+        }
+
+        $entityManager = $this->getDoctrine()->getManager();
+        
+
+        //ajouter la modif d'email
+        $user = $userRepository->find($userId);
+        $user->setEmail($contentDecode->email);
+        $entityManager->persist($user);
+
+        foreach ($contentDecode->newlyweds as $newlywedDecode){
+            $newlywed = $personRepository->find($newlywedDecode->id);
+            $newlywed->setFirstname($newlywedDecode->firstname);
+            $newlywed->setLastname($newlywedDecode->lastname);
+            $entityManager->persist($newlywed);
+        }
+
+        //j'enregistre la nouvelle date en BDD
+        $thisWedding = $weddingRepository->find($id);
+
+        foreach($contentDecode->wedding as $oneWedding){
+            $weddingDate = $oneWedding->date->date;
+            $createDate = new DateTime($weddingDate);
+            $finalDate = $createDate->format('Y-m-d');
+            // dd($finalDate);
+            $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $finalDate));
+            $entityManager->persist($thisWedding);
+
+        }   
+       
+
+        $entityManager->flush();
+
+        $newlyweds = $personRepository->findByNewlyweds($id);
+        $thisWeddingArray = $weddingRepository->findThisWedding($id);
+
+        $data = 
+            [
+                'thisUser' => $thisUser,
+                'newlyweds' => $newlyweds,
+                'wedding' => $thisWeddingArray
             ]
         ;
 

@@ -23,14 +23,14 @@ class WeddingController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
         $eventsWedding = $eventRepository->findThisWedding($id);
-        $newlyweds = $personRepository->findByNewlyweds($id);
-        $thisWedding = $weddingRepository->findThisWedding($id);
+        // $newlyweds = $personRepository->findByNewlyweds($id);
+        // $thisWedding = $weddingRepository->findThisWedding($id);
         
         $data = 
             [
              'events' => $eventsWedding,
-             'newlyweds' => $newlyweds,
-             'wedding' => $thisWedding   
+            //  'newlyweds' => $newlyweds,
+            //  'wedding' => $thisWedding   
             ]
         ;
         $response = new JsonResponse($data, 200);
@@ -73,36 +73,36 @@ class WeddingController extends AbstractController
             $entityManager->persist($weddingEvent);
         }
 
-        foreach ($contentDecode->newlyweds as $newlywedDecode){
-            $newlywed = $personRepository->find($newlywedDecode->id);
-            $newlywed->setFirstname($newlywedDecode->firstname);
-            $newlywed->setLastname($newlywedDecode->lastname);
-        }
+        // foreach ($contentDecode->newlyweds as $newlywedDecode){
+        //     $newlywed = $personRepository->find($newlywedDecode->id);
+        //     $newlywed->setFirstname($newlywedDecode->firstname);
+        //     $newlywed->setLastname($newlywedDecode->lastname);
+        // }
 
-        //j'enregistre la nouvelle date en BDD
-        $thisWedding = $weddingRepository->find($id);
-        foreach($contentDecode->wedding as $oneWedding){
-            $weddingDate = $oneWedding->date->date;
-            $createDate = new DateTime($weddingDate);
-            $finalDate = $createDate->format('Y-m-d');
-            // dd($finalDate);
-            $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $finalDate));
-            $entityManager->persist($thisWedding);
+        // //j'enregistre la nouvelle date en BDD
+        // $thisWedding = $weddingRepository->find($id);
+        // foreach($contentDecode->wedding as $oneWedding){
+        //     $weddingDate = $oneWedding->date->date;
+        //     $createDate = new DateTime($weddingDate);
+        //     $finalDate = $createDate->format('Y-m-d');
+        //     // dd($finalDate);
+        //     $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $finalDate));
+        //     $entityManager->persist($thisWedding);
 
-        }   
+        // }   
        
         
         $entityManager->flush();
 
         $eventsWedding = $eventRepository->findThisWedding($id);
-        $newlyweds = $personRepository->findByNewlyweds($id);
-        $thisWeddingArray = $weddingRepository->findThisWedding($id);
+        // $newlyweds = $personRepository->findByNewlyweds($id);
+        // $thisWeddingArray = $weddingRepository->findThisWedding($id);
         
         $data = 
             [
              'events' => $eventsWedding,
-             'newlyweds' => $newlyweds,
-             'wedding' => $thisWeddingArray   
+            //  'newlyweds' => $newlyweds,
+            //  'wedding' => $thisWeddingArray   
             ]
         ;
         $response = new JsonResponse($data, 200);

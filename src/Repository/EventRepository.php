@@ -57,6 +57,8 @@ class EventRepository extends ServiceEntityRepository
         return $qb->getArrayResult();
     }
 
+
+
     // /**
     //  * @return WeddingEvent[] Returns an array of WeddingEvent objects
     //  */
