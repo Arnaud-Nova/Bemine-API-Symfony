@@ -60,7 +60,7 @@ class PersonController extends AbstractController
     /**
      * @Route("/brides/guests/new/wedding/{id}", name="new", requirements={"id"="\d+"}, methods={"GET", "POST"})
      */
-    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository)
+    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository, GuestGroupRepository $guestGroupRepository)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
@@ -87,22 +87,28 @@ class PersonController extends AbstractController
         $guestGroup->setWedding($wedding);
 
         //j'assigne les events au groupe
+        $events = $eventRepository->findEventsByWedding($id);
 
-        // for ($i = 1; $i <= 4; $i++){
-        //     foreach ($contentDecode->events as $eventValue){
-        //         $participate = $eventValue->$i;
-        //             $event = $eventRepository->find($i);
-        //             // dd($participate, $event);
-        //             if ($participate == true){
-        //                 // dd($participate, $event);
-        //                 $guestGroup->addEvent($event);
-        //             }
-        //     } 
-        // } 
+        foreach ($contentDecode->events as $eventId=>$eventValue){
+                if ($eventValue === true){
+                    $thisEvent = $eventRepository->find($eventId);
+                    $guestGroup->addEvent($thisEvent);
+                }
+            }
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($person);
         $guestGroup->setContactPerson($person);
+
+        $alreayUser = $guestGroupRepository->findByEmail($contentDecode->email);
+        if ($alreayUser){
+            $message = 'l\'email du user existe déjà';
+            $response = new Response($message, 200);
+            $response->headers->set('Content-Type', 'application/json');
+           
+            return $response;
+            
+        }
 
         if ($contentDecode->email){
             $guestGroup->setEmail($contentDecode->email);
@@ -127,20 +133,25 @@ class PersonController extends AbstractController
 
         $entityManager->flush();
 
-        $response = new JsonResponse('', 200);       
+        $data = 
+            [
+                'events' => $events
+            ]
+        ;
+
+        $response = new JsonResponse($data, 200);       
         return $response;
 
     }
 
     /**
-     * @Route("/brides/guests/edit/{id}", name="edit", requirements={"id"="\d+"}, methods={"GET", "POST"})
+     * @Route("/brides/guests/edit/{id}", name="editGuestGroup", requirements={"id"="\d+"}, methods={"GET", "POST"})
      */
-    public function edit(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id)
+    public function editGuestGroup(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, Request $request)
     {
-        $guestGroup = $personRepository->findByGuestGroup($id);
+        // $guestGroup = $personRepository->findByGuestGroup($id);
+        $guestGroup = $guestGroupRepository->find($id);
 
-        dd($guestGroup);
-        
         if (!$guestGroup){
             $message = 'Le guestGroupId n\'existe pas';
             $response = new Response($message, 404);
@@ -153,7 +164,94 @@ class PersonController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $response = new JsonResponse('', 200);       
+        $entityManager = $this->getDoctrine()->getManager();
+
+        //edit email 
+        if ($guestGroup->getId() === $contentDecode->group->id){
+            $guestGroup->setEmail($contentDecode->group->email);
+            $entityManager->persist($guestGroup);
+        }   
+        
+
+        //edit persons
+        foreach ($contentDecode->group->people as $person){
+            $personBdd = $personRepository->find($person->id);
+            $personBdd->setFirstname($person->firstname);
+            $personBdd->setLastname($person->lastname);
+            $personBdd->setAttendance($person->attendance);
+            $entityManager->persist($personBdd);
+        }
+        
+        
+        
+        // dd($guestGroup);
+
+        $entityManager->flush();
+        $guestGroupArray = $guestGroupRepository->findByGuestGroupQueryBuilder($id);
+        
+        $data = 
+            [
+                'group' => $guestGroupArray
+            ]
+        ;
+
+        $response = new JsonResponse($data, 200);       
+        return $response;
+    }
+
+    /**
+     * @Route("/brides/guests/delete/{id}", name="deleteGuestGroup", requirements={"id"="\d+"}, methods={"DELETE"})
+     */
+    public function deleteGuestGroup(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, Request $request)
+    {
+        // $guestGroup = $personRepository->findByGuestGroup($id);
+        $guestGroup = $guestGroupRepository->find($id);
+
+        if (!$guestGroup){
+            $message = 'Le guestGroupId n\'existe pas';
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+           
+            return $response;
+        }
+
+        dd($guestGroup->getPeople());
+        //je récupère les données du front dans l'objet request.
+        $content = $request->getContent();
+        $contentDecode = json_decode($content);
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        //edit email 
+        if ($guestGroup->getId() === $contentDecode->group->id){
+            $guestGroup->setEmail($contentDecode->group->email);
+            $entityManager->persist($guestGroup);
+        }   
+        
+
+        //edit persons
+        foreach ($contentDecode->group->people as $person){
+            $personBdd = $personRepository->find($person->id);
+            $personBdd->setFirstname($person->firstname);
+            $personBdd->setLastname($person->lastname);
+            $personBdd->setAttendance($person->attendance);
+            $entityManager->persist($personBdd);
+        }
+        
+        
+        
+        // dd($guestGroup);
+
+        $entityManager->flush();
+        $guestGroupArray = $guestGroupRepository->findByGuestGroupQueryBuilder($id);
+        
+        $data = 
+            [
+                'group' => $guestGroupArray
+            ]
+        ;
+
+        $response = new JsonResponse($data, 200);       
         return $response;
     }
 }

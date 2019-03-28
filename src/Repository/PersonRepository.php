@@ -105,8 +105,8 @@ class PersonRepository extends ServiceEntityRepository
     public function findByNewlyweds($id)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id', 'p.firstname', 'p.lastname', 'w.date')
-            ->leftJoin('p.wedding', 'w')
+            ->select('p.id', 'p.firstname', 'p.lastname')
+            // ->leftJoin('p.wedding', 'w')
             ->where('p.wedding = :myId')
             ->andWhere('p.newlyweds = 1')
             ->setParameter('myId', $id)
