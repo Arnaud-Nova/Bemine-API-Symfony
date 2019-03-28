@@ -32,4 +32,8 @@ services:
         class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
         public: false
         tags: [serializer.normalizer]
+
+    tenant_user_service:
+        class: App\Utils\UserService
+        arguments: [ '@security.token_storage' ]
     
