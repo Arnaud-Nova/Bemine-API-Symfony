@@ -114,18 +114,7 @@ class AppFixtures extends Fixture
         $manager->persist($event3);
         $manager->persist($event4);
 
-        $mail1 = new Mail();
-        $mail1->setName('Invitation');
-        $mail1->setContent(('A l\'occasion de ce mariage vous êtes invité à vous joindre aux futurs mariés.
-        Pour confirmer votre présence merci de vous connecter à BeMine en suivant le lien suivant : http://www.bemine.fr/guests/'));
-
-        $mail2 = new Mail();
-        $mail2->setName('Relance d\'invitation');
-        $mail2->setContent(('Afin de participer à ce merveilleux évènement, n\'oubliez pas de vous connecter à BeMine en suivant le lien suivant : http://www.bemine.fr/guests/'));
-
-        $manager->persist($mail1);
-        $manager->persist($mail2);
-
+        
         $manager->flush();
 
 

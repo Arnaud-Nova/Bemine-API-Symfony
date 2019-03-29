@@ -45,7 +45,7 @@ class User implements UserInterface
     private $wedding;
 
     /**
-    * @ORM\Column(type="string", unique=true)
+    * @ORM\Column(type="string", unique=true, nullable=true)
     */
     private $apiToken;
 
