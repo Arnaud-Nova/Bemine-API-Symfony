@@ -19,7 +19,21 @@ class WeddingRepository extends ServiceEntityRepository
         parent::__construct($registry, Wedding::class);
     }
 
-   
+    /**
+     * 
+     */
+    public function findThisWedding($id)
+    {
+        $qb = $this->createQueryBuilder('w')
+            ->select('w.id', 'w.date')
+            ->where('w.id = :myId')
+            ->setParameter('myId', $id)
+            ->getQuery()
+            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
     // /**
     //  * @return Wedding[] Returns an array of Wedding objects
     //  */

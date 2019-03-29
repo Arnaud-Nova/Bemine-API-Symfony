@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Repository\EventRepository;
 use App\Repository\PersonRepository;
 use App\Repository\WeddingRepository;
@@ -16,48 +17,20 @@ class WeddingController extends AbstractController
     /**
      * @Route("/brides/mywedding/index/wedding/{id}", name="index", requirements={"id"="\d+"}, methods={"GET", "POST"})
      */
-    public function index(PersonRepository $personRepository, $id, Request $request, EventRepository $eventRepository)
+    public function index(PersonRepository $personRepository, $id, Request $request, EventRepository $eventRepository, WeddingRepository $weddingRepository)
     { 
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
         $eventsWedding = $eventRepository->findThisWedding($id);
-        // $eventsType = $eventRepository->findAllEvents();
-        
-        $newlyweds = $personRepository->findByNewlyweds($id);
-        
-        //j'injecte le nom des events dans le tableau
-        $allEvents = [];
-        foreach ($eventsWedding as $event){
-            // $event
-            switch ($event['event_id']){
-                case 1:
-                $event1 = $eventRepository->find(1);
-                // dd($event1);
-                array_push($event, $event['event_name'] = $event1->getName());
-                break;
-                case 2:
-                $event2 = $eventRepository->find(2);
-                array_push($event, $event['event_name'] = $event2->getName());
-                break;
-                case 3:
-                $event3 = $eventRepository->find(3);
-                array_push($event, $event['event_name'] = $event3->getName());
-                break;
-                case 4:
-                $event4 = $eventRepository->find(4);
-                array_push($event, $event['event_name'] = $event4->getName());
-                break;
-            }
-            array_push($allEvents, $event);
-            // dump($event);
-        }
+        // $newlyweds = $personRepository->findByNewlyweds($id);
+        // $thisWedding = $weddingRepository->findThisWedding($id);
         
         $data = 
             [
-            //  'eventsType' => $eventsType,
-             'events' => $allEvents,
-             'newlyweds' => $newlyweds   
+             'events' => $eventsWedding,
+            //  'newlyweds' => $newlyweds,
+            //  'wedding' => $thisWedding   
             ]
         ;
         $response = new JsonResponse($data, 200);
@@ -68,19 +41,17 @@ class WeddingController extends AbstractController
     /**
      * @Route("/brides/mywedding/edit/wedding/{id}", name="edit", requirements={"id"="\d+"}, methods={"POST"})
      */
-    public function edit(PersonRepository $personRepository, $id, Request $request, EventRepository $eventRepository)
+    public function edit(PersonRepository $personRepository, $id, Request $request, EventRepository $eventRepository, WeddingRepository $weddingRepository)
     { 
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
         $eventsWedding = $eventRepository->findThisWedding($id);
-        // $eventsType = $eventRepository->findAllEvents();
-        
         
         foreach ($contentDecode->events as $oneEventDecode){
             $weddingEvent = $eventRepository->find($oneEventDecode->id);
-            // $weddingEvent->setDate();
+
             if ($oneEventDecode->address){
                 $weddingEvent->setAddress($oneEventDecode->address);
             }
@@ -97,29 +68,41 @@ class WeddingController extends AbstractController
                 $weddingEvent->setInformations($oneEventDecode->informations);
             }
             $weddingEvent->setActive($oneEventDecode->active);
-            // dd($weddingEvent);
+    
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($weddingEvent);
         }
 
-        foreach ($contentDecode->newlyweds as $newlywedDecode){
-            $newlywed = $personRepository->find($newlywedDecode->id);
-            $newlywed->setFirstname($newlywedDecode->firstname);
-            $newlywed->setLastname($newlywedDecode->lastname);
-            //voir la date !!!
+        // foreach ($contentDecode->newlyweds as $newlywedDecode){
+        //     $newlywed = $personRepository->find($newlywedDecode->id);
+        //     $newlywed->setFirstname($newlywedDecode->firstname);
+        //     $newlywed->setLastname($newlywedDecode->lastname);
+        // }
 
-        }
+        // //j'enregistre la nouvelle date en BDD
+        // $thisWedding = $weddingRepository->find($id);
+        // foreach($contentDecode->wedding as $oneWedding){
+        //     $weddingDate = $oneWedding->date->date;
+        //     $createDate = new DateTime($weddingDate);
+        //     $finalDate = $createDate->format('Y-m-d');
+        //     // dd($finalDate);
+        //     $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $finalDate));
+        //     $entityManager->persist($thisWedding);
 
+        // }   
+       
+        
         $entityManager->flush();
-        
-        
-            
+
+        $eventsWedding = $eventRepository->findThisWedding($id);
+        // $newlyweds = $personRepository->findByNewlyweds($id);
+        // $thisWeddingArray = $weddingRepository->findThisWedding($id);
         
         $data = 
             [
-            //  'eventsType' => $eventsType,
-            //  'events' => $allEvents,
-            //  'newlyweds' => $newlyweds   
+             'events' => $eventsWedding,
+            //  'newlyweds' => $newlyweds,
+            //  'wedding' => $thisWeddingArray   
             ]
         ;
         $response = new JsonResponse($data, 200);

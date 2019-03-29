@@ -30,12 +30,12 @@ class Person
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $attendance;
+    private $attendance = 0;
 
     /**
      * @ORM\Column(type="boolean", options={"default":false})
      */
-    private $newlyweds;
+    private $newlyweds = 0;
 
     /**
      * @ORM\Column(type="string", length=30, nullable=true)

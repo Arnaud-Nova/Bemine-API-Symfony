@@ -13,12 +13,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\ORM\EntityManagerInterface;
 
-
+/**
+* @Route("/brides/person/", name="person_")
+*/
 class PersonController extends AbstractController
 {
     /**
-     * @Route("/brides/guests/list/wedding/{id}", name="indexGuests", requirements={"id"="\d+"}, methods={"GET"})
+     * @Route("list/wedding/{id}", name="indexGuests", requirements={"id"="\d+"}, methods={"GET"})
      */
     public function indexGuests(PersonRepository $personRepository, $id)
     {
@@ -55,102 +58,203 @@ class PersonController extends AbstractController
     }
 
     /**
-     * @Route("/brides/guests/new/wedding/{id}", name="new", requirements={"id"="\d+"}, methods={"GET", "POST"})
+     * @Route("new", name="new", methods={"POST"})
      */
-    public function new(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository)
+    public function new(Request $request, EntityManagerInterface $em, GuestGroupRepository $guestGroupRepository)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $wedding = $weddingRepository->find($id);
-        
-        if (!$wedding){
-            $message = 'Le wedding id n\'existe pas';
-            $response = new Response($message, 404);
-            $response->headers->set('Content-Type', 'application/json');
-           
-            return $response;
-        }
+        $guestGroup = $guestGroupRepository->findOneBy(['id' => $contentDecode->groupId]);
+        $wedding = $guestGroup->getWedding();
 
         $person = new Person();
         $person->setLastname($contentDecode->lastname);
         $person->setFirstname($contentDecode->firstname);
-        $person->setWedding($wedding);
-        $person->setNewlyweds(0);
-        $person->setAttendance(0);
-
-        $guestGroup = new GuestGroup();
-        $guestGroup->setWedding($wedding);
-
-        //j'assigne les events au groupe
-
-        // for ($i = 1; $i <= 4; $i++){
-        //     foreach ($contentDecode->events as $eventValue){
-        //         $participate = $eventValue->$i;
-        //             $event = $eventRepository->find($i);
-        //             // dd($participate, $event);
-        //             if ($participate == true){
-        //                 // dd($participate, $event);
-        //                 $guestGroup->addEvent($event);
-        //             }
-        //     } 
-        // } 
-
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($person);
-        $guestGroup->setContactPerson($person);
-
-        if ($contentDecode->email){
-            $guestGroup->setEmail($contentDecode->email);
-        };
-
-        $entityManager->persist($guestGroup);
-
         $person->setGuestGroup($guestGroup);
-        $entityManager->persist($person);
-        
-        foreach ($contentDecode->people as $person){
-            $addPerson = new Person();
-            $addPerson->setLastname($person->lastname);
-            $addPerson->setFirstname($person->firstname);
-            $addPerson->setWedding($wedding);
-            $addPerson->setNewlyweds(0);
-            $addPerson->setGuestGroup($guestGroup);
-            $addPerson->setAttendance(0);
+        $person->setWedding($wedding);
 
-            $entityManager->persist($addPerson);
-        } 
+        $em->persist($person);
+        $em->flush();
 
-        $entityManager->flush();
+        $data = 'Enregistrement OK';
+        $response = new JsonResponse($data, 201);
 
-        $response = new JsonResponse('', 200);       
         return $response;
-
     }
 
-    /**
-     * @Route("/brides/guests/edit/{id}", name="edit", requirements={"id"="\d+"}, methods={"GET", "POST"})
-     */
-    public function edit(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id)
-    {
-        $guestGroup = $personRepository->findByGuestGroup($id);
-
-        dd($guestGroup);
+    // /**
+    //  * @Route("/brides/guests/edit/{id}", name="editGuestGroup", requirements={"id"="\d+"}, methods={"GET", "POST"})
+    //  */
+    // public function editGuestGroup(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, Request $request)
+    // {
+    //     // $guestGroup = $personRepository->findByGuestGroup($id);
+    //     $guestGroup = $guestGroupRepository->find($id);
         
-        if (!$guestGroup){
-            $message = 'Le guestGroupId n\'existe pas';
-            $response = new Response($message, 404);
-            $response->headers->set('Content-Type', 'application/json');
-           
-            return $response;
-        }
+    //     if (!$guestGroup){
+    //         $data = 
+    //         [
+    //             'message' => 'Le guestGroupId n\'existe pas'
+    //         ]
+    //         ;
 
-        //je récupère les données du front dans l'objet request.
+    //         $response = new JsonResponse($data, 400);
+        
+    //         return $response;
+    //     }
+
+    //     //je récupère les données du front dans l'objet request.
+    //     $content = $request->getContent();
+    //     $contentDecode = json_decode($content);
+
+    //     $entityManager = $this->getDoctrine()->getManager();
+
+    //     //edit email 
+    //     if ($guestGroup->getId() === $contentDecode->group->id){
+    //         $guestGroup->setEmail($contentDecode->group->email);
+    //         $entityManager->persist($guestGroup);
+    //     }   
+        
+
+    //     //edit persons
+    //     foreach ($contentDecode->group->people as $person){
+    //         $personBdd = $personRepository->find($person->id);
+    //         $personBdd->setFirstname($person->firstname);
+    //         $personBdd->setLastname($person->lastname);
+    //         $personBdd->setAttendance($person->attendance);
+    //         $entityManager->persist($personBdd);
+    //     }
+        
+    //     // dd($guestGroup);
+
+    //     $entityManager->flush();
+    //     $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($id);
+        
+    //     $data = 
+    //         [
+    //             'guestGroupEdited' => $guestGroupArray
+    //         ]
+    //     ;
+
+    //     $response = new JsonResponse($data, 200);       
+    //     return $response;
+    // }
+
+    // /**
+    //  * @Route("/brides/guests/delete/{id}", name="deleteGuestGroup", requirements={"id"="\d+"}, methods={"DELETE"})
+    //  */
+    // public function deleteGuestGroup(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, Request $request)
+    // {
+    //     // $guestGroup = $personRepository->findByGuestGroup($id);
+    //     $guestGroup = $guestGroupRepository->find($id);
+
+    //     if (!$guestGroup){
+    //         $data = 
+    //         [
+    //             'message' => 'Le guestGroupId n\'existe pas'
+    //         ]
+    //         ;
+
+    //         $response = new JsonResponse($data, 400);
+        
+    //         return $response;
+    //     }
+
+    //     dd($guestGroup->getPeople());
+    //     //je récupère les données du front dans l'objet request.
+    //     $content = $request->getContent();
+    //     $contentDecode = json_decode($content);
+
+    //     $entityManager = $this->getDoctrine()->getManager();
+
+    //     //edit email 
+    //     if ($guestGroup->getId() === $contentDecode->group->id){
+    //         $guestGroup->setEmail($contentDecode->group->email);
+    //         $entityManager->persist($guestGroup);
+    //     }   
+        
+
+    //     //edit persons
+    //     foreach ($contentDecode->group->people as $person){
+    //         $personBdd = $personRepository->find($person->id);
+    //         $personBdd->setFirstname($person->firstname);
+    //         $personBdd->setLastname($person->lastname);
+    //         $personBdd->setAttendance($person->attendance);
+    //         $entityManager->persist($personBdd);
+    //     }
+        
+        
+        
+    //     // dd($guestGroup);
+
+    //     $entityManager->flush();
+    //     $guestGroupArray = $guestGroupRepository->findByGuestGroupQueryBuilder($id);
+        
+    //     $data = 
+    //         [
+    //             'group' => $guestGroupArray
+    //         ]
+    //     ;
+
+    //     $response = new JsonResponse($data, 200);       
+    //     return $response;
+    // }
+    
+    /**
+     * @Route("delete", name="delete", methods={"DELETE"})
+     */
+    public function deletePerson(Request $request, PersonRepository $personRepository, EntityManagerInterface $em)
+    {
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $response = new JsonResponse('', 200);       
+        $person = $personRepository->findOneBy(['id' => $contentDecode->personId]);
+
+        if (!$person) {
+            $data = 'Cette personne n\existe pas';
+
+            $response = new JsonResponse($data, 400);
+
+            return $response;
+        }
+
+        $em->remove($person);
+        $em->flush();
+
+        $data = 'Suppression OK';
+        $response = new JsonResponse($data, 200);
+
+        return $response;
+    }
+
+    /**
+     * @Route("edit", name="edit", methods={"PUT"})
+     */
+    public function editPerson(Request $request, PersonRepository $personRepository, EntityManagerInterface $em)
+    {
+        $content = $request->getContent();
+        $contentDecode = json_decode($content);
+
+        $person = $personRepository->findOneBy(['id' => $contentDecode->personId]);
+
+        if (!$person) {
+            $data = 'Cette personne n\existe pas';
+
+            $response = new JsonResponse($data, 400);
+
+            return $response;
+        }
+
+        $person->setLastname($contentDecode->lastname);
+        $person->setFirstname($contentDecode->firstname);
+        $person->setAttendance($contentDecode->attendance);
+
+        $em->flush();
+
+        $data = 'Update OK';
+        $response = new JsonResponse($data, 200);
+
         return $response;
     }
 }

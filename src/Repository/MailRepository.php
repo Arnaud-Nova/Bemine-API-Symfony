@@ -19,7 +19,19 @@ class MailRepository extends ServiceEntityRepository
         parent::__construct($registry, Mail::class);
     }
 
+    /**
+     * @return Mail[] Returns an array of GuestGroup objects
+     */
+    public function findAllQueryBuilder()
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->select('m.id', 'm.name')
+            ->getQuery()
+            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
     
+        return $qb->getArrayResult();
+    }
 
 
     // /**

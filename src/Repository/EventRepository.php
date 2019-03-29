@@ -19,15 +19,15 @@ class EventRepository extends ServiceEntityRepository
         parent::__construct($registry, Event::class);
     }
 
-     /**
+    /**
      * 
      */
     public function findThisWedding($id)
     {
-        $qb = $this->createQueryBuilder('we')
-            ->select('we')
-            // ->select('we', 'e.name as eventName')
-            ->leftJoin('we.wedding', 'w')
+        $qb = $this->createQueryBuilder('e')
+            ->select('e')
+            // ->select('e', 'e.name as eventName')
+            ->leftJoin('e.wedding', 'w')
             // ->leftJoin('we.event', 'e')
             ->where('w.id = :myId')
             ->setParameter('myId', $id)
@@ -37,6 +37,27 @@ class EventRepository extends ServiceEntityRepository
     
         return $qb->getArrayResult();
     }
+
+    /**
+     * 
+     */
+    public function findEventsByWedding($id)
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->select('e.id', 'e.name', 'e.active')
+            // ->select('we', 'e.name as eventName')
+            ->leftJoin('e.wedding', 'w')
+            // ->leftJoin('we.event', 'e')
+            ->where('w.id = :myId')
+            ->setParameter('myId', $id)
+            ->getQuery()
+            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
+
+
 
     // /**
     //  * @return WeddingEvent[] Returns an array of WeddingEvent objects

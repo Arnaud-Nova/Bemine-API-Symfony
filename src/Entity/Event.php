@@ -197,12 +197,12 @@ class Event
 
     public function getActive(): ?bool
     {
-        return $this->isActive;
+        return $this->active;
     }
 
-    public function setActive(?bool $isActive): self
+    public function setActive(?bool $active): self
     {
-        $this->isActive = $isActive;
+        $this->active = $active;
 
         return $this;
     }
