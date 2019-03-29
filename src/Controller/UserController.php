@@ -162,13 +162,9 @@ class UserController extends AbstractController
         
             return $response;
         }
-
         
-
         $newlyweds = $personRepository->findByNewlyweds($id);
         $thisWeddingArray = $weddingRepository->findThisWedding($id);
-
-
 
         $data = 
             [
@@ -211,11 +207,13 @@ class UserController extends AbstractController
 
         $entityManager = $this->getDoctrine()->getManager();
         
-
-        //ajouter la modif d'email
-        $user = $userRepository->find($userId);
-        $user->setEmail($contentDecode->email);
-        $entityManager->persist($user);
+        
+        foreach ($contentDecode->thisUser as $thisUser){
+            //ajouter la modif d'email
+            $user = $userRepository->find($userId);
+            $user->setEmail($thisUser->email);
+            $entityManager->persist($user);
+        }
 
         foreach ($contentDecode->newlyweds as $newlywedDecode){
             $newlywed = $personRepository->find($newlywedDecode->id);
@@ -240,14 +238,15 @@ class UserController extends AbstractController
 
         $entityManager->flush();
 
-        $newlyweds = $personRepository->findByNewlyweds($id);
-        $thisWeddingArray = $weddingRepository->findThisWedding($id);
+        // $newlyweds = $personRepository->findByNewlyweds($id);
+        // $thisWeddingArray = $weddingRepository->findThisWedding($id);
 
         $data = 
             [
-                'thisUser' => $thisUser,
-                'newlyweds' => $newlyweds,
-                'wedding' => $thisWeddingArray
+                // 'thisUser' => $thisUser,
+                // 'newlyweds' => $newlyweds,
+                // 'wedding' => $thisWeddingArray
+                'message' => 'La modification a bien été prise en compte.'
             ]
         ;
 
