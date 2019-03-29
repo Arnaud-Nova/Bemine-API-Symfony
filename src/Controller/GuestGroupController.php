@@ -238,5 +238,52 @@ class GuestGroupController extends AbstractController
 
     }
 
+     /**
+     * @Route("/brides/group/mail/wedding/{id}", name="index_mail", requirements={"id"="\d+"}, methods={"GET","POST"})
+     */
+    public function indexMail(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, WeddingRepository $weddingRepository)
+    {
+        $wedding = $weddingRepository->find($id);
+        
+        if (!$wedding){
+            $data = 
+            [
+                'message' => 'Le wedding id n\'existe pas.'
+            ]
+            ;
+            
+            $response = new JsonResponse($data, 400);
+        
+            return $response;
+        }
+        
+        // $contactsGroup = $guestGroupRepository->findGroupsQueryBuilder($id);
+        $groups = $guestGroupRepository->findGroupAndContactPerson($id);
+
+        //mariés exclus de ces comptes
+        $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
+        $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);
+        $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($id);
+        //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
+        $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
+
+        // $mails = $mailRepository->findAllQueryBuilder();
+        
+        $data = 
+            [
+                // 'mails' => $mails,
+                'groups' => $groups,
+                'countTotalGuests' => $countTotalGuests,
+                'countPresent' => $countPresent,
+                'countAbsent' => $countAbsent,
+                'countWaiting' => $countWaiting
+            ]
+        ;
+
+        $response = new JsonResponse($data, 200);
+       
+        return $response;
+    }
+
     
 }
