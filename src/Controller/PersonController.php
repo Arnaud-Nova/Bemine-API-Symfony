@@ -27,7 +27,6 @@ class PersonController extends AbstractController
     {
         
         $guests = $personRepository->findAllQueryBuilder($id);
-
          //mariés exclus de ces comptes
         $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
         $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);
@@ -53,11 +52,9 @@ class PersonController extends AbstractController
                 'countWaiting' => $countWaiting
             ]
         ;
-
         $response = new JsonResponse($data, 200);
        
         return $response;
-
     }
 
     /**

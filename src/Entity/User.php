@@ -44,6 +44,11 @@ class User implements UserInterface
      */
     private $wedding;
 
+    /**
+    * @ORM\Column(type="string", unique=true)
+    */
+    private $apiToken;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -76,8 +81,9 @@ class User implements UserInterface
      */
     public function getRoles()
     {
-        $roleCode = json_decode($this->roles)->code;
-        $roles = [$roleCode];
+        $roles[] = $this->roles;
+      //  $roleCode = json_decode($this->roles)->code;
+      //  $roles = [$roleCode];
 
         return $roles;
     }
@@ -146,9 +152,30 @@ class User implements UserInterface
     }
 
     /**
-     * @ORM\PrePersist 
-     * @ORM\PreUpdate
-     */
+
+     * Get the value of apiToken
+     */ 
+    public function getApiToken()
+    {
+        return $this->apiToken;
+    }
+
+    /**
+     * Set the value of apiToken
+     *
+     * @return self
+     */ 
+    public function setApiToken($apiToken)
+    {
+        $this->apiToken = $apiToken;
+
+        return $this;
+    }
+    
+    /**
+    * @ORM\PrePersist 
+    * @ORM\PreUpdate
+    */
     public function defaultValues()
     {
         if (empty($this->roles)) {
@@ -159,5 +186,6 @@ class User implements UserInterface
         if (!isset($this->isActive)) {
             $this->isActive = true;
         }
+
     }
 }
