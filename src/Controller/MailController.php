@@ -17,7 +17,7 @@ class MailController extends AbstractController
     /**
      * @Route("/brides/guests/mail/wedding/{id}", name="index_mail", requirements={"id"="\d+"}, methods={"GET","POST"})
      */
-    public function indexMail(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, WeddingRepository $weddingRepository, MailRepository $mailRepository)
+    public function indexMail(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, WeddingRepository $weddingRepository)
     {
         $wedding = $weddingRepository->find($id);
         
@@ -33,8 +33,11 @@ class MailController extends AbstractController
             return $response;
         }
         
-        $contactsGroup = $guestGroupRepository->findGroupsQueryBuilder($id);
+        // $contactsGroup = $guestGroupRepository->findGroupsQueryBuilder($id);
         
+
+        // dd($contactsGroup);
+
         //mariés exclus de ces comptes
         $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
         $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);
@@ -43,7 +46,7 @@ class MailController extends AbstractController
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
 
         $mails = $mailRepository->findAllQueryBuilder();
-
+        
         $data = 
             [
                 'mails' => $mails,

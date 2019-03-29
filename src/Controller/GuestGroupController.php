@@ -17,7 +17,7 @@ class GuestGroupController extends AbstractController
 {
 
     /**
-     * @Route("/brides/group/new/wedding/{id}", name="newGroup", requirements={"id"="\d+"}, methods={"GET", "POST"})
+     * @Route("/brides/group/new/wedding/{id}", name="newGroup", requirements={"id"="\d+"}, methods={"POST"})
      */
     public function newGroup(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, $id, EventRepository $eventRepository, GuestGroupRepository $guestGroupRepository)
     {
@@ -153,7 +153,7 @@ class GuestGroupController extends AbstractController
     }
 
     /**
-     * @Route("/brides/group/edit", name="edit_group", requirements={"id"="\d+"}, methods={"GET", "POST"})
+     * @Route("/brides/group/edit", name="edit_group", requirements={"id"="\d+"}, methods={"POST"})
      */
     public function editGroup(GuestGroupRepository $guestGroupRepository, Request $request)
     {
