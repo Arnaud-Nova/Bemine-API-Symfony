@@ -4,61 +4,51 @@ namespace App\Controller;
 
 
 use App\Repository\MailRepository;
-use App\Repository\PersonRepository;
-use App\Repository\WeddingRepository;
 use App\Repository\GuestGroupRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+* @Route("/brides/mail/", name="mail_")
+*/
 class MailController extends AbstractController
 {
+
     /**
-     * @Route("/brides/guests/mail/wedding/{id}", name="index_mail", requirements={"id"="\d+"}, methods={"GET","POST"})
+     * @Route("send", name="send", methods={"POST"})
      */
-    public function indexMail(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, WeddingRepository $weddingRepository)
+    public function sendEmail(\Swift_Mailer $mailer)
     {
-        $wedding = $weddingRepository->find($id);
-        
-        if (!$wedding){
-            $data = 
-            [
-                'message' => 'Le wedding id n\'existe pas.'
-            ]
-            ;
-            
-            $response = new JsonResponse($data, 400);
-        
-            return $response;
-        }
-        
-        // $contactsGroup = $guestGroupRepository->findGroupsQueryBuilder($id);
-        
-
-        // dd($contactsGroup);
-
-        //mariés exclus de ces comptes
-        $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
-        $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);
-        $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($id);
-        //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
-        $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
-
-        $mails = $mailRepository->findAllQueryBuilder();
-        
-        $data = 
-            [
-                'mails' => $mails,
-                'contactsGroup' => $contactsGroup,
-                'countTotalGuests' => $countTotalGuests,
-                'countPresent' => $countPresent,
-                'countAbsent' => $countAbsent,
-                'countWaiting' => $countWaiting
-            ]
+        // dd('ici');
+        $destinataires = []; // pour créer une liste de destinataires
+        $destinataires[] = 'calmelsarnaud@gmail.com';
+        $name = 'toto'; // création de variables pour personnaliser la vue
+        $message = (new \Swift_Message('Hello Email'))
+        ->setFrom('oweddingteam@gmail.com')
+        ->setTo($destinataires)
+        ->setSubject('Bemine sera toujours là pour vous !! :)')
+        ->setBody(
+            $this->renderView(
+                'mail/invitation.html.twig', // vue twig correspondant à l'email
+                ['name' => $name] // passage des variables
+            ),
+            'text/html' //format du mail
+        )
+        /*
+         * If you also want to include a plaintext version of the message
+        ->addPart(
+            $this->renderView(
+                'emails/registration.txt.twig',
+                ['name' => $name]
+            ),
+            'text/plain'
+        )
+        */
         ;
-
-        $response = new JsonResponse($data, 200);
+        $mailer->send($message);
+        $response = new JsonResponse($name, 200);
        
         return $response;
     }
