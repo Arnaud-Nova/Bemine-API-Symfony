@@ -108,6 +108,39 @@ class GuestGroupRepository extends ServiceEntityRepository
         return $qb->getArrayResult();
     }
 
+    /**
+     * @return GuestGroup[] Returns an array of GuestGroup objects
+     */
+    public function findGuestGroupForWebsite($slugUrl)
+    {
+        $qb = $this->createQueryBuilder('g')
+            ->select('g.id as groupId', 'g.email as groupEmail', 'p.id', 'p.firstname', 'p.lastname', 'p.attendance')
+            ->leftJoin('g.people', 'p')
+            ->where('g.slugUrl = :slugUrl')
+            ->setParameter('slugUrl', $slugUrl)
+            ->getQuery()
+            ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
+
+    /**
+     * 
+     */
+    public function findThisWeddingBySlug($slugUrl)
+    {
+        $qb = $this->createQueryBuilder('g')
+            ->select('w.id')
+            ->leftJoin('g.wedding', 'w')
+            ->where('g.slugUrl = :slugUrl')
+            ->setParameter('slugUrl', $slugUrl)
+            ->getQuery()
+            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
     // /**
     //  * @return GuestGroup[] Returns an array of GuestGroup objects
     //  */

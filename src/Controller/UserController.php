@@ -149,7 +149,7 @@ class UserController extends AbstractController
     {
         // je récupère mon user connecté grâce à l'id du user passée en url
         $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
-
+        
         if (!$thisUser){
             
             $data = 
@@ -169,8 +169,8 @@ class UserController extends AbstractController
         $data = 
             [
                 'thisUser' => $thisUser,
-                'newlyweds' => $newlyweds,
-                'wedding' => $thisWeddingArray
+                // 'newlyweds' => $newlyweds,
+                // 'wedding' => $thisWeddingArray
             ]
         ;
 

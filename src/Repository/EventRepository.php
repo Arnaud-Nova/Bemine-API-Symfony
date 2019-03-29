@@ -57,6 +57,25 @@ class EventRepository extends ServiceEntityRepository
         return $qb->getArrayResult();
     }
 
+    /**
+     * 
+     */
+    public function findEventsActiveByWedding($id)
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->select('e.id as eventId', 'e.name as eventName', 'e.active as eventActive')
+            // ->select('we', 'e.name as eventName')
+            ->leftJoin('e.wedding', 'w')
+            // ->leftJoin('we.event', 'e')
+            ->where('w.id = :myId')
+            ->andWhere('e.active = 1')
+            ->setParameter('myId', $id)
+            ->getQuery()
+            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
 
 
     // /**

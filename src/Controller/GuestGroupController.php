@@ -285,5 +285,43 @@ class GuestGroupController extends AbstractController
         return $response;
     }
 
-    
+    /**
+     * @Route("/guests/show/{slugUrl}", name="show_website", requirements={"id"="\d+"}, methods={"GET"})
+     */
+    public function showWebsite(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, EventRepository $eventRepository, $slugUrl)
+    {
+        $guestGroupForWebsite = $guestGroupRepository->findGuestGroupForWebsite($slugUrl);
+        $thisWedding = $guestGroupRepository->findThisWeddingBySlug($slugUrl);
+        $newlyweds = $personRepository->findByNewlywedsForWebsite($thisWedding);
+        $eventsForThisGroup = $eventRepository->findEventsActiveByWedding($thisWedding);
+        
+        //si besoin de tout avoir au même niveau sauf les people
+        // $arrayResult = array_merge($guestGroupForWebsite, $newlyweds, $eventsForThisGroup);
+
+        
+
+        if (!$guestGroupForWebsite){
+            $data = 
+            [
+                'message' => 'Le guestGroupId n\'existe pas'
+            ]
+            ;
+
+            $response = new JsonResponse($data, 400);
+        
+            return $response;
+        }
+
+        
+        $data = 
+            [
+                'thisGroup' => $guestGroupForWebsite,
+                'newlyweds' => $newlyweds,
+                'eventsForThisGroup' => $eventsForThisGroup
+            ]
+        ;
+
+        $response = new JsonResponse($data, 200);       
+        return $response;
+    }
 }
