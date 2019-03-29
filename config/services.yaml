@@ -36,4 +36,7 @@ services:
     tenant_user_service:
         class: App\Utils\UserService
         arguments: [ '@security.token_storage' ]
+
+    random_string_generator:
+        class: App\Utils\RadomString
     

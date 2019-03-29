@@ -1,13 +1,57 @@
-<h1>
-    Cet email vous est envoyé par Bemine with Symfony !!
-</h1>
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script:400,700|Lato:400,400i,700,700i" rel="stylesheet">
 
-<h2>Ceci est une vue twig</h2>
-<p>Je peux renseigner le texte que je veux et y inclure des variables <strong>{{ name }}</strong></p>
+<div style="display: flex; justify-content: center;">
+    <div style="width: 80%">
+        <a style="text-decoration:none;" href="http://92.243.9.53/"><h1 style="color: #27374d; font-size: 5em; text-align: center; font-family: 'Dancing Script', cursive;">Be Mine</h1></a>
 
-<p>Du coup rien ne m'empêche de faire un email avec une partie dynamique comme cette url qui ne rime à rien</p>
-<a href="#">http://bemine/accèsinvité/monslug-<strong>{{ name }}</strong>-group/</a>
+        <h2 style="color: #27374d; font-size: 2em; text-align: center; font-family: 'Dancing Script', cursive;">
+            Vous êtes invité au mariage de {{ newlywed1.firstname }} et {{ newlywed2.firstname }}
+        </h2>
 
-<h3>
-    Cool non ? !!
-</h3>
+        <h3 style="color: #27374d; font-size: 1.5em; text-align: center; font-family: 'Dancing Script', cursive;">
+            Celui-ci se déroulera le {{ wedding.date|date('d/m/Y') }}
+        </h3>
+        
+
+        <div style="background-color: #27374d; color: #fcfaf1; padding: 2em; font-family: 'Lato', sans-serif;">
+            <p style="text-align: center;">
+                Afin de les aider à organiser cet évènement, connectez-vous à l'espace invité.
+                
+            </p>
+            <p style="text-align: center;">
+                Vous y retrouverez toutes les informations qui vous seront utiles et surtout vous pourrez confirmer votre présence.
+            </p>
+    
+            <div style="display: flex; justify-content: center; align-items: center;">
+                <button style="width: 200px; background-color: #fbd99b; color: #27374d; padding: 0.5em; border-radius: 0.5em; color: #27374d !important; font-size: 1.1em;">
+                    <a style="text-decoration: none;" href="http://92.243.9.53/guests/{{ guestGroup.slugUrl }}">
+                        C'est par ici
+                    </a>
+                </button>
+            </div>
+        </div>
+
+        <footer style="display: flex; justify-content: center; font-family: 'Lato', sans-serif; margin: 1em;">
+            <div>
+                <div style="display: flex; justify-content: center; color: #27374d;">
+                    Une question ? Un problème ?
+                </div>
+                <div style="display: flex; justify-content: center;">
+                    <a style="display: inline-block; color: #27374d;" href="mailto:oweddingteam@gmail.com">oweddingteam@gmail.com</a>
+                </div>
+            
+                <div style="display: flex; justify-content: center; margin: 1em;">
+                    <a href="http://92.243.9.53/" style="display: inline-block; text-decoration:none; color: #27374d;">
+                        BeMine
+                    </a>
+                        |  
+                    <a style="display: inline-block; text-decoration:none; color: #27374d;" href="http://92.243.9.53/mentionlegal">
+                        Mentions légales
+                    </a>
+                </div>
+            </div>
+        </footer>
+    
+    </div>
+</div>
+

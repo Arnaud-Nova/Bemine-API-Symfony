@@ -12,6 +12,7 @@ use App\Entity\GuestGroup;
 use App\Entity\Person;
 use App\Entity\Event;
 use App\Entity\Mail;
+use App\Utils\RandomString;
 
 class AppFixtures extends Fixture
 {
@@ -24,6 +25,8 @@ class AppFixtures extends Fixture
     
     public function load(ObjectManager $manager)
     {
+        $rm = new RandomString();
+
         $couple1 = new User();
         $couple1->setEmail('couple1@test.fr');
         $encodedPassword = $this->passwordEncoder->encodePassword($couple1, 'couple1');
@@ -123,7 +126,7 @@ class AppFixtures extends Fixture
             if ($i < 15) { // guestGroups & people for 1st wedding
                 $guestGroup = new GuestGroup();
                 $guestGroup->setEmail($generator->email());
-                $guestGroup->setSlugUrl($this->randomString());
+                $guestGroup->setSlugUrl($rm->random());
                 $guestGroup->setWedding($wedding1);
 
                 for ($n = 0; $n < 2; $n++) {
@@ -146,7 +149,7 @@ class AppFixtures extends Fixture
             } else { // guestGroups & people for 2nd wedding
                 $guestGroup = new GuestGroup();
                 $guestGroup->setEmail($generator->email());
-                $guestGroup->setSlugUrl($this->randomString());
+                $guestGroup->setSlugUrl($rm->random());
                 $guestGroup->setWedding($wedding2);
 
                 for ($n = 0; $n < 2; $n++) {
@@ -193,19 +196,6 @@ class AppFixtures extends Fixture
 
 
         $manager->flush();
-    }
-
-    public function randomString()
-    {
-        // for slugUrl build
-        $chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $string = '';
-
-        for($i=0; $i<20; $i++){
-            $string .= $chars[rand(0, strlen($chars)-1)];
-        }
-
-        return $string;
     }
 
     public function randomAttendance()
