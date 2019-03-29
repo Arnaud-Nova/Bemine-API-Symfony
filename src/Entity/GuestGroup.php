@@ -50,21 +50,26 @@ class GuestGroup
      */
     private $gifts;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\MailGuestGroup", mappedBy="guestGroup")
-     */
-    private $mailGuestGroups;
+    // /**
+    //  * @ORM\OneToMany(targetEntity="App\Entity\MailGuestGroup", mappedBy="guestGroup")
+    //  */
+    // private $mailGuestGroups;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="guestGroups")
      */
     private $event;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $mailStatus;
+
     public function __construct()
     {
         $this->people = new ArrayCollection();
         $this->gifts = new ArrayCollection();
-        $this->mailGuestGroups = new ArrayCollection();
+        // $this->mailGuestGroups = new ArrayCollection();
         $this->event = new ArrayCollection();
         // $this->event = new ArrayCollection();
     }
@@ -184,36 +189,36 @@ class GuestGroup
         return $this;
     }
 
-    /**
-     * @return Collection|MailGuestGroup[]
-     */
-    public function getMailGuestGroups(): Collection
-    {
-        return $this->mailGuestGroups;
-    }
+    // /**
+    //  * @return Collection|MailGuestGroup[]
+    //  */
+    // public function getMailGuestGroups(): Collection
+    // {
+    //     return $this->mailGuestGroups;
+    // }
 
-    public function addMailGuestGroup(MailGuestGroup $mailGuestGroup): self
-    {
-        if (!$this->mailGuestGroups->contains($mailGuestGroup)) {
-            $this->mailGuestGroups[] = $mailGuestGroup;
-            $mailGuestGroup->setGuestGroup($this);
-        }
+    // public function addMailGuestGroup(MailGuestGroup $mailGuestGroup): self
+    // {
+    //     if (!$this->mailGuestGroups->contains($mailGuestGroup)) {
+    //         $this->mailGuestGroups[] = $mailGuestGroup;
+    //         $mailGuestGroup->setGuestGroup($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removeMailGuestGroup(MailGuestGroup $mailGuestGroup): self
-    {
-        if ($this->mailGuestGroups->contains($mailGuestGroup)) {
-            $this->mailGuestGroups->removeElement($mailGuestGroup);
-            // set the owning side to null (unless already changed)
-            if ($mailGuestGroup->getGuestGroup() === $this) {
-                $mailGuestGroup->setGuestGroup(null);
-            }
-        }
+    // public function removeMailGuestGroup(MailGuestGroup $mailGuestGroup): self
+    // {
+    //     if ($this->mailGuestGroups->contains($mailGuestGroup)) {
+    //         $this->mailGuestGroups->removeElement($mailGuestGroup);
+    //         // set the owning side to null (unless already changed)
+    //         if ($mailGuestGroup->getGuestGroup() === $this) {
+    //             $mailGuestGroup->setGuestGroup(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
     /**
      * @return Collection|Event[]
@@ -237,6 +242,18 @@ class GuestGroup
         if ($this->event->contains($event)) {
             $this->event->removeElement($event);
         }
+
+        return $this;
+    }
+
+    public function getMailStatus(): ?bool
+    {
+        return $this->mailStatus;
+    }
+
+    public function setMailStatus(?bool $mailStatus): self
+    {
+        $this->mailStatus = $mailStatus;
 
         return $this;
     }

@@ -86,123 +86,6 @@ class PersonController extends AbstractController
 
         return $response;
     }
-
-    // /**
-    //  * @Route("/brides/guests/edit/{id}", name="editGuestGroup", requirements={"id"="\d+"}, methods={"GET", "POST"})
-    //  */
-    // public function editGuestGroup(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, Request $request)
-    // {
-    //     // $guestGroup = $personRepository->findByGuestGroup($id);
-    //     $guestGroup = $guestGroupRepository->find($id);
-        
-    //     if (!$guestGroup){
-    //         $data = 
-    //         [
-    //             'message' => 'Le guestGroupId n\'existe pas'
-    //         ]
-    //         ;
-
-    //         $response = new JsonResponse($data, 400);
-        
-    //         return $response;
-    //     }
-
-    //     //je récupère les données du front dans l'objet request.
-    //     $content = $request->getContent();
-    //     $contentDecode = json_decode($content);
-
-    //     $entityManager = $this->getDoctrine()->getManager();
-
-    //     //edit email 
-    //     if ($guestGroup->getId() === $contentDecode->group->id){
-    //         $guestGroup->setEmail($contentDecode->group->email);
-    //         $entityManager->persist($guestGroup);
-    //     }   
-        
-
-    //     //edit persons
-    //     foreach ($contentDecode->group->people as $person){
-    //         $personBdd = $personRepository->find($person->id);
-    //         $personBdd->setFirstname($person->firstname);
-    //         $personBdd->setLastname($person->lastname);
-    //         $personBdd->setAttendance($person->attendance);
-    //         $entityManager->persist($personBdd);
-    //     }
-        
-    //     // dd($guestGroup);
-
-    //     $entityManager->flush();
-    //     $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($id);
-        
-    //     $data = 
-    //         [
-    //             'guestGroupEdited' => $guestGroupArray
-    //         ]
-    //     ;
-
-    //     $response = new JsonResponse($data, 200);       
-    //     return $response;
-    // }
-
-    // /**
-    //  * @Route("/brides/guests/delete/{id}", name="deleteGuestGroup", requirements={"id"="\d+"}, methods={"DELETE"})
-    //  */
-    // public function deleteGuestGroup(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, Request $request)
-    // {
-    //     // $guestGroup = $personRepository->findByGuestGroup($id);
-    //     $guestGroup = $guestGroupRepository->find($id);
-
-    //     if (!$guestGroup){
-    //         $data = 
-    //         [
-    //             'message' => 'Le guestGroupId n\'existe pas'
-    //         ]
-    //         ;
-
-    //         $response = new JsonResponse($data, 400);
-        
-    //         return $response;
-    //     }
-
-    //     dd($guestGroup->getPeople());
-    //     //je récupère les données du front dans l'objet request.
-    //     $content = $request->getContent();
-    //     $contentDecode = json_decode($content);
-
-    //     $entityManager = $this->getDoctrine()->getManager();
-
-    //     //edit email 
-    //     if ($guestGroup->getId() === $contentDecode->group->id){
-    //         $guestGroup->setEmail($contentDecode->group->email);
-    //         $entityManager->persist($guestGroup);
-    //     }   
-        
-
-    //     //edit persons
-    //     foreach ($contentDecode->group->people as $person){
-    //         $personBdd = $personRepository->find($person->id);
-    //         $personBdd->setFirstname($person->firstname);
-    //         $personBdd->setLastname($person->lastname);
-    //         $personBdd->setAttendance($person->attendance);
-    //         $entityManager->persist($personBdd);
-    //     }
-        
-        
-        
-    //     // dd($guestGroup);
-
-    //     $entityManager->flush();
-    //     $guestGroupArray = $guestGroupRepository->findByGuestGroupQueryBuilder($id);
-        
-    //     $data = 
-    //         [
-    //             'group' => $guestGroupArray
-    //         ]
-    //     ;
-
-    //     $response = new JsonResponse($data, 200);       
-    //     return $response;
-    // }
     
     /**
      * @Route("delete", name="delete", methods={"DELETE"})
@@ -260,4 +143,5 @@ class PersonController extends AbstractController
 
         return $response;
     }
+
 }
