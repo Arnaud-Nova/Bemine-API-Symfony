@@ -232,7 +232,7 @@ class PersonController extends AbstractController
     }
 
     /**
-     * @Route("edit", name="edit", methods={"PUT"})
+     * @Route("edit", name="edit", methods={"POST"})
      */
     public function editPerson(Request $request, PersonRepository $personRepository, EntityManagerInterface $em)
     {
