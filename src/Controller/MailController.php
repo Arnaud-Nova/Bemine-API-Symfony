@@ -21,36 +21,39 @@ class MailController extends AbstractController
      */
     public function sendEmail(\Swift_Mailer $mailer)
     {
-        // dd('ici');
         $destinataires = []; // pour créer une liste de destinataires
-        $destinataires[] = 'calmelsarnaud@gmail.com';
-        $name = 'toto'; // création de variables pour personnaliser la vue
+        $destinataires[] = 'email@email';
+        $name = ''; 
         $message = (new \Swift_Message('Hello Email'))
         ->setFrom('oweddingteam@gmail.com')
         ->setTo($destinataires)
         ->setSubject('Bemine sera toujours là pour vous !! :)')
         ->setBody(
             $this->renderView(
-                'mail/invitation.html.twig', // vue twig correspondant à l'email
-                ['name' => $name] // passage des variables
-            ),
-            'text/html' //format du mail
-        )
-        /*
-         * If you also want to include a plaintext version of the message
-        ->addPart(
-            $this->renderView(
-                'emails/registration.txt.twig',
-                ['name' => $name]
-            ),
-            'text/plain'
-        )
-        */
-        ;
+                'mail/invitation.html.twig', [
+                    'name' => $name
+                    ]),
+            'text/html'
+        );
+
         $mailer->send($message);
         $response = new JsonResponse($name, 200);
        
         return $response;
+    }
+
+    /**
+     * @Route("show", name="show", methods={"POST"})
+     */
+    public function showEmail()
+    {
+        $name = '';
+
+        return $this->render(
+            'mail/invitation.html.twig',
+            ['name' => $name]
+        );
+
     }
 
 }

@@ -1,0 +1,22 @@
+/* Variables CSS
+
+Couleurs principales
+color: #fbd99b;
+$primary-color: #27374d;
+$secondary-color: #fcfaf1;
+
+Couleurs des boutons
+$color-ok : #4caf50;
+$color-ko: #d05f54;
+$color-wait: #9e9e9e;
+
+Polices
+$cursive-font: 'Dancing Script', cursive;
+$normal-font: 'Lato', sans-serif;
+
+
+// monitor size
+
+$mobile-breakpoint: 45rem;
+
+*/
