@@ -118,11 +118,16 @@ class GuestGroupController extends AbstractController
     }
 
     /**
-     * @Route("/brides/guests/group/{groupId}", name="show_group", requirements={"id"="\d+"}, methods={"GET"})
+     * @Route("/brides/guests/group", name="show_group", requirements={"id"="\d+"}, methods={"GET"})
      */
-    public function showGroup(GuestGroupRepository $guestGroupRepository, $groupId)
+    public function showGroup(GuestGroupRepository $guestGroupRepository, Request $request)
     {
-        $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($groupId);
+
+        //je récupère les données du front dans l'objet request.
+        $content = $request->getContent();
+        $contentDecode = json_decode($content);
+
+        $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($contentDecode->groupId);
         
         if (!$guestGroupArray){
             $data = 
