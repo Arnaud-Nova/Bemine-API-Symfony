@@ -87,120 +87,177 @@ class PersonController extends AbstractController
         return $response;
     }
 
+    // /**
+    //  * @Route("/brides/guests/edit/{id}", name="editGuestGroup", requirements={"id"="\d+"}, methods={"GET", "POST"})
+    //  */
+    // public function editGuestGroup(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, Request $request)
+    // {
+    //     // $guestGroup = $personRepository->findByGuestGroup($id);
+    //     $guestGroup = $guestGroupRepository->find($id);
+        
+    //     if (!$guestGroup){
+    //         $data = 
+    //         [
+    //             'message' => 'Le guestGroupId n\'existe pas'
+    //         ]
+    //         ;
+
+    //         $response = new JsonResponse($data, 400);
+        
+    //         return $response;
+    //     }
+
+    //     //je récupère les données du front dans l'objet request.
+    //     $content = $request->getContent();
+    //     $contentDecode = json_decode($content);
+
+    //     $entityManager = $this->getDoctrine()->getManager();
+
+    //     //edit email 
+    //     if ($guestGroup->getId() === $contentDecode->group->id){
+    //         $guestGroup->setEmail($contentDecode->group->email);
+    //         $entityManager->persist($guestGroup);
+    //     }   
+        
+
+    //     //edit persons
+    //     foreach ($contentDecode->group->people as $person){
+    //         $personBdd = $personRepository->find($person->id);
+    //         $personBdd->setFirstname($person->firstname);
+    //         $personBdd->setLastname($person->lastname);
+    //         $personBdd->setAttendance($person->attendance);
+    //         $entityManager->persist($personBdd);
+    //     }
+        
+    //     // dd($guestGroup);
+
+    //     $entityManager->flush();
+    //     $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($id);
+        
+    //     $data = 
+    //         [
+    //             'guestGroupEdited' => $guestGroupArray
+    //         ]
+    //     ;
+
+    //     $response = new JsonResponse($data, 200);       
+    //     return $response;
+    // }
+
+    // /**
+    //  * @Route("/brides/guests/delete/{id}", name="deleteGuestGroup", requirements={"id"="\d+"}, methods={"DELETE"})
+    //  */
+    // public function deleteGuestGroup(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, Request $request)
+    // {
+    //     // $guestGroup = $personRepository->findByGuestGroup($id);
+    //     $guestGroup = $guestGroupRepository->find($id);
+
+    //     if (!$guestGroup){
+    //         $data = 
+    //         [
+    //             'message' => 'Le guestGroupId n\'existe pas'
+    //         ]
+    //         ;
+
+    //         $response = new JsonResponse($data, 400);
+        
+    //         return $response;
+    //     }
+
+    //     dd($guestGroup->getPeople());
+    //     //je récupère les données du front dans l'objet request.
+    //     $content = $request->getContent();
+    //     $contentDecode = json_decode($content);
+
+    //     $entityManager = $this->getDoctrine()->getManager();
+
+    //     //edit email 
+    //     if ($guestGroup->getId() === $contentDecode->group->id){
+    //         $guestGroup->setEmail($contentDecode->group->email);
+    //         $entityManager->persist($guestGroup);
+    //     }   
+        
+
+    //     //edit persons
+    //     foreach ($contentDecode->group->people as $person){
+    //         $personBdd = $personRepository->find($person->id);
+    //         $personBdd->setFirstname($person->firstname);
+    //         $personBdd->setLastname($person->lastname);
+    //         $personBdd->setAttendance($person->attendance);
+    //         $entityManager->persist($personBdd);
+    //     }
+        
+        
+        
+    //     // dd($guestGroup);
+
+    //     $entityManager->flush();
+    //     $guestGroupArray = $guestGroupRepository->findByGuestGroupQueryBuilder($id);
+        
+    //     $data = 
+    //         [
+    //             'group' => $guestGroupArray
+    //         ]
+    //     ;
+
+    //     $response = new JsonResponse($data, 200);       
+    //     return $response;
+    // }
+    
     /**
-     * @Route("/brides/guests/edit/{id}", name="editGuestGroup", requirements={"id"="\d+"}, methods={"GET", "POST"})
+     * @Route("delete", name="delete", methods={"DELETE"})
      */
-    public function editGuestGroup(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, Request $request)
+    public function deletePerson(Request $request, PersonRepository $personRepository, EntityManagerInterface $em)
     {
-        // $guestGroup = $personRepository->findByGuestGroup($id);
-        $guestGroup = $guestGroupRepository->find($id);
-        
-        if (!$guestGroup){
-            $data = 
-            [
-                'message' => 'Le guestGroupId n\'existe pas'
-            ]
-            ;
-
-            $response = new JsonResponse($data, 400);
-        
-            return $response;
-        }
-
-        //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $person = $personRepository->findOneBy(['id' => $contentDecode->personId]);
 
-        //edit email 
-        if ($guestGroup->getId() === $contentDecode->group->id){
-            $guestGroup->setEmail($contentDecode->group->email);
-            $entityManager->persist($guestGroup);
-        }   
-        
+        if (!$person) {
+            $data = 'Cette personne n\existe pas';
 
-        //edit persons
-        foreach ($contentDecode->group->people as $person){
-            $personBdd = $personRepository->find($person->id);
-            $personBdd->setFirstname($person->firstname);
-            $personBdd->setLastname($person->lastname);
-            $personBdd->setAttendance($person->attendance);
-            $entityManager->persist($personBdd);
+            $response = new JsonResponse($data, 400);
+
+            return $response;
         }
-        
-        // dd($guestGroup);
 
-        $entityManager->flush();
-        $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($id);
-        
-        $data = 
-            [
-                'guestGroupEdited' => $guestGroupArray
-            ]
-        ;
+        $em->remove($person);
+        $em->flush();
 
-        $response = new JsonResponse($data, 200);       
+        $data = 'Suppression OK';
+        $response = new JsonResponse($data, 200);
+
         return $response;
     }
 
     /**
-     * @Route("/brides/guests/delete/{id}", name="deleteGuestGroup", requirements={"id"="\d+"}, methods={"DELETE"})
+     * @Route("edit", name="edit", methods={"PUT"})
      */
-    public function deleteGuestGroup(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, Request $request)
+    public function editPerson(Request $request, PersonRepository $personRepository, EntityManagerInterface $em)
     {
-        // $guestGroup = $personRepository->findByGuestGroup($id);
-        $guestGroup = $guestGroupRepository->find($id);
-
-        if (!$guestGroup){
-            $data = 
-            [
-                'message' => 'Le guestGroupId n\'existe pas'
-            ]
-            ;
-
-            $response = new JsonResponse($data, 400);
-        
-            return $response;
-        }
-
-        dd($guestGroup->getPeople());
-        //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $person = $personRepository->findOneBy(['id' => $contentDecode->personId]);
 
-        //edit email 
-        if ($guestGroup->getId() === $contentDecode->group->id){
-            $guestGroup->setEmail($contentDecode->group->email);
-            $entityManager->persist($guestGroup);
-        }   
-        
+        if (!$person) {
+            $data = 'Cette personne n\existe pas';
 
-        //edit persons
-        foreach ($contentDecode->group->people as $person){
-            $personBdd = $personRepository->find($person->id);
-            $personBdd->setFirstname($person->firstname);
-            $personBdd->setLastname($person->lastname);
-            $personBdd->setAttendance($person->attendance);
-            $entityManager->persist($personBdd);
+            $response = new JsonResponse($data, 400);
+
+            return $response;
         }
-        
-        
-        
-        // dd($guestGroup);
 
-        $entityManager->flush();
-        $guestGroupArray = $guestGroupRepository->findByGuestGroupQueryBuilder($id);
-        
-        $data = 
-            [
-                'group' => $guestGroupArray
-            ]
-        ;
+        $person->setLastname($contentDecode->lastname);
+        $person->setFirstname($contentDecode->firstname);
+        $person->setAttendance($contentDecode->attendance);
 
-        $response = new JsonResponse($data, 200);       
+        $em->flush();
+
+        $data = 'Update OK';
+        $response = new JsonResponse($data, 200);
+
         return $response;
     }
 }
