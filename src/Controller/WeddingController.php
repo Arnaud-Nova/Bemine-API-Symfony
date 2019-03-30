@@ -62,7 +62,7 @@ class WeddingController extends AbstractController
                 $weddingEvent->setCity($oneEventDecode->city);
             }
             if ($oneEventDecode->schedule){
-                $weddingEvent->setSchedule($oneEventDecode->schedule);
+                $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d', $oneEventDecode->schedule));
             }
             if ($oneEventDecode->informations){
                 $weddingEvent->setInformations($oneEventDecode->informations);
