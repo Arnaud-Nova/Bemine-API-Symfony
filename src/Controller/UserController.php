@@ -169,8 +169,8 @@ class UserController extends AbstractController
         $data = 
             [
                 'thisUser' => $thisUser,
-                // 'newlyweds' => $newlyweds,
-                // 'wedding' => $thisWeddingArray
+                'newlyweds' => $newlyweds,
+                'wedding' => $thisWeddingArray
             ]
         ;
 
