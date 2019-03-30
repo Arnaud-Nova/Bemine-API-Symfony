@@ -40,3 +40,14 @@ services:
     random_string_generator:
         class: App\Utils\RadomString
     
+    acme_api.event.jwt_authenticated_listener:
+        class: App\EventListener\AuthenticatedListener
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_authenticated, method: onJwtAuthenticatedRequest }
+
+    acme_api.event.jwt_created_listener:
+        class: App\EventListener\JWTCreatedListener
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+    

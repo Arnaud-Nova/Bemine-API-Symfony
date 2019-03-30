@@ -80,7 +80,10 @@ class MailController extends AbstractController
      */
     public function showEmail(GuestGroupRepository $ggRepo, Request $request, \Swift_Mailer $mailer, PersonRepository $pRepo)
     {
+
         $data = json_decode($request->getContent());
+        dump($request);
+        dd($request->attributes->get('emailUser'));
 
         $guestGroupsId = $data->list_mailing;
 
