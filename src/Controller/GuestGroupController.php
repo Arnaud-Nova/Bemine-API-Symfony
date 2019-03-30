@@ -122,7 +122,7 @@ class GuestGroupController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($contentDecode->groupId);
+        $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($contentDecode->id); //groupId modifié en id
         
         if (!$guestGroupArray){
             $data = 
@@ -157,7 +157,7 @@ class GuestGroupController extends AbstractController
         $contentDecode = json_decode($content);
 
         //je récupère le guestGroup 
-        $guestGroup = $guestGroupRepository->find($contentDecode->groupId);   
+        $guestGroup = $guestGroupRepository->find($contentDecode->id);   //groupId modifié en id
         
         if (!$guestGroup){
             $data = 
@@ -201,7 +201,7 @@ class GuestGroupController extends AbstractController
         $contentDecode = json_decode($content);
         
         //je récupère le guestGroup 
-        $guestGroup = $guestGroupRepository->find($contentDecode->groupId);   
+        $guestGroup = $guestGroupRepository->find($contentDecode->id);   //groupId modifié en id
         
         if (!$guestGroup){
             $data = 

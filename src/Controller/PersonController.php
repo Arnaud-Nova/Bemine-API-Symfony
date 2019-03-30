@@ -76,7 +76,7 @@ class PersonController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $guestGroup = $guestGroupRepository->findOneBy(['id' => $contentDecode->groupId]);
+        $guestGroup = $guestGroupRepository->findOneBy(['id' => $contentDecode->id]); //modification groupId en id
         $wedding = $guestGroup->getWedding();
 
         $person = new Person();
@@ -102,7 +102,7 @@ class PersonController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $person = $personRepository->findOneBy(['id' => $contentDecode->personId]);
+        $person = $personRepository->findOneBy(['id' => $contentDecode->id]); //modification de personId en id à la demande d'olivier le 30/03 9h20
 
         if (!$person) {
             $data = 'Cette personne n\existe pas';
