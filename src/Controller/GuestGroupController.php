@@ -103,16 +103,11 @@ class GuestGroupController extends AbstractController
         // $guestGroupId = $guestGroup->getId();
         // $guestGroupCreated = $guestGroupRepository->findByGuestGroupIdQueryBuilder($guestGroupId);
 
-        $eventsType = $eventRepository->findEventsByWedding($id);
+        // $eventsType = $eventRepository->findEventsByWedding($id);
 
-        $data = 
-            [
-                // 'guestGroupCreated' => $guestGroupCreated,
-                'events' => $eventsType
-            ]
-        ;
+        $message = 'Le group a bien été ajouté';
 
-        $response = new JsonResponse($data, 200);       
+        $response = new JsonResponse($message, 200);       
         return $response;
 
     }
