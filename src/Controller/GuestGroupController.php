@@ -103,16 +103,11 @@ class GuestGroupController extends AbstractController
         // $guestGroupId = $guestGroup->getId();
         // $guestGroupCreated = $guestGroupRepository->findByGuestGroupIdQueryBuilder($guestGroupId);
 
-        $eventsType = $eventRepository->findEventsByWedding($id);
+        // $eventsType = $eventRepository->findEventsByWedding($id);
 
-        $data = 
-            [
-                // 'guestGroupCreated' => $guestGroupCreated,
-                'events' => $eventsType
-            ]
-        ;
+        $message = 'Le group a bien été ajouté';
 
-        $response = new JsonResponse($data, 200);       
+        $response = new JsonResponse($message, 200);       
         return $response;
 
     }
@@ -127,7 +122,7 @@ class GuestGroupController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($contentDecode->groupId);
+        $guestGroupArray = $guestGroupRepository->findByGuestGroupIdQueryBuilder($contentDecode->id); //groupId modifié en id
         
         if (!$guestGroupArray){
             $data = 
@@ -162,7 +157,7 @@ class GuestGroupController extends AbstractController
         $contentDecode = json_decode($content);
 
         //je récupère le guestGroup 
-        $guestGroup = $guestGroupRepository->find($contentDecode->groupId);   
+        $guestGroup = $guestGroupRepository->find($contentDecode->id);   //groupId modifié en id
         
         if (!$guestGroup){
             $data = 
@@ -206,7 +201,7 @@ class GuestGroupController extends AbstractController
         $contentDecode = json_decode($content);
         
         //je récupère le guestGroup 
-        $guestGroup = $guestGroupRepository->find($contentDecode->groupId);   
+        $guestGroup = $guestGroupRepository->find($contentDecode->id);   //groupId modifié en id
         
         if (!$guestGroup){
             $data = 
@@ -238,5 +233,90 @@ class GuestGroupController extends AbstractController
 
     }
 
-    
+     /**
+     * @Route("/brides/group/mail/wedding/{id}", name="index_mail", requirements={"id"="\d+"}, methods={"GET","POST"})
+     */
+    public function indexMail(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, WeddingRepository $weddingRepository)
+    {
+        $wedding = $weddingRepository->find($id);
+        
+        if (!$wedding){
+            $data = 
+            [
+                'message' => 'Le wedding id n\'existe pas.'
+            ]
+            ;
+            
+            $response = new JsonResponse($data, 400);
+        
+            return $response;
+        }
+        
+        // $contactsGroup = $guestGroupRepository->findGroupsQueryBuilder($id);
+        $groups = $guestGroupRepository->findGroupAndContactPerson($id);
+
+        //mariés exclus de ces comptes
+        $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
+        $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);
+        $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($id);
+        //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
+        $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
+
+        // $mails = $mailRepository->findAllQueryBuilder();
+        
+        $data = 
+            [
+                // 'mails' => $mails,
+                'groups' => $groups,
+                'countTotalGuests' => $countTotalGuests,
+                'countPresent' => $countPresent,
+                'countAbsent' => $countAbsent,
+                'countWaiting' => $countWaiting
+            ]
+        ;
+
+        $response = new JsonResponse($data, 200);
+       
+        return $response;
+    }
+
+    /**
+     * @Route("/guests/show/{slugUrl}", name="show_website", requirements={"id"="\d+"}, methods={"GET"})
+     */
+    public function showWebsite(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, EventRepository $eventRepository, $slugUrl)
+    {
+        $guestGroupForWebsite = $guestGroupRepository->findGuestGroupForWebsite($slugUrl);
+        $thisWedding = $guestGroupRepository->findThisWeddingBySlug($slugUrl);
+        $newlyweds = $personRepository->findByNewlywedsForWebsite($thisWedding);
+        $eventsForThisGroup = $eventRepository->findEventsActiveByWedding($thisWedding);
+        
+        //si besoin de tout avoir au même niveau sauf les people
+        // $arrayResult = array_merge($guestGroupForWebsite, $newlyweds, $eventsForThisGroup);
+
+        
+
+        if (!$guestGroupForWebsite){
+            $data = 
+            [
+                'message' => 'Le guestGroupId n\'existe pas'
+            ]
+            ;
+
+            $response = new JsonResponse($data, 400);
+        
+            return $response;
+        }
+
+        
+        $data = 
+            [
+                'thisGroup' => $guestGroupForWebsite,
+                'newlyweds' => $newlyweds,
+                'eventsForThisGroup' => $eventsForThisGroup
+            ]
+        ;
+
+        $response = new JsonResponse($data, 200);       
+        return $response;
+    }
 }

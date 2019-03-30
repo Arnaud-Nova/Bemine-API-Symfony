@@ -34,6 +34,26 @@ class UserRepository extends ServiceEntityRepository
     
         return $qb->getArrayResult();
     }
+
+    // /**
+    // * 
+    // */
+    // public function findUserProfilQueryBuilder($userId)
+    // {
+    //     $qb = $this->createQueryBuilder('u')
+    //         ->select('u.email', 'u.id as userId', 'w.id as weddingId', 'w.date as weddingDate', 'p.firstname', 'p.lastname')
+    //         ->leftJoin('u.wedding', 'w')
+    //         ->leftJoin('w.people', 'p')
+    //         // ->innerJoin('')
+    //         ->where('u.id = :userId')
+    //         ->setParameter('userId', $userId)
+    //         ->andWhere('p.newlyweds = 1')
+    //         ->getQuery()
+    //         ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+    //         ;
+    
+    //     return $qb->getArrayResult();
+    // }
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

@@ -81,6 +81,7 @@ class MailController extends AbstractController
         return $response;
     }
 
+
     /**
      * @Route("show", name="show", methods={"GET"})
      */

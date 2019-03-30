@@ -23,7 +23,7 @@ class PersonController extends AbstractController
     /**
      * @Route("list/wedding/{id}", name="indexGuests", requirements={"id"="\d+"}, methods={"GET"})
      */
-    public function indexGuests(PersonRepository $personRepository, $id)
+    public function indexGuests(PersonRepository $personRepository, $id, WeddingRepository $weddingRepository)
     {
         
         $guests = $personRepository->findAllQueryBuilder($id);
@@ -33,9 +33,19 @@ class PersonController extends AbstractController
         $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($id);
         //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
-        
-        if (!$guests){
+        // dd($guests);
+
+        if (!$weddingRepository->find($id)){
             $message = 'Le wedding id n\'existe pas';
+
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+         if (!$guests){
+            $message = 'Vous n\'avez pas encore d\'invités ajoutés à votre mariage';
 
             $response = new Response($message, 404);
             $response->headers->set('Content-Type', 'application/json');
@@ -66,7 +76,7 @@ class PersonController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $guestGroup = $guestGroupRepository->findOneBy(['id' => $contentDecode->groupId]);
+        $guestGroup = $guestGroupRepository->findOneBy(['id' => $contentDecode->id]); //modification groupId en id
         $wedding = $guestGroup->getWedding();
 
         $person = new Person();
@@ -92,7 +102,7 @@ class PersonController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $person = $personRepository->findOneBy(['id' => $contentDecode->personId]);
+        $person = $personRepository->findOneBy(['id' => $contentDecode->id]); //modification de personId en id à la demande d'olivier le 30/03 9h20
 
         if (!$person) {
             $data = 'Cette personne n\existe pas';
@@ -119,7 +129,7 @@ class PersonController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        $person = $personRepository->findOneBy(['id' => $contentDecode->personId]);
+        $person = $personRepository->findOneBy(['id' => $contentDecode->id]); //modification de personId en id à la demande d'olivier le 30/03 9h20
 
         if (!$person) {
             $data = 'Cette personne n\existe pas';
