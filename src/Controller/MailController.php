@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\PersonRepository;
+use App\Repository\UserRepository;
 
 /**
 * @Route("/brides/mail/", name="mail_")
@@ -21,29 +22,34 @@ class MailController extends AbstractController
     /**
      * @Route("send", name="send", methods={"POST"})
      */
-    public function sendEmail(GuestGroupRepository $ggRepo, Request $request, \Swift_Mailer $mailer, PersonRepository $pRepo)
+    public function sendEmail(GuestGroupRepository $ggRepo, Request $request, \Swift_Mailer $mailer, PersonRepository $pRepo, UserRepository $userRepo)
     {
         $data = json_decode($request->getContent());
 
+        // récupération du wedding correspondant au user grâce à AuthenticatedListener
+        $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+
         $guestGroupsId = $data->list_mailing;
-        $errorsMessage = [];
+        $messages = [];
 
         
         foreach ($guestGroupsId as $id) {
             $guestGroup = $ggRepo->findOneBy(['id' => $id]);
             if (!$guestGroup) {
-                $errorsMessage[] = 'Un email n\'a pas été expédié car il n\'y a pas de groupe avec l\'id ' . $id;
+                $messages[] = 'Un email n\'a pas été expédié car il n\'y a pas de groupe avec l\'id ' . $id;
+            } elseif ($userWedding != $guestGroup->getWedding()) {
+                $messages[] = 'Un email n\'a pas été expédié car le groupe ' . $id . ' ne fait pas parti de ce mariage';
             } else {
             
             // $recipient = $guestGroup->getEmail(); // A commenter pour fonctionnement faker
-            $recipient = 'calmelsarnaud@gmail.com'; // A décommenter pour fonctionnement faker
+            $recipient = 'oweddingteam@gmail.com'; // A décommenter pour fonctionnement faker
             $wedding = $guestGroup->getWedding();
             $newlyweds = $pRepo->findBy([
                 'wedding' => $wedding,
                 'newlyweds' =>true
             ]);
 
-            $message = (new \Swift_Message('Invitation Email'))
+            $invitationEmail = (new \Swift_Message('Invitation Email'))
             ->setFrom('oweddingteam@gmail.com')
             ->setTo($recipient)
             ->setSubject('Invitation au mariage de ' . $newlyweds[0]->getFirstname() . ' et ' . $newlyweds[1]->getFirstname())
@@ -58,19 +64,19 @@ class MailController extends AbstractController
                 'text/html'
             );
 
-            $mailer->send($message);
+            $mailer->send($invitationEmail);
             }
         }
 
 
-        if (!empty($errorsMessage)) {
+        if (!empty($messages)) {
             $httpCode = 400;
         } else {
             $httpCode = 200;
-            $errorsMessage[] = 'Emails envoyés';
+            $messages[] = 'Emails envoyés';
         }
 
-        $response = new JsonResponse($errorsMessage, $httpCode);
+        $response = new JsonResponse($messages, $httpCode);
        
         return $response;
     }
@@ -78,27 +84,29 @@ class MailController extends AbstractController
     /**
      * @Route("show", name="show", methods={"GET"})
      */
-    public function showEmail(GuestGroupRepository $ggRepo, Request $request, \Swift_Mailer $mailer, PersonRepository $pRepo)
+    public function showEmail(UserRepository $userRepo, GuestGroupRepository $ggRepo, Request $request, \Swift_Mailer $mailer, PersonRepository $pRepo)
     {
 
         $data = json_decode($request->getContent());
-        dump($request);
-        dd($request->attributes->get('emailUser'));
 
+        // récupération du wedding correspondant au user grâce à AuthenticatedListener
+        $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+
+        
         $guestGroupsId = $data->list_mailing;
 
         $i = 0;
         foreach ($guestGroupsId as $id) {
             $guestGroup = $ggRepo->findOneBy(['id' => $id]);
             if (!$guestGroup) {
-                $errorsMessage[] = 'Pas de groupe correspondants à cet id : ' . $id;
-
+                $errorsMessage[] = 'Pas de groupe correspondant à cet id : ' . $id;
+            } elseif ($userWedding != $guestGroup->getWedding()) {
+                $errorsMessage[] = 'Le groupe ' . $id . ' ne fait pas parti de ce mariage';
             } elseif ($i < 1) {
 
             $recipient = $guestGroup->getEmail();
-            $wedding = $guestGroup->getWedding();
             $newlyweds = $pRepo->findBy([
-                'wedding' => $wedding,
+                'wedding' => $userWedding,
                 'newlyweds' =>true
             ]);
             $i++;
@@ -116,7 +124,7 @@ class MailController extends AbstractController
             'mail/invitation.html.twig', [
                 'newlywed1' => $newlyweds[0],
                 'newlywed2' => $newlyweds[1],
-                'wedding' => $wedding,
+                'wedding' => $userWedding,
                 'guestGroup' => $guestGroup,
                 ]
             );

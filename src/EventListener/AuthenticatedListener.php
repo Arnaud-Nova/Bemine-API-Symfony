@@ -30,7 +30,7 @@ class AuthenticatedListener
 
         $user = $event->getPayload();
         $userEmail = $user['email'];
-
+        
         $request->attributes->set('userEmail', $userEmail);
     }
 }
