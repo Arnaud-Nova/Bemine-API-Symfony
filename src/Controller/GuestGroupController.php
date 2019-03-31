@@ -113,7 +113,7 @@ class GuestGroupController extends AbstractController
     }
 
     /**
-     * @Route("/brides/guests/group", name="show_group", requirements={"id"="\d+"}, methods={"GET"})
+     * @Route("/brides/guests/group", name="show_group", methods={"POST"})
      */
     public function showGroup(GuestGroupRepository $guestGroupRepository, Request $request)
     {
@@ -137,11 +137,7 @@ class GuestGroupController extends AbstractController
         }
 
         
-        $data = 
-            [
-                'guestGroup' => $guestGroupArray
-            ]
-        ;
+        $data = $guestGroupArray[0];
 
         $response = new JsonResponse($data, 200);       
         return $response;
