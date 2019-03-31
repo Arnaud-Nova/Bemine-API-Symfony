@@ -197,7 +197,8 @@ class GuestGroupController extends AbstractController
         $contentDecode = json_decode($content);
         
         //je récupère le guestGroup 
-        $guestGroup = $guestGroupRepository->find($contentDecode->id);   //groupId modifié en id
+        // $guestGroup = $guestGroupRepository->find($contentDecode->id);   //groupId modifié en id
+        $guestGroup = $guestGroupRepository->findOneBy(['id' => $contentDecode->id]);
         
         if (!$guestGroup){
             $data = 
