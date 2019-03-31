@@ -143,12 +143,18 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/brides/profil/{userId}/{id}", name="profil", methods={"GET"})
+     * @Route("/brides/profil", name="profil", methods={"GET"})
      */
-    public function profil(UserRepository $userRepository, $userId, $id, PersonRepository $personRepository, WeddingRepository $weddingRepository)
+    public function profil(UserRepository $userRepository, PersonRepository $personRepository, WeddingRepository $weddingRepository, Request $request)
     {
+        // récupération du wedding correspondant au user grâce à AuthenticatedListener
+        $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+        //récupération du user id grâce à AuthenticatedListener
+        $userId = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getId();
+
         // je récupère mon user connecté grâce à l'id du user passée en url
         $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
+
         
         if (!$thisUser){
             
@@ -163,8 +169,8 @@ class UserController extends AbstractController
             return $response;
         }
         
-        $newlyweds = $personRepository->findByNewlyweds($id);
-        $thisWeddingArray = $weddingRepository->findThisWedding($id);
+        $newlyweds = $personRepository->findByNewlyweds($userWedding);
+        $thisWeddingArray = $weddingRepository->findThisWedding($userWedding);
 
         $data = 
             [
@@ -179,15 +185,56 @@ class UserController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/brides/profil/edit/{userId}/{id}", name="editProfil", methods={"GET", "POST"})
-     */
-    public function editProfil(UserRepository $userRepository, $userId, $id, PersonRepository $personRepository, WeddingRepository $weddingRepository, Request $request)
-    {
+    // /**
+    //  * @Route("/brides/profil/{userId}/{id}", name="profil", methods={"GET"})
+    //  */
+    // public function profil(UserRepository $userRepository, $userId, $id, PersonRepository $personRepository, WeddingRepository $weddingRepository)
+    // {
+    //     // je récupère mon user connecté grâce à l'id du user passée en url
+    //     $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
+        
+    //     if (!$thisUser){
+            
+    //         $data = 
+    //         [
+    //             'message' => 'Le user id n\'existe pas.'
+    //         ]
+    //         ;
+            
+    //         $response = new JsonResponse($data, 400);
+        
+    //         return $response;
+    //     }
+        
+    //     $newlyweds = $personRepository->findByNewlyweds($id);
+    //     $thisWeddingArray = $weddingRepository->findThisWedding($id);
 
+    //     $data = 
+    //         [
+    //             'thisUser' => $thisUser,
+    //             'newlyweds' => $newlyweds,
+    //             'wedding' => $thisWeddingArray
+    //         ]
+    //     ;
+
+    //     $response = new JsonResponse($data, 200);
+       
+    //     return $response;
+    // }
+
+    /**
+     * @Route("/brides/profil/edit", name="editProfil", methods={"GET", "POST"})
+     */
+    public function editProfil(UserRepository $userRepository, PersonRepository $personRepository, WeddingRepository $weddingRepository, Request $request)
+    {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
+
+        // récupération du wedding correspondant au user grâce à AuthenticatedListener
+        $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+        //récupération du user id grâce à AuthenticatedListener
+        $userId = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getId();
 
         // je récupère mon user connecté grâce à l'id du user passée en url
         $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
@@ -223,7 +270,7 @@ class UserController extends AbstractController
         }
 
         //j'enregistre la nouvelle date en BDD
-        $thisWedding = $weddingRepository->find($id);
+        $thisWedding = $weddingRepository->find($userWedding);
 
         foreach($contentDecode->wedding as $oneWedding){
             $weddingDate = $oneWedding->date->date;
@@ -254,4 +301,80 @@ class UserController extends AbstractController
        
         return $response;
     }
+
+    // /**
+    //  * @Route("/brides/profil/edit/{userId}/{id}", name="editProfil", methods={"GET", "POST"})
+    //  */
+    // public function editProfil(UserRepository $userRepository, $userId, $id, PersonRepository $personRepository, WeddingRepository $weddingRepository, Request $request)
+    // {
+
+    //     //je récupère les données du front dans l'objet request.
+    //     $content = $request->getContent();
+    //     $contentDecode = json_decode($content);
+
+    //     // je récupère mon user connecté grâce à l'id du user passée en url
+    //     $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
+
+    //     if (!$thisUser){
+            
+    //         $data = 
+    //         [
+    //             'message' => 'Le user id n\'existe pas.'
+    //         ]
+    //         ;
+            
+    //         $response = new JsonResponse($data, 400);
+        
+    //         return $response;
+    //     }
+
+    //     $entityManager = $this->getDoctrine()->getManager();
+        
+        
+    //     foreach ($contentDecode->thisUser as $thisUser){
+    //         //ajouter la modif d'email
+    //         $user = $userRepository->find($userId);
+    //         $user->setEmail($thisUser->email);
+    //         $entityManager->persist($user);
+    //     }
+
+    //     foreach ($contentDecode->newlyweds as $newlywedDecode){
+    //         $newlywed = $personRepository->find($newlywedDecode->id);
+    //         $newlywed->setFirstname($newlywedDecode->firstname);
+    //         $newlywed->setLastname($newlywedDecode->lastname);
+    //         $entityManager->persist($newlywed);
+    //     }
+
+    //     //j'enregistre la nouvelle date en BDD
+    //     $thisWedding = $weddingRepository->find($id);
+
+    //     foreach($contentDecode->wedding as $oneWedding){
+    //         $weddingDate = $oneWedding->date->date;
+    //         $createDate = new DateTime($weddingDate);
+    //         $finalDate = $createDate->format('Y-m-d');
+    //         // dd($finalDate);
+    //         $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $finalDate));
+    //         $entityManager->persist($thisWedding);
+
+    //     }   
+       
+
+    //     $entityManager->flush();
+
+    //     // $newlyweds = $personRepository->findByNewlyweds($id);
+    //     // $thisWeddingArray = $weddingRepository->findThisWedding($id);
+
+    //     $data = 
+    //         [
+    //             // 'thisUser' => $thisUser,
+    //             // 'newlyweds' => $newlyweds,
+    //             // 'wedding' => $thisWeddingArray
+    //             'message' => 'La modification a bien été prise en compte.'
+    //         ]
+    //     ;
+
+    //     $response = new JsonResponse($data, 200);
+       
+    //     return $response;
+    // }
 }
