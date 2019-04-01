@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\PersonRepository;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
 * @Route("/brides/mail/", name="mail_")
@@ -22,7 +23,7 @@ class MailController extends AbstractController
     /**
      * @Route("send", name="send", methods={"POST"})
      */
-    public function sendEmail(GuestGroupRepository $ggRepo, Request $request, \Swift_Mailer $mailer, PersonRepository $pRepo, UserRepository $userRepo)
+    public function sendEmail(GuestGroupRepository $ggRepo, Request $request, \Swift_Mailer $mailer, PersonRepository $pRepo, UserRepository $userRepo, EntityManagerInterface $em)
     {
         $data = json_decode($request->getContent());
 
@@ -65,6 +66,10 @@ class MailController extends AbstractController
             );
 
             $mailer->send($invitationEmail);
+
+            $guestGroup->setMailStatus(true);
+            $em->persist($guestGroup);
+
             }
         }
 
