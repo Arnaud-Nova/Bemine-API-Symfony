@@ -157,23 +157,28 @@ class GuestGroupController extends AbstractController
     /**
      * @Route("/brides/group/edit", name="edit_group", requirements={"id"="\d+"}, methods={"POST"})
      */
-    public function editGroup(GuestGroupRepository $guestGroupRepository, Request $request)
+    public function editGroup(GuestGroupRepository $guestGroupRepository, Request $request, UserRepository $userRepository)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
+        // récupération du wedding correspondant au user grâce à AuthenticatedListener
+        $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+
         //je récupère le guestGroup 
         $guestGroup = $guestGroupRepository->find($contentDecode->id);   //groupId modifié en id
         
         if (!$guestGroup){
-            $data = 
-            [
-                'message' => 'Le guestGroupId n\'existe pas'
-            ]
-            ;
+            $message = 'Le guestGroupId n\'existe pas';
 
-            $response = new JsonResponse($data, 400);
+            $response = new JsonResponse($message, 400);
+            return $response;
+
+        }elseif ($userWedding->getId() != $guestGroup->getWedding()->getId()) {
+            $message = 'Le guestGroupId donné n\'est pas relié au wedding du user connecté';
+
+            $response = new JsonResponse($message, 400);
         
             return $response;
         }
