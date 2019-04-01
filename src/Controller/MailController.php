@@ -68,6 +68,7 @@ class MailController extends AbstractController
             $mailer->send($invitationEmail);
 
             $guestGroup->setMailStatus(true);
+            dd($guestGroup);
             $em->persist($guestGroup);
 
             }
@@ -93,45 +94,22 @@ class MailController extends AbstractController
     public function showEmail(UserRepository $userRepo, GuestGroupRepository $ggRepo, Request $request, \Swift_Mailer $mailer, PersonRepository $pRepo)
     {
 
-        $data = json_decode($request->getContent());
-
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
         
-        $guestGroupsId = $data->listMailing;
-
-        $i = 0;
-        foreach ($guestGroupsId as $id) {
-            $guestGroup = $ggRepo->findOneBy(['id' => $id]);
-            if (!$guestGroup) {
-                $errorsMessage[] = 'Pas de groupe correspondant à cet id : ' . $id;
-            } elseif ($userWedding != $guestGroup->getWedding()) {
-                $errorsMessage[] = 'Le groupe ' . $id . ' ne fait pas parti de ce mariage';
-            } elseif ($i < 1) {
-
-            $recipient = $guestGroup->getEmail();
-            $newlyweds = $pRepo->findBy([
-                'wedding' => $userWedding,
-                'newlyweds' =>true
-            ]);
-            $i++;
-            } 
-        }
-
-        if (!empty($errorsMessage)) {
-            $response = new JsonResponse($errorsMessage, 400);
-       
-            return $response;
-
-        }
-
+        $newlyweds = $pRepo->findBy([
+            'wedding' => $userWedding,
+            'newlyweds' =>true
+        ]);
+        
+        $preview['slugUrl'] = 'preview';
         return $this->render(
             'mail/invitation.html.twig', [
                 'newlywed1' => $newlyweds[0],
                 'newlywed2' => $newlyweds[1],
                 'wedding' => $userWedding,
-                'guestGroup' => $guestGroup,
+                'guestGroup' => $preview,
                 ]
             );
     }
