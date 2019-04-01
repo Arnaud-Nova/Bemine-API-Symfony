@@ -115,7 +115,7 @@ class ReceptionTableController extends AbstractController
         $table = $receptionTableRepository->find($contentDecode->id);
 
         if (!$table){
-            $message = 'Il n\'y a pas de table avec l\'id correspondant.';
+            $message = "Il n'existe pas de table avec l'id $contentDecode->id";
                 
             $response = new JsonResponse($message, 400);
        
@@ -142,6 +142,45 @@ class ReceptionTableController extends AbstractController
         $tableId = $table->getId();
         // dd($oneTable);
         $message = "La table avec id : $tableId a bien été modifiée.";
+        $response = new JsonResponse($message, 200);
+        
+        return $response;
+    }
+
+     /**
+     * @Route("delete", name="delete", methods={"DELETE"})
+     */
+    public function delete(Request $request, UserRepository $userRepository, ReceptionTableRepository $receptionTableRepository, EntityManagerInterface $em)
+    {
+        //je récupère les données du front dans l'objet request.
+        $content = $request->getContent();
+        $contentDecode = json_decode($content);
+
+        // récupération du wedding correspondant au user grâce à AuthenticatedListener
+        $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+
+        $table = $receptionTableRepository->find($contentDecode->id);
+
+        if (!$table){
+            $message = "Il n'existe pas de table avec l'id $contentDecode->id";
+                
+            $response = new JsonResponse($message, 400);
+       
+            return $response;
+
+        } elseif($userWedding->getId() != $receptionTableRepository->find($contentDecode->id)->getWedding()->getId()){
+            $message = 'L\'id de la table n\'appartient pas au mariage du user connecté';
+                
+            $response = new JsonResponse($message, 400);
+       
+            return $response;
+        }
+       
+
+        $em->remove($table);
+        $em->flush();
+        
+        $message = "La table a bien été supprimée.";
         $response = new JsonResponse($message, 200);
         
         return $response;
