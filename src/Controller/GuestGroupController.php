@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Utils\RandomString;
 
 class GuestGroupController extends AbstractController
 {
@@ -20,7 +21,7 @@ class GuestGroupController extends AbstractController
     /**
      * @Route("/brides/group/new", name="newGroup", methods={"POST"})
      */
-    public function newGroup(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, EventRepository $eventRepository, GuestGroupRepository $guestGroupRepository, UserRepository $userRepository)
+    public function newGroup(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, EventRepository $eventRepository, GuestGroupRepository $guestGroupRepository, UserRepository $userRepository, RandomString $rS)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
@@ -52,6 +53,7 @@ class GuestGroupController extends AbstractController
 
         $guestGroup = new GuestGroup();
         $guestGroup->setWedding($wedding);
+        $guestGroup->setSlugUrl($rS->random());
 
         //j'assigne les events au groupe
         $events = $eventRepository->findEventsByWedding($userWedding);

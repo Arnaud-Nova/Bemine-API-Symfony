@@ -23,11 +23,6 @@ class Event
      */
     private $wedding;
 
-    // /**
-    //  * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="events")
-    //  */
-    // private $event;
-
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -96,18 +91,6 @@ class Event
     public function setWedding(?Wedding $wedding): self
     {
         $this->wedding = $wedding;
-
-        return $this;
-    }
-
-    public function getEvent(): ?Event
-    {
-        return $this->event;
-    }
-
-    public function setEvent(?Event $event): self
-    {
-        $this->event = $event;
 
         return $this;
     }
