@@ -29,7 +29,7 @@ class MailController extends AbstractController
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
-        $guestGroupsId = $data->list_mailing;
+        $guestGroupsId = $data->listMailing;
         $messages = [];
 
         
@@ -94,7 +94,7 @@ class MailController extends AbstractController
         $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
         
-        $guestGroupsId = $data->list_mailing;
+        $guestGroupsId = $data->listMailing;
 
         $i = 0;
         foreach ($guestGroupsId as $id) {
