@@ -30,7 +30,7 @@ class WeddingController extends AbstractController
         $eventsWedding = $eventRepository->findThisWedding($userWedding);
         // $newlyweds = $personRepository->findByNewlyweds($id);
         // $thisWedding = $weddingRepository->findThisWedding($id);
-        
+                
         $data = 
             [
              'events' => $eventsWedding,
@@ -57,8 +57,9 @@ class WeddingController extends AbstractController
 
         $eventsWedding = $eventRepository->findThisWedding($userWedding);
         
-
+        
         foreach ($contentDecode->events as $oneEventDecode){
+            
             $weddingEvent = $eventRepository->find($oneEventDecode->id);
             if (!$weddingEvent){
                 $message = 'Il n\'y a pas d\'event avec l\'id correspondant.';
@@ -82,32 +83,40 @@ class WeddingController extends AbstractController
                 if ($oneEventDecode->city){
                     $weddingEvent->setCity($oneEventDecode->city);
                 }
-                if ($oneEventDecode->schedule){
+                //    dd($oneEventDecode->schedule);
+                if (isset($oneEventDecode->schedule->date)){
+                
+                    $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d', $oneEventDecode->schedule->date));
+                } else {
                     $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d', $oneEventDecode->schedule));
                 }
+
+               
+                // dd($oneEventDecode->schedule->date->format('Y-m-d'));
                 if ($oneEventDecode->hour){
                     $weddingEvent->setHour($oneEventDecode->hour);
                 }
                 if ($oneEventDecode->informations){
                     $weddingEvent->setInformations($oneEventDecode->informations);
                 }
-                $weddingEvent->setActive($oneEventDecode->active);
-        
+                if ($oneEventDecode->active){
+                    $weddingEvent->setActive($oneEventDecode->active);
+                }
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($weddingEvent);
                 $entityManager->flush();
-
-                $eventsWedding = $eventRepository->findThisWedding($userWedding);
-        
-                $data = 
-                    [
-                    'events' => $eventsWedding,
-                    ]
-                ;
-                $response = new JsonResponse($data, 200);
-               
-                return $response;
             }
-        }
+        }         
+
+        $eventsWedding = $eventRepository->findThisWedding($userWedding);
+        
+        $data = 
+            [
+            'events' => $eventsWedding,
+            ]
+        ;
+        $response = new JsonResponse($data, 200);
+       
+        return $response;
     }
 }

@@ -19,6 +19,41 @@ class ReceptionTableRepository extends ServiceEntityRepository
         parent::__construct($registry, ReceptionTable::class);
     }
 
+    /**
+     * 
+     */
+    public function findTablesByWedding($userWedding)
+    {
+        $qb = $this->createQueryBuilder('rt')
+            ->select('rt')
+            ->leftJoin('rt.wedding', 'w')
+            ->where('w.id = :userWedding')
+            ->setParameter('userWedding', $userWedding)
+            ->getQuery()
+            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
+
+    /**
+     * 
+     */
+    public function findOneTableById($id)
+    {
+        $qb = $this->createQueryBuilder('rt')
+            ->select('rt', 'p')
+            ->leftJoin('rt.people', 'p')
+            ->where('rt.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
+
+
     // /**
     //  * @return ReceptionTable[] Returns an array of ReceptionTable objects
     //  */
