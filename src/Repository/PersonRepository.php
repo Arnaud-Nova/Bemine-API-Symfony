@@ -102,6 +102,23 @@ class PersonRepository extends ServiceEntityRepository
     /**
      * 
      */
+    public function findPlanList($id)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p')
+            // ->leftJoin('p.guestGroup', 'gg')
+            ->where('p.wedding = :myId')
+            ->setParameter('myId', $id)
+            ->getQuery()
+            ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
+
+    /**
+     * 
+     */
     public function findByNewlyweds($id)
     {
         $qb = $this->createQueryBuilder('p')
