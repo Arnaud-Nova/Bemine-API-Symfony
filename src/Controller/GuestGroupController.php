@@ -30,38 +30,27 @@ class GuestGroupController extends AbstractController
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
-        $wedding = $weddingRepository->find($userWedding);
-        
-        if (!$wedding){
-            $data = 
-            [
-                'message' => 'Le wedding id n\'existe pas.'
-            ]
-            ;
-            
-            $response = new JsonResponse($data, 400);
-        
-            return $response;
-        }
-
         $person = new Person();
         $person->setLastname($contentDecode->lastname);
         $person->setFirstname($contentDecode->firstname);
-        $person->setWedding($wedding);
+        $person->setWedding($userWedding);
         $person->setNewlyweds(0);
         $person->setAttendance(0);
 
         $guestGroup = new GuestGroup();
-        $guestGroup->setWedding($wedding);
+        $guestGroup->setWedding($userWedding);
         $guestGroup->setSlugUrl($rS->random());
 
-        //j'assigne les events au groupe
-        $events = $eventRepository->findEventsByWedding($userWedding);
+        $message = [];
 
         foreach ($contentDecode->events as $eventId=>$eventValue){
             if ($eventValue === true){
                 $thisEvent = $eventRepository->find($eventId);
-                $guestGroup->addEvent($thisEvent);
+                if ($thisEvent->getWedding == $userWedding) {
+                    $guestGroup->addEvent($thisEvent);
+                } else {
+                    $message[] = 'L\'event avec l\'id ' . $eventId . 'ne correspond pas à ce mariage';
+                }
             }
         }
 
@@ -69,21 +58,12 @@ class GuestGroupController extends AbstractController
         $entityManager->persist($person);
         $guestGroup->setContactPerson($person);
 
-        $alreayUser = $guestGroupRepository->findByEmail($contentDecode->email);
-        if ($alreayUser){
-            $data = 
-            [
-                'message' => 'l\'email du user existe déjà.'
-            ]
-            ;
-
-            $response = new JsonResponse($data, 400);
-        
-            return $response;
-            
+        $alreadyUsedEmail = $guestGroupRepository->findByEmail($contentDecode->email);
+        if ($alreadyUsedEmail){
+            $message[] = 'l\'email du group existe déjà.';
         }
 
-        if ($contentDecode->email){
+        if ($contentDecode->email) {
             $guestGroup->setEmail($contentDecode->email);
         };
 
@@ -96,7 +76,7 @@ class GuestGroupController extends AbstractController
             $addPerson = new Person();
             $addPerson->setLastname($person->lastname);
             $addPerson->setFirstname($person->firstname);
-            $addPerson->setWedding($wedding);
+            $addPerson->setWedding($userWedding);
             $addPerson->setNewlyweds(0);
             $addPerson->setGuestGroup($guestGroup);
             $addPerson->setAttendance(0);
@@ -106,14 +86,14 @@ class GuestGroupController extends AbstractController
 
         $entityManager->flush();
 
-        // $guestGroupId = $guestGroup->getId();
-        // $guestGroupCreated = $guestGroupRepository->findByGuestGroupIdQueryBuilder($guestGroupId);
+        if (!empty($message)) {
+            $httpCode = 400;
+        } else {
+            $httpCode = 200;
+            $message[] = 'Le group a bien été ajouté';
+        }
 
-        // $eventsType = $eventRepository->findEventsByWedding($id);
-
-        $message = 'Le group a bien été ajouté';
-
-        $response = new JsonResponse($message, 200);       
+        $response = new JsonResponse($message, $httpCode);       
         return $response;
 
     }

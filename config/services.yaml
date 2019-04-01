@@ -34,7 +34,7 @@ services:
         tags: [serializer.normalizer]
 
     random_string_generator:
-        class: App\Utils\RadomString
+        class: App\Utils\RandomString
     
     acme_api.event.jwt_authenticated_listener:
         class: App\EventListener\AuthenticatedListener

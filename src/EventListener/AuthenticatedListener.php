@@ -3,7 +3,6 @@
 namespace App\EventListener;
 
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTAuthenticatedEvent;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class AuthenticatedListener
