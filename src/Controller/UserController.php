@@ -185,43 +185,6 @@ class UserController extends AbstractController
         return $response;
     }
 
-    // /**
-    //  * @Route("/brides/profil/{userId}/{id}", name="profil", methods={"GET"})
-    //  */
-    // public function profil(UserRepository $userRepository, $userId, $id, PersonRepository $personRepository, WeddingRepository $weddingRepository)
-    // {
-    //     // je récupère mon user connecté grâce à l'id du user passée en url
-    //     $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
-        
-    //     if (!$thisUser){
-            
-    //         $data = 
-    //         [
-    //             'message' => 'Le user id n\'existe pas.'
-    //         ]
-    //         ;
-            
-    //         $response = new JsonResponse($data, 400);
-        
-    //         return $response;
-    //     }
-        
-    //     $newlyweds = $personRepository->findByNewlyweds($id);
-    //     $thisWeddingArray = $weddingRepository->findThisWedding($id);
-
-    //     $data = 
-    //         [
-    //             'thisUser' => $thisUser,
-    //             'newlyweds' => $newlyweds,
-    //             'wedding' => $thisWeddingArray
-    //         ]
-    //     ;
-
-    //     $response = new JsonResponse($data, 200);
-       
-    //     return $response;
-    // }
-
     /**
      * @Route("/brides/profil/edit", name="editProfil", methods={"GET", "POST"})
      */
@@ -254,31 +217,59 @@ class UserController extends AbstractController
 
         $entityManager = $this->getDoctrine()->getManager();
         
-        
+       
         foreach ($contentDecode->thisUser as $thisUser){
-            //ajouter la modif d'email
-            $user = $userRepository->find($userId);
-            $user->setEmail($thisUser->email);
-            $entityManager->persist($user);
+            if ($userId != $thisUser->id){
+                $message = 'Le user Id envoyé ne correspond pas au user id du user connecté';
+                        
+                $response = new JsonResponse($message, 400);
+            
+                return $response;
+            } else {
+                //ajouter la modif d'email
+                $user = $userRepository->find($userId);
+                $user->setEmail($thisUser->email);
+                $entityManager->persist($user);
+            }
         }
+        
 
         foreach ($contentDecode->newlyweds as $newlywedDecode){
             $newlywed = $personRepository->find($newlywedDecode->id);
-            $newlywed->setFirstname($newlywedDecode->firstname);
-            $newlywed->setLastname($newlywedDecode->lastname);
-            $entityManager->persist($newlywed);
+            
+            if ($userWedding->getId() != $newlywed->getWedding()->getId()){
+                $message = 'Les newlyweds ne font pas partie du mariage du user connecté';
+                        
+                $response = new JsonResponse($message, 400);
+            
+                return $response;
+            } else {
+                
+                $newlywed->setFirstname($newlywedDecode->firstname);
+                $newlywed->setLastname($newlywedDecode->lastname);
+                $entityManager->persist($newlywed);
+            }
         }
 
         //j'enregistre la nouvelle date en BDD
         $thisWedding = $weddingRepository->find($userWedding);
 
         foreach($contentDecode->wedding as $oneWedding){
-            $weddingDate = $oneWedding->date->date;
-            $createDate = new DateTime($weddingDate);
-            $finalDate = $createDate->format('Y-m-d');
-            // dd($finalDate);
-            $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $finalDate));
-            $entityManager->persist($thisWedding);
+            if ($thisWedding->getId() != $oneWedding->id){
+                $message = 'L\'id du mariage envoyé ne correspond pas à l \'id du mariage du user connecté';
+                        
+                $response = new JsonResponse($message, 400);
+            
+                return $response;
+            } else {
+                $weddingDate = $oneWedding->date->date;
+                $createDate = new DateTime($weddingDate);
+                $finalDate = $createDate->format('Y-m-d');
+                // dd($finalDate);
+                $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $finalDate));
+                $entityManager->persist($thisWedding);
+            }
+                
 
         }   
        
