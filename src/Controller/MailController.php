@@ -96,7 +96,6 @@ class MailController extends AbstractController
 
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
-
         
         $newlyweds = $pRepo->findBy([
             'wedding' => $userWedding,
@@ -104,6 +103,7 @@ class MailController extends AbstractController
         ]);
         
         $preview['slugUrl'] = 'preview';
+
         return $this->render(
             'mail/invitation.html.twig', [
                 'newlywed1' => $newlyweds[0],
@@ -113,5 +113,4 @@ class MailController extends AbstractController
                 ]
             );
     }
-
 }
