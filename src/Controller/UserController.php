@@ -225,7 +225,7 @@ class UserController extends AbstractController
         
        
         foreach ($contentDecode->thisUser as $thisUser){
-            if ($userId != $thisUser->id){
+            if ($userId != $thisUser->userId){
                 $message = 'Le user Id envoyé ne correspond pas au user id du user connecté';
                         
                 $response = new JsonResponse($message, 400);
