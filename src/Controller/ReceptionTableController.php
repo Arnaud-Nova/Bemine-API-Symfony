@@ -32,4 +32,25 @@ class ReceptionTableController extends AbstractController
         
         return $response;
     }
+
+    /**
+     * @Route("show", name="show", methods={"POST"})
+     */
+    public function show(Request $request, UserRepository $userRepository, ReceptionTableRepository $receptionTableRepository)
+    {
+        //je récupère les données du front dans l'objet request.
+        $content = $request->getContent();
+        $contentDecode = json_decode($content);
+
+        // récupération du wedding correspondant au user grâce à AuthenticatedListener
+        $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+
+        $oneTable = $receptionTableRepository->findOneTableById($contentDecode->id);
+
+        // dd($oneTable);
+        $data = $oneTable;
+        $response = new JsonResponse($data, 200);
+        
+        return $response;
+    }
 }
