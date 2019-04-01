@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\ReceptionTable;
+use Doctrine\ORM\EntityManager;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReceptionTableRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -46,10 +49,53 @@ class ReceptionTableController extends AbstractController
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
         $oneTable = $receptionTableRepository->findOneTableById($contentDecode->id);
+        
+        if (!$oneTable){
+            $message = 'Il n\'y a pas de table avec l\'id correspondant.';
+                
+            $response = new JsonResponse($message, 400);
+       
+            return $response;
 
+        } elseif($userWedding->getId() != $receptionTableRepository->find($contentDecode->id)->getWedding()->getId()){
+            $message = 'L\'id de la table n\'appartient pas au mariage du user connecté';
+                
+            $response = new JsonResponse($message, 400);
+       
+            return $response;
+        }
+        
         // dd($oneTable);
         $data = $oneTable;
         $response = new JsonResponse($data, 200);
+        
+        return $response;
+    }
+
+     /**
+     * @Route("new", name="new", methods={"POST"})
+     */
+    public function new(Request $request, UserRepository $userRepository, ReceptionTableRepository $receptionTableRepository, EntityManagerInterface $em)
+    {
+        //je récupère les données du front dans l'objet request.
+        $content = $request->getContent();
+        $contentDecode = json_decode($content);
+
+        // récupération du wedding correspondant au user grâce à AuthenticatedListener
+        $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+
+        $table = new ReceptionTable();
+        $table->setWedding($userWedding);
+        $table->setName($contentDecode->name);
+        $table->setTotalSeats($contentDecode->totalSeats);
+
+        $em->persist($table);
+        $em->flush();
+        
+
+        // dd($oneTable);
+        $message = 'La table a bien été ajoutée.';
+        $response = new JsonResponse($message, 200);
         
         return $response;
     }
