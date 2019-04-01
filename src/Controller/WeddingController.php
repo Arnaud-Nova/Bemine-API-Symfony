@@ -81,42 +81,60 @@ class WeddingController extends AbstractController
 
         $eventsWedding = $eventRepository->findThisWedding($userWedding);
         
+
         foreach ($contentDecode->events as $oneEventDecode){
             $weddingEvent = $eventRepository->find($oneEventDecode->id);
+            if (!$weddingEvent){
+                $message = 'Il n\'y a pas d\'event avec l\'id correspondant.';
+                
+                $response = new JsonResponse($message, 400);
+           
+                return $response;
+            } elseif ($userWedding != $weddingEvent->getWedding()) {
+                $message = 'L\'événement ne correspond pas au bon mariage.';
+                
+                $response = new JsonResponse($message, 400);
+           
+                return $response;
+            } else {
+                if ($oneEventDecode->address){
+                    $weddingEvent->setAddress($oneEventDecode->address);
+                }
+                if ($oneEventDecode->postcode){
+                    $weddingEvent->setPostcode($oneEventDecode->postcode);
+                }
+                if ($oneEventDecode->city){
+                    $weddingEvent->setCity($oneEventDecode->city);
+                }
+                if ($oneEventDecode->schedule){
+                    $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d H:i:s', $oneEventDecode->schedule));
+                }
+                if ($oneEventDecode->informations){
+                    $weddingEvent->setInformations($oneEventDecode->informations);
+                }
+                $weddingEvent->setActive($oneEventDecode->active);
+        
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($weddingEvent);
+                $entityManager->flush();
 
-            if ($oneEventDecode->address){
-                $weddingEvent->setAddress($oneEventDecode->address);
+                $eventsWedding = $eventRepository->findThisWedding($userWedding);
+        
+                $data = 
+                    [
+                    'events' => $eventsWedding,
+                    ]
+                ;
+                $response = new JsonResponse($data, 200);
+               
+                return $response;
             }
-            if ($oneEventDecode->postcode){
-                $weddingEvent->setPostcode($oneEventDecode->postcode);
-            }
-            if ($oneEventDecode->city){
-                $weddingEvent->setCity($oneEventDecode->city);
-            }
-            if ($oneEventDecode->schedule){
-                $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d H:i:s', $oneEventDecode->schedule));
-            }
-            if ($oneEventDecode->informations){
-                $weddingEvent->setInformations($oneEventDecode->informations);
-            }
-            $weddingEvent->setActive($oneEventDecode->active);
-    
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($weddingEvent);
+                
         }
 
-        $entityManager->flush();
-
-        $eventsWedding = $eventRepository->findThisWedding($userWedding);
         
-        $data = 
-            [
-             'events' => $eventsWedding,
-            ]
-        ;
-        $response = new JsonResponse($data, 200);
+
        
-        return $response;
     }
 
     //  /**
