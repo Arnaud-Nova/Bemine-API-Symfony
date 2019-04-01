@@ -44,7 +44,7 @@ class Event
     private $city;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="date", nullable=true)
      */
     private $schedule;
 
