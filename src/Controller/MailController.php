@@ -68,8 +68,8 @@ class MailController extends AbstractController
             $mailer->send($invitationEmail);
 
             $guestGroup->setMailStatus(true);
-            dd($guestGroup);
-            $em->persist($guestGroup);
+            // dd($guestGroup);
+            $em->flush();
 
             }
         }
