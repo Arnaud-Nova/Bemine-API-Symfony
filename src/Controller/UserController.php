@@ -171,6 +171,12 @@ class UserController extends AbstractController
         
         $newlyweds = $personRepository->findByNewlyweds($userWedding);
         $thisWeddingArray = $weddingRepository->findThisWedding($userWedding);
+    //     $renderThisWedding = [];
+
+    //    $renderThisWedding['id'] = $thisWeddingArray[0]['id'];
+    //    $renderThisWedding['date'] = $thisWeddingArray[0]['date']->format('Y-m-d');
+        // dd($renderThisWedding);
+
 
         $data = 
             [

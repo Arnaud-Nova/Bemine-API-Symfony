@@ -85,6 +85,9 @@ class WeddingController extends AbstractController
                 if ($oneEventDecode->schedule){
                     $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d H:i:s', $oneEventDecode->schedule));
                 }
+                if ($oneEventDecode->hour){
+                    $weddingEvent->setHour($oneEventDecode->hour);
+                }
                 if ($oneEventDecode->informations){
                     $weddingEvent->setInformations($oneEventDecode->informations);
                 }

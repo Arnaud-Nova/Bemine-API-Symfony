@@ -73,6 +73,11 @@ class Event
      */
     private $name;
 
+    /**
+     * @ORM\Column(type="string", length=30, nullable=true)
+     */
+    private $hour;
+
     public function __construct()
     {
         $this->guestGroups = new ArrayCollection();
@@ -227,6 +232,18 @@ class Event
     public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getHour(): ?string
+    {
+        return $this->hour;
+    }
+
+    public function setHour(?string $hour): self
+    {
+        $this->hour = $hour;
 
         return $this;
     }
