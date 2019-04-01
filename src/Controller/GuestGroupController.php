@@ -224,7 +224,7 @@ class GuestGroupController extends AbstractController
 
             $response = new JsonResponse($message, 400);
             return $response;
-            
+
         } elseif ($userWedding->getId() != $guestGroup->getWedding()->getId()) {
             $message = 'Le guestGroupId donné n\'est pas relié au wedding du user connecté';
 
@@ -252,33 +252,32 @@ class GuestGroupController extends AbstractController
     }
 
      /**
-     * @Route("/brides/group/mail/wedding/{id}", name="index_mail", requirements={"id"="\d+"}, methods={"GET","POST"})
+     * @Route("/brides/group/mail", name="index_mail", methods={"GET","POST"})
      */
-    public function indexMail(GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, $id, WeddingRepository $weddingRepository)
+    public function indexMail(Request $request, GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, WeddingRepository $weddingRepository, UserRepository $userRepository)
     {
-        $wedding = $weddingRepository->find($id);
+        // récupération du wedding correspondant au user grâce à AuthenticatedListener
+        $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+
+        $wedding = $weddingRepository->find($userWedding);
         
         if (!$wedding){
-            $data = 
-            [
-                'message' => 'Le wedding id n\'existe pas.'
-            ]
-            ;
+            $message = 'Le wedding id n\'existe pas.';
             
-            $response = new JsonResponse($data, 400);
+            $response = new JsonResponse($message, 400);
         
             return $response;
         }
         
         // $contactsGroup = $guestGroupRepository->findGroupsQueryBuilder($id);
-        $groups = $guestGroupRepository->findGroupAndContactPerson($id);
+        $groups = $guestGroupRepository->findGroupAndContactPerson($userWedding);
 
         //mariés exclus de ces comptes
-        $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($id);
-        $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($id);
-        $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($id);
+        $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($userWedding);
+        $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($userWedding);
+        $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($userWedding);
         //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
-        $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($id);
+        $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($userWedding);
 
         // $mails = $mailRepository->findAllQueryBuilder();
         
