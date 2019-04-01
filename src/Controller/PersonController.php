@@ -235,4 +235,43 @@ class PersonController extends AbstractController
         return $response;
     }
 
+    /**
+     * @Route("plan/list", name="plan_list", requirements={"id"="\d+"}, methods={"GET"})
+     */
+    public function planList(PersonRepository $personRepository, WeddingRepository $weddingRepository, UserRepository $userRepo, Request $request)
+    {
+
+        // récupération du wedding correspondant au user grâce à AuthenticatedListener
+        $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+        $weddingId = $userWedding->getId();
+
+        
+        $guests = $personRepository->findPlanList($weddingId);
+        
+
+        if (!$weddingRepository->find($weddingId)){
+            $message = 'Le wedding id n\'existe pas';
+
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+
+         if (!$guests){
+            $message = 'Vous n\'avez pas encore d\'invités ajoutés à votre mariage';
+
+            $response = new Response($message, 404);
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+        }
+        
+        $data = $guests;
+
+        $response = new JsonResponse($data, 200);
+       
+        return $response;
+    }
+
 }
