@@ -30,8 +30,6 @@ class PersonController extends AbstractController
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
         $weddingId = $userWedding->getId();
-        dump($userWedding);
-
         
         $guests = $personRepository->findAllQueryBuilder($weddingId);
          //mariés exclus de ces comptes
@@ -40,7 +38,6 @@ class PersonController extends AbstractController
         $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($weddingId);
         //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($weddingId);
-        // dd($guests);
 
         if (!$weddingRepository->find($weddingId)){
             $message = 'Le wedding id n\'existe pas';
