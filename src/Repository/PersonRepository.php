@@ -57,7 +57,7 @@ class PersonRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('p')
             ->select('COUNT(p.attendance)')
-            ->where('p.attendance = 0')
+            ->where('p.attendance = 2')
             ->andWhere('p.newlyweds = 0')
             ->andWhere('p.wedding = :myId')
             ->setParameter('myId', $id)
@@ -74,7 +74,7 @@ class PersonRepository extends ServiceEntityRepository
         //problème null n'est pas compté
         $qb = $this->createQueryBuilder('p')
             ->select('COUNT(p.id)')
-            ->where('p.attendance is NULL')
+            ->where('p.attendance = 0')
             ->andWhere('p.newlyweds = 0')
             ->andWhere('p.wedding = :myId')
             ->setParameter('myId', $id)
