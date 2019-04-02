@@ -30,6 +30,7 @@ class ReceptionTableRepository extends ServiceEntityRepository
             ->leftJoin('rt.people', 'p')
             ->where('w.id = :userWedding')
             ->setParameter('userWedding', $userWedding)
+            ->orderBy('rt.id', 'ASC')
             ->getQuery()
             // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
