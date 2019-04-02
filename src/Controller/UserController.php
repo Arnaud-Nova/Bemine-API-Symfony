@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Event;
 use App\Entity\Person;
 use App\Entity\Wedding;
+use App\Entity\ReceptionTable;
 use App\Repository\UserRepository;
 use App\Repository\PersonRepository;
 use App\Repository\WeddingRepository;
@@ -116,11 +117,17 @@ class UserController extends AbstractController
         $personSpouse->setMenu('ADULTE');
         $personSpouse->setWedding($wedding);
         $personSpouse->setAttendance(1);
+
+        //je crée la table représentant le pull d'invités pour le plan de table
+        $tableGuests = new ReceptionTable();
+        $tableGuests->setWedding($wedding);
+        $tableGuests->setName('Liste des invités');
         
         $entityManager->persist($user);
         $entityManager->persist($wedding);
         $entityManager->persist($person);
         $entityManager->persist($personSpouse);
+        $entityManager->persist($tableGuests);
         $entityManager->flush();
         
         //je set mon flash message avec symfo, voir si c'est fait avec react ou pas

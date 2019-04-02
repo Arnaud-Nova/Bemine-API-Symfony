@@ -5,12 +5,14 @@ namespace App\Controller;
 use App\Entity\Person;
 use App\Entity\GuestGroup;
 use App\Utils\RandomString;
+use App\Entity\ReceptionTable;
 use App\Repository\UserRepository;
 use App\Repository\EventRepository;
 use App\Repository\PersonRepository;
 use App\Repository\WeddingRepository;
 use App\Repository\GuestGroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\ReceptionTableRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,7 +24,7 @@ class GuestGroupController extends AbstractController
     /**
      * @Route("/brides/group/new", name="newGroup", methods={"POST"})
      */
-    public function newGroup(Request $request, PersonRepository $personRepository, WeddingRepository $weddingRepository, EventRepository $eventRepository, GuestGroupRepository $guestGroupRepository, UserRepository $userRepository, RandomString $rS)
+    public function newGroup(Request $request, ReceptionTableRepository $receptionTableRepository, PersonRepository $personRepository, WeddingRepository $weddingRepository, EventRepository $eventRepository, GuestGroupRepository $guestGroupRepository, UserRepository $userRepository, RandomString $rS)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
@@ -31,12 +33,20 @@ class GuestGroupController extends AbstractController
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
+        //récupération de la table d'invités initialisée au signup
+        $nameTable = 'Liste des invités';
+        $tableGuestsId = $receptionTableRepository->findTableGuestsId($userWedding, $nameTable);
+        // dd($tableGuestsId);
+        $table = $receptionTableRepository->find($tableGuestsId[0]['id']);
+        
+
         $person = new Person();
         $person->setLastname($contentDecode->lastname);
         $person->setFirstname($contentDecode->firstname);
         $person->setWedding($userWedding);
         $person->setNewlyweds(0);
         $person->setAttendance(0);
+        $person->setReceptionTable($table);
 
         $guestGroup = new GuestGroup();
         $guestGroup->setWedding($userWedding);
@@ -81,9 +91,10 @@ class GuestGroupController extends AbstractController
             $addPerson->setNewlyweds(0);
             $addPerson->setGuestGroup($guestGroup);
             $addPerson->setAttendance(0);
+            $addPerson->setReceptionTable($table);
 
             $entityManager->persist($addPerson);
-        } 
+        }
 
         $entityManager->flush();
 

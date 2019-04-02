@@ -55,6 +55,23 @@ class ReceptionTableRepository extends ServiceEntityRepository
         return $qb->getArrayResult();
     }
 
+    /**
+     * 
+     */
+    public function findTableGuestsId($userWeddding, $nameTable)
+    {
+        $qb = $this->createQueryBuilder('rt')
+            ->select('rt.id')
+            ->where('rt.id = :userWedding')
+            ->andWhere('rt.name = :nameTable')
+            ->setParameter('userWedding', $userWeddding)
+            ->setParameter('nameTable', $nameTable)
+            ->getQuery()
+            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
 
     // /**
     //  * @return ReceptionTable[] Returns an array of ReceptionTable objects
