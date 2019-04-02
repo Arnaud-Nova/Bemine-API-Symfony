@@ -58,13 +58,13 @@ class ReceptionTableRepository extends ServiceEntityRepository
     /**
      * 
      */
-    public function findTableGuestsId($userWeddding, $nameTable)
+    public function findTableGuestsId($userWedding, $nameTable)
     {
         $qb = $this->createQueryBuilder('rt')
             ->select('rt.id')
             ->where('rt.id = :userWedding')
             ->andWhere('rt.name = :nameTable')
-            ->setParameter('userWedding', $userWeddding)
+            ->setParameter('userWedding', $userWedding)
             ->setParameter('nameTable', $nameTable)
             ->getQuery()
             // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
@@ -73,6 +73,24 @@ class ReceptionTableRepository extends ServiceEntityRepository
         return $qb->getArrayResult();
     }
 
+    
+    /**
+     * 
+     */
+    public function findByWeddingTheTableGuests($userWedding, $nameTable)
+    {
+        $qb = $this->createQueryBuilder('rt')
+            ->select('rt')
+            ->where('rt.id = :userWedding')
+            ->andWhere('rt.name = :nameTable')
+            ->setParameter('userWedding', $userWedding)
+            ->setParameter('nameTable', $nameTable)
+            ->getQuery()
+            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
     // /**
     //  * @return ReceptionTable[] Returns an array of ReceptionTable objects
     //  */
