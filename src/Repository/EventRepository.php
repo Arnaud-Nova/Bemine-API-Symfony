@@ -77,6 +77,23 @@ class EventRepository extends ServiceEntityRepository
         return $qb->getArrayResult();
     }
 
+    /**
+     * 
+     */
+    public function findEventsActiveByGroup($slugUrl)
+    {
+        $qb = $this->createQueryBuilder('e')
+            ->select('e')
+            // ->select('we', 'e.name as eventName')
+            ->leftJoin('e.guestGroups', 'gg')
+            ->where('gg.slugUrl = :slugUrl')
+            ->setParameter('slugUrl', $slugUrl)
+            ->getQuery()
+            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
+            ;
+    
+        return $qb->getArrayResult();
+    }
 
     // /**
     //  * @return WeddingEvent[] Returns an array of WeddingEvent objects

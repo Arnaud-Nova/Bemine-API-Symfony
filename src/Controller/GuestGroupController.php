@@ -288,12 +288,10 @@ class GuestGroupController extends AbstractController
         $guestGroupForWebsite = $guestGroupRepository->findGuestGroupForWebsite($slugUrl);
         $thisWedding = $guestGroupRepository->findThisWeddingBySlug($slugUrl);
         $newlyweds = $personRepository->findByNewlywedsForWebsite($thisWedding);
-        $eventsForThisGroup = $eventRepository->findEventsActiveByWedding($thisWedding);
+        $eventsForThisGroup = $eventRepository->findEventsActiveByGroup($slugUrl);
         
         //si besoin de tout avoir au même niveau sauf les people
         // $arrayResult = array_merge($guestGroupForWebsite, $newlyweds, $eventsForThisGroup);
-
-        
 
         if (!$guestGroupForWebsite){
             $message = 'Le guestGroupId n\'existe pas';
@@ -325,20 +323,49 @@ class GuestGroupController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        
         foreach ($contentDecode->attendance as $attendee){
             $person = $personRepository->find($attendee);
-            $person->setAttendance(true);
-            $em->persist($person);
-            // dump($person);
+            if (!$person){
+                $message = 'L\'id de la personne n\'existe pas';
+                $response = new JsonResponse($message, 400);
+        
+                return $response;
+            }else {
+                if ($person->getGuestGroup()->getSlugUrl() != $slugUrl){
+                    // dd($person->getGuestGroup()->getSlugUrl(), $slugUrl);
+                    $message = 'L\'id de la personne ne correspond pas au groupe';
+                    $response = new JsonResponse($message, 400);
+            
+                    return $response;
+                }
+                $person->setAttendance(true);
+                $em->persist($person);
+                // dump($person);
+            }
         }
 
         foreach ($contentDecode->unattendance as $absent){
             // dump($absent);
             $person = $personRepository->find($absent);
-            $person->setAttendance(false);
-            $em->persist($person);
-            // dump($person);
+            
+            if (!$person){
+                $message = 'L\'id de la personne n\'existe pas';
+                $response = new JsonResponse($message, 400);
+        
+                return $response;
+            }else {
+                if ($person->getGuestGroup()->getSlugUrl() != $slugUrl){
+                    // dd($person->getGuestGroup()->getSlugUrl(), $slugUrl);
+                    $message = 'L\'id de la personne ne correspond pas au groupe';
+                    $response = new JsonResponse($message, 400);
+            
+                    return $response;
+                }
+                $person->setAttendance(false);
+                $em->persist($person);
+                // dump($person);
+            }
+            
         }
         // dd($contentDecode->attendance);
         $em->flush();
