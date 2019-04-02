@@ -295,13 +295,9 @@ class GuestGroupController extends AbstractController
         
 
         if (!$guestGroupForWebsite){
-            $data = 
-            [
-                'message' => 'Le guestGroupId n\'existe pas'
-            ]
-            ;
+            $message = 'Le guestGroupId n\'existe pas';
 
-            $response = new JsonResponse($data, 400);
+            $response = new JsonResponse($message, 400);
         
             return $response;
         }
