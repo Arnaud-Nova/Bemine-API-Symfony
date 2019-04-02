@@ -147,6 +147,22 @@ class PersonRepository extends ServiceEntityRepository
     
         return $qb->getQuery()->getArrayResult();
     }
+
+    /**
+     * 
+     */
+    public function findByReceptionTableQueryBuilder($tableGuestId)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p')
+            // ->leftJoin('p.wedding', 'w')
+            ->where('p.receptionTable = :tableGuestId')
+            ->setParameter('tableGuestId', $tableGuestId)
+            ;
+    
+        return $qb->getQuery()->getArrayResult();
+    }
+
     // /**
     //  * @return Person[] Returns an array of Person objects
     //  */
