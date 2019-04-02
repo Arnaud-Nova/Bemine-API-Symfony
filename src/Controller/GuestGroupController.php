@@ -334,7 +334,7 @@ class GuestGroupController extends AbstractController
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
-        foreach ($contentDecode->attendance as $attendee){
+        foreach ($contentDecode->attendanceList as $attendee){
             $person = $personRepository->find($attendee);
             if (!$person){
                 $message = 'L\'id de la personne n\'existe pas';
@@ -355,7 +355,7 @@ class GuestGroupController extends AbstractController
             }
         }
 
-        foreach ($contentDecode->unattendance as $absent){
+        foreach ($contentDecode->unattendanceList as $absent){
             // dump($absent);
             $person = $personRepository->find($absent);
             
