@@ -114,7 +114,7 @@ class GuestGroupRepository extends ServiceEntityRepository
     public function findGuestGroupForWebsite($slugUrl)
     {
         $qb = $this->createQueryBuilder('g')
-            ->select('g.id as groupId', 'g.email as groupEmail', 'p.id', 'p.firstname', 'p.lastname', 'p.attendance')
+            ->select('g.id as groupId', 'g.email', 'IDENTITY (g.contactPerson) as contactPrincipal', 'p.id as personId', 'p.firstname', 'p.lastname', 'p.attendance')
             ->leftJoin('g.people', 'p')
             ->where('g.slugUrl = :slugUrl')
             ->setParameter('slugUrl', $slugUrl)

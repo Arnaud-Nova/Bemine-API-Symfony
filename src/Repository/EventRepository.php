@@ -63,7 +63,7 @@ class EventRepository extends ServiceEntityRepository
     public function findEventsActiveByWedding($id)
     {
         $qb = $this->createQueryBuilder('e')
-            ->select('e.id as eventId', 'e.name as eventName', 'e.active as eventActive')
+            ->select('e.id as eventId', 'e.name as eventName', 'e.active as eventActive', 'e.address', 'e.postcode', 'e.city', 'e.schedule', 'e.hour', 'e.postcode', 'e.map')
             // ->select('we', 'e.name as eventName')
             ->leftJoin('e.wedding', 'w')
             // ->leftJoin('we.event', 'e')
