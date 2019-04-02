@@ -52,7 +52,7 @@ class ReceptionTableController extends AbstractController
             ];
             
         endforeach;
-        
+        // dd($tablesListToSend);
         $data = $tablesListToSend;
         $response = new JsonResponse($data, 200);
         
