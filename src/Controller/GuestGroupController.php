@@ -4,16 +4,17 @@ namespace App\Controller;
 
 use App\Entity\Person;
 use App\Entity\GuestGroup;
+use App\Utils\RandomString;
 use App\Repository\UserRepository;
 use App\Repository\EventRepository;
 use App\Repository\PersonRepository;
 use App\Repository\WeddingRepository;
 use App\Repository\GuestGroupRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Utils\RandomString;
 
 class GuestGroupController extends AbstractController
 {
@@ -312,6 +313,41 @@ class GuestGroupController extends AbstractController
         ;
 
         $response = new JsonResponse($data, 200);       
+        return $response;
+    }
+
+    /**
+     * @Route("/guests/website/form", name="website_form", requirements={"id"="\d+"}, methods={"POST"})
+     */
+    public function websiteForm(UserRepository $userRepository, GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, EventRepository $eventRepository, Request $request, EntityManagerInterface $em)
+    {
+        //je récupère les données du front dans l'objet request.
+        $content = $request->getContent();
+        $contentDecode = json_decode($content);
+
+        
+        foreach ($contentDecode->attendance as $attendee){
+            $person = $personRepository->find($attendee);
+            $person->setAttendance(true);
+            $em->persist($person);
+            // dump($person);
+        }
+
+        foreach ($contentDecode->unattendance as $absent){
+            // dump($absent);
+            $person = $personRepository->find($absent);
+            $person->setAttendance(false);
+            $em->persist($person);
+            // dump($person);
+        }
+        // dd($contentDecode->attendance);
+        $em->flush();
+       
+
+        
+        $message = 'Les modification ont bien été prise en compte';
+
+        $response = new JsonResponse($message, 200);       
         return $response;
     }
 }
