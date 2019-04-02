@@ -92,6 +92,8 @@ class WeddingController extends AbstractController
                     }
                     
                     $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d', $formatDate));
+                } elseif ($oneEventDecode->schedule === null){
+                    
                 } else {
                     if (strlen($oneEventDecode->schedule) > 10) {
                         $formatDate = substr($oneEventDecode->schedule, 0, 10);
@@ -101,6 +103,9 @@ class WeddingController extends AbstractController
                     $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d', $formatDate));
                 }
                 // dd($oneEventDecode);
+                
+                
+                
 
                
                 // dd($oneEventDecode->schedule->date->format('Y-m-d'));
