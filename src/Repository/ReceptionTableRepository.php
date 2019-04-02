@@ -25,8 +25,9 @@ class ReceptionTableRepository extends ServiceEntityRepository
     public function findTablesByWedding($userWedding)
     {
         $qb = $this->createQueryBuilder('rt')
-            ->select('rt')
+            ->select('rt', 'p')
             ->leftJoin('rt.wedding', 'w')
+            ->leftJoin('rt.people', 'p')
             ->where('w.id = :userWedding')
             ->setParameter('userWedding', $userWedding)
             ->getQuery()

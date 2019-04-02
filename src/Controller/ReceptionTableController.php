@@ -29,8 +29,31 @@ class ReceptionTableController extends AbstractController
 
         $tablesList = $receptionTableRepository->findTablesByWedding($userWedding);
 
+        $tablesListToSend = [];
         // dd($tablesList);
-        $data = $tablesList;
+        $i = -1;
+        foreach ($tablesList as $table):
+            $i += 1;
+        
+            $arrayGuestIds = [];
+            foreach ($table['people'] as $guest):
+                // dump($guest['id']);
+                if($guest):
+                    $arrayGuestIds[] = 'guest-'.$guest['id'];
+                endif;
+
+            endforeach;
+
+            $tablesListToSend[$i] = [
+                'id' => 'table-'.$table['id'],
+                'title' => $table['name'],
+                'link' => $table['id'],
+                'guestsIds' => $arrayGuestIds
+            ];
+            
+        endforeach;
+        
+        $data = $tablesListToSend;
         $response = new JsonResponse($data, 200);
         
         return $response;
