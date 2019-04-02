@@ -102,11 +102,6 @@ class WeddingController extends AbstractController
                     }
                     $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d', $formatDate));
                 }
-                // dd($oneEventDecode);
-                
-                
-                
-
                
                 // dd($oneEventDecode->schedule->date->format('Y-m-d'));
                 if ($oneEventDecode->hour){
