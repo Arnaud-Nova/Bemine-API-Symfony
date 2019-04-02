@@ -47,7 +47,7 @@ class GuestGroupController extends AbstractController
         foreach ($contentDecode->events as $eventId=>$eventValue){
             if ($eventValue === true){
                 $thisEvent = $eventRepository->find($eventId);
-                if ($thisEvent->getWedding == $userWedding) {
+                if ($thisEvent->getWedding() == $userWedding) {
                     $guestGroup->addEvent($thisEvent);
                 } else {
                     $message[] = 'L\'event avec l\'id ' . $eventId . 'ne correspond pas à ce mariage';
@@ -317,9 +317,9 @@ class GuestGroupController extends AbstractController
     }
 
     /**
-     * @Route("/guests/website/form", name="website_form", requirements={"id"="\d+"}, methods={"POST"})
+     * @Route("/guests/website/form/{slugUrl}", name="website_form", requirements={"id"="\d+"}, methods={"POST"})
      */
-    public function websiteForm(UserRepository $userRepository, GuestGroupRepository $guestGroupRepository, PersonRepository $personRepository, EventRepository $eventRepository, Request $request, EntityManagerInterface $em)
+    public function websiteForm(UserRepository $userRepository, PersonRepository $personRepository, Request $request, EntityManagerInterface $em, $slugUrl)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
