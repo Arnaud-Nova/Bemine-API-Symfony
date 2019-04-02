@@ -154,7 +154,7 @@ class PersonRepository extends ServiceEntityRepository
     public function findByReceptionTableQueryBuilder($tableGuestId)
     {
         $qb = $this->createQueryBuilder('p')
-            ->select('p.id', 'p.firstname', 'p.lastname')
+            ->select('p')
             // ->leftJoin('p.wedding', 'w')
             ->where('p.receptionTable = :tableGuestId')
             ->setParameter('tableGuestId', $tableGuestId)

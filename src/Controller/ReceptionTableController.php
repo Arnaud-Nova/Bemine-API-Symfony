@@ -63,8 +63,22 @@ class ReceptionTableController extends AbstractController
         $guests = [];
         foreach ($guestsOfTableGuests as $guest):
             $guests[] = [
-                $guest['id'] => ['id' => $guest['id'], 'content' => $guest['firstname'].' '.$guest['lastname']]
-                
+                $guest['id'] => [
+                    'id' => $guest['id'], 
+                    'firstname' => $guest['firstname'],
+                    'lastname' => $guest['lastname'],
+                    'attendance' => $guest['attendance'],
+                    'newlyweds' => $guest['newlyweds'],
+                    'menu' => $guest['menu'],
+                    'allergies' => $guest['allergies'],
+                    'halal' => $guest['halal'],
+                    'noAlcoHol' => $guest['noAlcohol'],
+                    'vegetarian' => $guest['vegetarian'],
+                    'vegan' => $guest['vegan'],
+                    'casher' => $guest['casher'],
+                    'commentAllergies' => $guest['commentAllergies'],
+                    'seatNumber' => $guest['seatNumber']
+                ]
             ];
         endforeach;
         // dd($guests);
