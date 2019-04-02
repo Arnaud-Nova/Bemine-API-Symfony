@@ -30,6 +30,7 @@ class PersonController extends AbstractController
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
         $weddingId = $userWedding->getId();
+        dump($userWedding);
 
         
         $guests = $personRepository->findAllQueryBuilder($weddingId);
