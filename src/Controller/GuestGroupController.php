@@ -349,7 +349,7 @@ class GuestGroupController extends AbstractController
             
                     return $response;
                 }
-                $person->setAttendance(true);
+                $person->setAttendance(1);
                 $em->persist($person);
                 // dump($person);
             }
@@ -372,7 +372,7 @@ class GuestGroupController extends AbstractController
             
                     return $response;
                 }
-                $person->setAttendance(false);
+                $person->setAttendance(2);
                 $em->persist($person);
                 // dump($person);
             }
@@ -380,8 +380,6 @@ class GuestGroupController extends AbstractController
         }
         // dd($contentDecode->attendance);
         $em->flush();
-       
-
         
         $message = 'Les modification ont bien été prise en compte';
 
