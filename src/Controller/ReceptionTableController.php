@@ -60,29 +60,29 @@ class ReceptionTableController extends AbstractController
         // dd($tableGuests);
         $guestsOfTableGuests = $personRepository->findByReceptionTableQueryBuilder($tableGuests);
         // dd($guestsOfTableGuests);
-        $guests = [];
-        foreach ($guestsOfTableGuests as $guest):
-            $guests[] = [
-                $guest['id'] => [
-                    'id' => $guest['id'], 
-                    'firstname' => $guest['firstname'],
-                    'lastname' => $guest['lastname'],
-                    'attendance' => $guest['attendance'],
-                    'newlyweds' => $guest['newlyweds'],
-                    'menu' => $guest['menu'],
-                    'allergies' => $guest['allergies'],
-                    'halal' => $guest['halal'],
-                    'noAlcoHol' => $guest['noAlcohol'],
-                    'vegetarian' => $guest['vegetarian'],
-                    'vegan' => $guest['vegan'],
-                    'casher' => $guest['casher'],
-                    'commentAllergies' => $guest['commentAllergies'],
-                    'seatNumber' => $guest['seatNumber']
-                ]
-            ];
-        endforeach;
-        // dd($guests);
-
+        // $guests = [];
+        // foreach ($guestsOfTableGuests as $guest):
+        //     $guests[] = [
+        //         $guest['id'] => [
+        //             'id' => $guest['id'], 
+        //             'firstname' => $guest['firstname'],
+        //             'lastname' => $guest['lastname'],
+        //             'attendance' => $guest['attendance'],
+        //             'newlyweds' => $guest['newlyweds'],
+        //             'menu' => $guest['menu'],
+        //             'allergies' => $guest['allergies'],
+        //             'halal' => $guest['halal'],
+        //             'noAlcoHol' => $guest['noAlcohol'],
+        //             'vegetarian' => $guest['vegetarian'],
+        //             'vegan' => $guest['vegan'],
+        //             'casher' => $guest['casher'],
+        //             'commentAllergies' => $guest['commentAllergies'],
+        //             'seatNumber' => $guest['seatNumber']
+        //         ]
+        //     ];
+        // endforeach;
+        // // dd($guests);
+        
         $data = [
             'guests' => $guests,
             'tables' => $tablesListToSend
