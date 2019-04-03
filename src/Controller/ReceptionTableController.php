@@ -22,7 +22,7 @@ class ReceptionTableController extends AbstractController
     /**
      * @Route("list", name="list", methods={"GET"})
      */
-    public function list(Request $request, UserRepository $userRepository, ReceptionTableRepository $receptionTableRepository, PersonRepository $personRepository)
+    public function list(Request $request, UserRepository $userRepository, ReceptionTableRepository $receptionTableRepository, PersonRepository $personRepository, EntityManagerInterface $em)
     {
 
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
@@ -32,20 +32,27 @@ class ReceptionTableController extends AbstractController
         $tablesList = $receptionTableRepository->findTablesByWedding($userWedding);
 
         $tablesListToSend = [];
-        
+        // dd($tablesList);
         $i = -1;
+        
         foreach ($tablesList as $table):
             $i += 1;
-            
+            $ii = -1;
             $arrayGuestIds = [];
             foreach ($table['people'] as $guest):
-                
+                $ii += 1;
                 if($guest):
-                    $arrayGuestIds[$guest['seatNumber']] = $guest['id'];
+                    // dump($ii);
+                    $guestPerson = $personRepository->find($guest['id']);
+                    $guestPerson->setSeatNumber($ii);
+                    $em->persist($guestPerson);
+                    $em->flush();
+                   
+                    $arrayGuestIds[$guestPerson->getSeatNumber()] = $guestPerson->getId();
                 endif;
-
+               
             endforeach;
-            
+            // dd($arrayGuestIds);
            
             $tablesListToSend[$i] = [
                 'id' => 'table-'.$table['id'],
@@ -166,7 +173,7 @@ class ReceptionTableController extends AbstractController
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
-        dd($contentDecode->guestIds);
+        // dd($contentDecode->guestIds);
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
