@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\ReceptionTable;
 use Doctrine\ORM\EntityManager;
 use App\Repository\UserRepository;
+use App\Repository\PersonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReceptionTableRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,12 +22,13 @@ class ReceptionTableController extends AbstractController
     /**
      * @Route("list", name="list", methods={"GET"})
      */
-    public function list(Request $request, UserRepository $userRepository, ReceptionTableRepository $receptionTableRepository)
+    public function list(Request $request, UserRepository $userRepository, ReceptionTableRepository $receptionTableRepository, PersonRepository $personRepository)
     {
 
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
+        //je crée la liste des tables
         $tablesList = $receptionTableRepository->findTablesByWedding($userWedding);
 
         $tablesListToSend = [];
@@ -39,7 +41,7 @@ class ReceptionTableController extends AbstractController
             foreach ($table['people'] as $guest):
                 // dump($guest['id']);
                 if($guest):
-                    $arrayGuestIds[] = 'guest-'.$guest['id'];
+                    $arrayGuestIds[] = $guest['id'];
                 endif;
 
             endforeach;
@@ -50,10 +52,42 @@ class ReceptionTableController extends AbstractController
                 'link' => $table['id'],
                 'guestsIds' => $arrayGuestIds
             ];
-            
         endforeach;
         // dd($tablesListToSend);
-        $data = $tablesListToSend;
+        //je crée la liste des guests de la table 
+        $nameTable = "Liste des invités";
+        $tableGuests = $receptionTableRepository->findByWeddingTheTableGuests($userWedding, $nameTable);
+        // dd($tableGuests);
+        $guestsOfTableGuests = $personRepository->findByReceptionTableQueryBuilder($tableGuests);
+        // dd($guestsOfTableGuests);
+        // $guests = [];
+        // foreach ($guestsOfTableGuests as $guest):
+        //     $guests[] = [
+        //         $guest['id'] => [
+        //             'id' => $guest['id'], 
+        //             'firstname' => $guest['firstname'],
+        //             'lastname' => $guest['lastname'],
+        //             'attendance' => $guest['attendance'],
+        //             'newlyweds' => $guest['newlyweds'],
+        //             'menu' => $guest['menu'],
+        //             'allergies' => $guest['allergies'],
+        //             'halal' => $guest['halal'],
+        //             'noAlcoHol' => $guest['noAlcohol'],
+        //             'vegetarian' => $guest['vegetarian'],
+        //             'vegan' => $guest['vegan'],
+        //             'casher' => $guest['casher'],
+        //             'commentAllergies' => $guest['commentAllergies'],
+        //             'seatNumber' => $guest['seatNumber']
+        //         ]
+        //     ];
+        // endforeach;
+        // // dd($guests);
+        
+        $data = [
+            'guests' => $guests,
+            'tables' => $tablesListToSend
+    
+        ];
         $response = new JsonResponse($data, 200);
         
         return $response;
