@@ -62,7 +62,8 @@ class ReceptionTableRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('rt')
             ->select('rt.id')
-            ->where('rt.id = :userWedding')
+            ->leftJoin('rt.wedding', 'w')
+            ->where('w.id = :userWedding')
             ->andWhere('rt.name = :nameTable')
             ->setParameter('userWedding', $userWedding)
             ->setParameter('nameTable', $nameTable)
@@ -81,7 +82,8 @@ class ReceptionTableRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('rt')
             ->select('rt')
-            ->where('rt.id = :userWedding')
+            ->leftJoin('rt.wedding', 'w')
+            ->where('w.id = :userWedding')
             ->andWhere('rt.name = :nameTable')
             ->setParameter('userWedding', $userWedding)
             ->setParameter('nameTable', $nameTable)

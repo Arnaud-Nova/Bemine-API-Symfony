@@ -36,7 +36,7 @@ class GuestGroupController extends AbstractController
         //récupération de la table d'invités initialisée au signup
         $nameTable = 'Liste des invités';
         $tableGuestsId = $receptionTableRepository->findTableGuestsId($userWedding, $nameTable);
-        // dd($tableGuestsId);
+        // dd($tableGuestsId, $userWedding);
         $table = $receptionTableRepository->find($tableGuestsId[0]['id']);
         
 

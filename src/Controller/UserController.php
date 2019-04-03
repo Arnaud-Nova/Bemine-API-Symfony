@@ -100,6 +100,13 @@ class UserController extends AbstractController
         $user->setWedding($wedding);
         // $user->setRoles(['ROLE_USER']);
         
+        //je crée la table représentant le pull d'invités pour le plan de table
+        $tableGuests = new ReceptionTable();
+        $tableGuests->setWedding($wedding);
+        $tableGuests->setName('Liste des invités');
+        $entityManager->persist($tableGuests);
+
+
         //je crée ma nouvelle personne, car un user est aussi une personne.
         $person = new Person();
         $person->setNewlyweds(true);
@@ -108,6 +115,7 @@ class UserController extends AbstractController
         $person->setMenu('ADULTE');
         $person->setWedding($wedding);
         $person->setAttendance(1);
+        $person->setReceptionTable($tableGuests);
         
         //je crée le deuxième marié
         $personSpouse = new Person();
@@ -117,17 +125,15 @@ class UserController extends AbstractController
         $personSpouse->setMenu('ADULTE');
         $personSpouse->setWedding($wedding);
         $personSpouse->setAttendance(1);
+        $personSpouse->setReceptionTable($tableGuests);
 
-        //je crée la table représentant le pull d'invités pour le plan de table
-        $tableGuests = new ReceptionTable();
-        $tableGuests->setWedding($wedding);
-        $tableGuests->setName('Liste des invités');
+       
         
         $entityManager->persist($user);
         $entityManager->persist($wedding);
         $entityManager->persist($person);
         $entityManager->persist($personSpouse);
-        $entityManager->persist($tableGuests);
+        
         $entityManager->flush();
         
         //je set mon flash message avec symfo, voir si c'est fait avec react ou pas
