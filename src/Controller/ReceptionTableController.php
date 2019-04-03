@@ -32,20 +32,21 @@ class ReceptionTableController extends AbstractController
         $tablesList = $receptionTableRepository->findTablesByWedding($userWedding);
 
         $tablesListToSend = [];
-        // dd($tablesList);
+        
         $i = -1;
         foreach ($tablesList as $table):
             $i += 1;
-        
+            
             $arrayGuestIds = [];
             foreach ($table['people'] as $guest):
-                // dump($guest['id']);
+                
                 if($guest):
-                    $arrayGuestIds[] = $guest['id'];
+                    $arrayGuestIds[$guest['seatNumber']] = $guest['id'];
                 endif;
 
             endforeach;
-
+            
+           
             $tablesListToSend[$i] = [
                 'id' => 'table-'.$table['id'],
                 'title' => $table['name'],
@@ -53,7 +54,7 @@ class ReceptionTableController extends AbstractController
                 'guestIds' => $arrayGuestIds
             ];
         endforeach;
-        // dd($tablesListToSend);
+        
         //je crée la liste des guests de la table 
         $nameTable = "Liste des invités";
         $tableGuests = $receptionTableRepository->findByWeddingTheTableGuests($userWedding, $nameTable);
@@ -160,25 +161,25 @@ class ReceptionTableController extends AbstractController
     /**
      * @Route("edit", name="edit", methods={"POST"})
      */
-    public function edit(Request $request, UserRepository $userRepository, ReceptionTableRepository $receptionTableRepository, EntityManagerInterface $em)
+    public function edit(Request $request, UserRepository $userRepository, ReceptionTableRepository $receptionTableRepository, PersonRepository $personRepository, EntityManagerInterface $em)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
-
+        dd($contentDecode->guestIds);
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
-        $table = $receptionTableRepository->find($contentDecode->id);
+        $table = $receptionTableRepository->find($contentDecode->link);
 
         if (!$table){
-            $message = "Il n'existe pas de table avec l'id $contentDecode->id";
+            $message = "Il n'existe pas de table avec l'id $contentDecode->link";
                 
             $response = new JsonResponse($message, 400);
        
             return $response;
 
-        } elseif($userWedding->getId() != $receptionTableRepository->find($contentDecode->id)->getWedding()->getId()){
+        } elseif($userWedding->getId() != $receptionTableRepository->find($contentDecode->link)->getWedding()->getId()){
             $message = 'L\'id de la table n\'appartient pas au mariage du user connecté';
                 
             $response = new JsonResponse($message, 400);
@@ -186,11 +187,16 @@ class ReceptionTableController extends AbstractController
             return $response;
         }
 
-        if ($contentDecode->name){
-            $table->setName($contentDecode->name);
+        if ($contentDecode->title){
+            $table->setName($contentDecode->title);
         }
-        if ($contentDecode->totalSeats){
-            $table->setTotalSeats($contentDecode->totalSeats);
+        if ($contentDecode->guestIds){
+            
+            foreach ($contentDecode->guestIds as $seatNumber => $guestId):
+                $person = $personRepository->find($guestId);
+                $person->setSeatNumber($seatNumber);
+                $person->setReceptionTable($table);
+            endforeach;
         }
 
         $em->persist($table);
