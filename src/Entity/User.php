@@ -24,7 +24,7 @@ class User implements UserInterface
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=191)
      */
     private $roles = [];
 
@@ -35,7 +35,7 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=191, nullable=true)
      */
     private $urlAvatar;
 
@@ -45,7 +45,7 @@ class User implements UserInterface
     private $wedding;
 
     /**
-    * @ORM\Column(type="string", length=255, unique=true, nullable=true)
+    * @ORM\Column(type="string", length=191, unique=true, nullable=true)
     */
     private $apiToken;
 
