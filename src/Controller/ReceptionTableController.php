@@ -50,7 +50,7 @@ class ReceptionTableController extends AbstractController
                 'id' => 'table-'.$table['id'],
                 'title' => $table['name'],
                 'link' => $table['id'],
-                'guestsIds' => $arrayGuestIds
+                'guestIds' => $arrayGuestIds
             ];
         endforeach;
         // dd($tablesListToSend);
@@ -84,7 +84,7 @@ class ReceptionTableController extends AbstractController
         // // dd($guests);
         
         $data = [
-            'guests' => $guests,
+            'guests' => $guestsOfTableGuests,
             'tables' => $tablesListToSend
     
         ];
