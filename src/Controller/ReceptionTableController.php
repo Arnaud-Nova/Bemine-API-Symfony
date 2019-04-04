@@ -39,20 +39,23 @@ class ReceptionTableController extends AbstractController
             $i += 1;
             $ii = -1;
             $arrayGuestIds = [];
+            // dd($table);
             foreach ($table['people'] as $guest):
                 $ii += 1;
-                if($guest):
+                if($guest && $table['name'] === 'Liste des invités'){
                     // dump($ii);
                     $guestPerson = $personRepository->find($guest['id']);
                     $guestPerson->setSeatNumber($ii);
                     $em->persist($guestPerson);
                     $em->flush();
-                   
                     $arrayGuestIds[$guestPerson->getSeatNumber()] = $guestPerson->getId();
-                endif;
-               
+                } elseif ($guest) {
+                    $guestPerson = $personRepository->find($guest['id']);
+                    $arrayGuestIds[$guestPerson->getSeatNumber()] = $guestPerson->getId();
+                } 
+                // dump($arrayGuestIds);
             endforeach;
-            // dd($arrayGuestIds);
+            // dump($arrayGuestIds);
            
             $tablesListToSend[$i] = [
                 'id' => 'table-'.$table['id'],
@@ -61,7 +64,7 @@ class ReceptionTableController extends AbstractController
                 'guestIds' => $arrayGuestIds
             ];
         endforeach;
-        
+        // dd($arrayGuestIds);
         //je crée la liste des guests de la table 
         $nameTable = "Liste des invités";
         $tableGuests = $receptionTableRepository->findByWeddingTheTableGuests($userWedding, $nameTable);
