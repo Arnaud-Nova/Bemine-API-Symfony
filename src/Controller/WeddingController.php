@@ -57,7 +57,7 @@ class WeddingController extends AbstractController
 
         $eventsWedding = $eventRepository->findThisWedding($userWedding);
         
-        
+
         foreach ($contentDecode->events as $oneEventDecode){
             
             $weddingEvent = $eventRepository->find($oneEventDecode->id);
@@ -83,7 +83,7 @@ class WeddingController extends AbstractController
                 if ($oneEventDecode->city){
                     $weddingEvent->setCity($oneEventDecode->city);
                 }
-                //    dump($oneEventDecode->schedule);
+                
                 if (isset($oneEventDecode->schedule->date)){
                     if (strlen($oneEventDecode->schedule->date) > 10) {
                         $formatDate = substr($oneEventDecode->schedule->date, 0, 10);
@@ -110,9 +110,9 @@ class WeddingController extends AbstractController
                 if ($oneEventDecode->informations){
                     $weddingEvent->setInformations($oneEventDecode->informations);
                 }
-                if ($oneEventDecode->active){
-                    $weddingEvent->setActive($oneEventDecode->active);
-                }
+                
+                $weddingEvent->setActive($oneEventDecode->active);
+                
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($weddingEvent);
                 $entityManager->flush();
