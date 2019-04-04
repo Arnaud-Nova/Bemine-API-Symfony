@@ -50,12 +50,22 @@ class ReceptionTableController extends AbstractController
                     $em->flush();
                     $arrayGuestIds[$guestPerson->getSeatNumber()] = $guestPerson->getId();
                 } elseif ($guest) {
-                    $guestPerson = $personRepository->find($guest['id']);
-                    $arrayGuestIds[$guestPerson->getSeatNumber()] = $guestPerson->getId();
+                    // $guestPerson = $personRepository->find($guest['id']);
+                    // $arrayGuestIds[$guestPerson->getSeatNumber()] = $guestPerson->getId();
+                    $guestPersons = $personRepository->findBy(
+                        ['receptionTable' => $table['id']],
+                        ['seatNumber' => 'ASC']
+                    );
+                    $arrayGuestIds = [];
+                    foreach ($guestPersons as $guestPerson):
+                       
+                        $arrayGuestIds[] = $guestPerson->getId();
+                    endforeach;
+
                 } 
-                // dump($arrayGuestIds);
+                
             endforeach;
-            // dump($arrayGuestIds);
+            
            
             $tablesListToSend[$i] = [
                 'id' => 'table-'.$table['id'],
@@ -65,37 +75,10 @@ class ReceptionTableController extends AbstractController
             ];
         endforeach;
         // dd($arrayGuestIds);
-        //je crée la liste des guests de la table 
-        $nameTable = "Liste des invités";
-        $tableGuests = $receptionTableRepository->findByWeddingTheTableGuests($userWedding, $nameTable);
-        // dd($tableGuests);
-        $guestsOfTableGuests = $personRepository->findByReceptionTableQueryBuilder($tableGuests);
-        // dd($guestsOfTableGuests);
-        // $guests = [];
-        // foreach ($guestsOfTableGuests as $guest):
-        //     $guests[] = [
-        //         $guest['id'] => [
-        //             'id' => $guest['id'], 
-        //             'firstname' => $guest['firstname'],
-        //             'lastname' => $guest['lastname'],
-        //             'attendance' => $guest['attendance'],
-        //             'newlyweds' => $guest['newlyweds'],
-        //             'menu' => $guest['menu'],
-        //             'allergies' => $guest['allergies'],
-        //             'halal' => $guest['halal'],
-        //             'noAlcoHol' => $guest['noAlcohol'],
-        //             'vegetarian' => $guest['vegetarian'],
-        //             'vegan' => $guest['vegan'],
-        //             'casher' => $guest['casher'],
-        //             'commentAllergies' => $guest['commentAllergies'],
-        //             'seatNumber' => $guest['seatNumber']
-        //         ]
-        //     ];
-        // endforeach;
-        // // dd($guests);
+        
         
         $data = [
-            'guests' => $guestsOfTableGuests,
+            // 'guests' => $guestsOfTableGuests,
             'tables' => $tablesListToSend
     
         ];
@@ -112,7 +95,7 @@ class ReceptionTableController extends AbstractController
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
-
+        
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
@@ -148,7 +131,7 @@ class ReceptionTableController extends AbstractController
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
-
+        
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
@@ -179,7 +162,7 @@ class ReceptionTableController extends AbstractController
         // dd($contentDecode->guestIds);
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
-
+        // dd($contentDecode);
         $table = $receptionTableRepository->find($contentDecode->link);
 
         if (!$table){
