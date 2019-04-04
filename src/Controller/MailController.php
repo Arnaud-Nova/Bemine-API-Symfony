@@ -102,14 +102,12 @@ class MailController extends AbstractController
             'newlyweds' =>true
         ]);
         
-        $preview['slugUrl'] = 'preview';
 
         return $this->render(
-            'mail/invitation.html.twig', [
+            'mail/preview.html.twig', [
                 'newlywed1' => $newlyweds[0],
                 'newlywed2' => $newlyweds[1],
                 'wedding' => $userWedding,
-                'guestGroup' => $preview,
                 ]
             );
     }
