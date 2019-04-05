@@ -106,6 +106,7 @@ class PersonRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('p')
             ->select('p')
             ->where('p.wedding = :myId')
+            ->andWhere('p.attendance != 2')
             ->setParameter('myId', $id)
             ->getQuery()
             ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
