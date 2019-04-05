@@ -26,11 +26,12 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/brides/checkToken", name="checkToken", methods={"GET"})
+     * @Route("/brides/checkToken", name="checkToken", methods={"POST"})
      */
     public function checkToken()
     {
         $message = 'Token valide';
+
         $response = new JsonResponse($message, 200);
 
         return $response;
