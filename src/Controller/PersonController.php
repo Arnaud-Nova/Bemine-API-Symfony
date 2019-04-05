@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
+use App\Repository\ReceptionTableRepository;
 
 /**
 * @Route("/brides/person/", name="person_")
@@ -50,7 +51,7 @@ class PersonController extends AbstractController
          if (!$guests){
             $message = 'Vous n\'avez pas encore d\'invités ajoutés à votre mariage';
 
-            $response = new Response($message, 404);
+            $response = new Response($message, 200);
             $response->headers->set('Content-Type', 'application/json');
 
             return $response;
@@ -72,13 +73,18 @@ class PersonController extends AbstractController
     /**
      * @Route("new", name="new", methods={"POST"})
      */
-    public function new(Request $request, EntityManagerInterface $em, GuestGroupRepository $guestGroupRepository, UserRepository $userRepo)
+    public function new(Request $request, EntityManagerInterface $em, GuestGroupRepository $guestGroupRepository, UserRepository $userRepo, ReceptionTableRepository $receptionTableRepository)
     {
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
 
         $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
+
+        //récupération de la table d'invités initialisée au signup
+        $nameTable = 'Liste des invités';
+        $tableGuestsId = $receptionTableRepository->findTableGuestsId($userWedding, $nameTable);
+        $table = $receptionTableRepository->find($tableGuestsId[0]['id']);
 
         $guestGroup = $guestGroupRepository->findOneBy(['id' => $contentDecode->id]); //modification groupId en id
         if (!$guestGroup) {
@@ -96,6 +102,7 @@ class PersonController extends AbstractController
                 $person->setFirstname($contentDecode->firstname);
                 $person->setGuestGroup($guestGroup);
                 $person->setWedding($wedding);
+                $person->setReceptionTable($table);
 
                 $em->persist($person);
                 $em->flush();
@@ -176,10 +183,6 @@ class PersonController extends AbstractController
 
             if (isset($contentDecode->attendance)) {
                 $person->setAttendance($contentDecode->attendance);
-                if ($contentDecode->attendance === 2){
-                    $person->setReceptionTable(null);
-                    $person->setSeatNumber(null);
-                }
             }
 
             if (isset($contentDecode->menu)) {
