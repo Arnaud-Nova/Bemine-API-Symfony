@@ -28,16 +28,11 @@ class WeddingController extends AbstractController
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
         $eventsWedding = $eventRepository->findThisWedding($userWedding);
-        // $newlyweds = $personRepository->findByNewlyweds($id);
-        // $thisWedding = $weddingRepository->findThisWedding($id);
                 
         $data = 
             [
              'events' => $eventsWedding,
-            //  'newlyweds' => $newlyweds,
-            //  'wedding' => $thisWedding   
-            ]
-        ;
+            ];
         $response = new JsonResponse($data, 200);
        
         return $response;
@@ -56,7 +51,6 @@ class WeddingController extends AbstractController
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
         $eventsWedding = $eventRepository->findThisWedding($userWedding);
-        
 
         foreach ($contentDecode->events as $oneEventDecode){
             
@@ -103,7 +97,6 @@ class WeddingController extends AbstractController
                     $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d', $formatDate));
                 }
                
-                // dd($oneEventDecode->schedule->date->format('Y-m-d'));
                 if ($oneEventDecode->hour){
                     $weddingEvent->setHour($oneEventDecode->hour);
                 }

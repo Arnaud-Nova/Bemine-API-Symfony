@@ -36,9 +36,7 @@ class GuestGroupController extends AbstractController
         //récupération de la table d'invités initialisée au signup
         $nameTable = 'Liste des invités';
         $tableGuestsId = $receptionTableRepository->findTableGuestsId($userWedding, $nameTable);
-        // dd($tableGuestsId, $userWedding);
         $table = $receptionTableRepository->find($tableGuestsId[0]['id']);
-        
 
         $person = new Person();
         $person->setLastname($contentDecode->lastname);
@@ -140,7 +138,6 @@ class GuestGroupController extends AbstractController
         
             return $response;
         }
-
         
         $data = $guestGroupArray[0];
 
@@ -177,14 +174,12 @@ class GuestGroupController extends AbstractController
             return $response;
         }
 
-        
         $guestGroup->setEmail($contentDecode->email);
 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($guestGroup);
         $entityManager->flush();
-
-        
+       
         $data = 
             [
                 'message' => 'La modification a bien été prise en compte.'
@@ -210,7 +205,6 @@ class GuestGroupController extends AbstractController
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
         
         //je récupère le guestGroup 
-        // $guestGroup = $guestGroupRepository->find($contentDecode->id);   //groupId modifié en id
         $guestGroup = $guestGroupRepository->findOneBy(['id' => $contentDecode->id]);
         
         if (!$guestGroup){
@@ -227,11 +221,9 @@ class GuestGroupController extends AbstractController
             return $response;
         }
 
-
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->remove($guestGroup);
         $entityManager->flush();
-
         
         $data = 
             [
@@ -263,28 +255,22 @@ class GuestGroupController extends AbstractController
             return $response;
         }
         
-        // $contactsGroup = $guestGroupRepository->findGroupsQueryBuilder($id);
         $groups = $guestGroupRepository->findGroupAndContactPerson($userWedding);
 
         //mariés exclus de ces comptes
         $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($userWedding);
         $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($userWedding);
         $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($userWedding);
-        //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($userWedding);
-
-        // $mails = $mailRepository->findAllQueryBuilder();
         
         $data = 
             [
-                // 'mails' => $mails,
                 'groups' => $groups,
                 'countTotalGuests' => $countTotalGuests,
                 'countPresent' => $countPresent,
                 'countAbsent' => $countAbsent,
                 'countWaiting' => $countWaiting
-            ]
-        ;
+            ];
 
         $response = new JsonResponse($data, 200);
        
@@ -300,9 +286,6 @@ class GuestGroupController extends AbstractController
         $thisWedding = $guestGroupRepository->findThisWeddingBySlug($slugUrl);
         $newlyweds = $personRepository->findByNewlywedsForWebsite($thisWedding);
         $eventsForThisGroup = $eventRepository->findEventsActiveByGroup($slugUrl);
-        
-        //si besoin de tout avoir au même niveau sauf les people
-        // $arrayResult = array_merge($guestGroupForWebsite, $newlyweds, $eventsForThisGroup);
 
         if (!$guestGroupForWebsite){
             $message = 'Le guestGroupId n\'existe pas';
@@ -312,14 +295,12 @@ class GuestGroupController extends AbstractController
             return $response;
         }
 
-        
         $data = 
             [
                 'thisGroup' => $guestGroupForWebsite,
                 'newlyweds' => $newlyweds,
                 'eventsForThisGroup' => $eventsForThisGroup
-            ]
-        ;
+            ];
 
         $response = new JsonResponse($data, 200);       
         return $response;
@@ -343,7 +324,6 @@ class GuestGroupController extends AbstractController
                 return $response;
             }else {
                 if ($person->getGuestGroup()->getSlugUrl() != $slugUrl){
-                    // dd($person->getGuestGroup()->getSlugUrl(), $slugUrl);
                     $message = 'L\'id de la personne ne correspond pas au groupe';
                     $response = new JsonResponse($message, 400);
             
@@ -351,12 +331,10 @@ class GuestGroupController extends AbstractController
                 }
                 $person->setAttendance(1);
                 $em->persist($person);
-                // dump($person);
             }
         }
 
         foreach ($contentDecode->unattendanceList as $absent){
-            // dump($absent);
             $person = $personRepository->find($absent);
             
             if (!$person){
@@ -366,7 +344,6 @@ class GuestGroupController extends AbstractController
                 return $response;
             }else {
                 if ($person->getGuestGroup()->getSlugUrl() != $slugUrl){
-                    // dd($person->getGuestGroup()->getSlugUrl(), $slugUrl);
                     $message = 'L\'id de la personne ne correspond pas au groupe';
                     $response = new JsonResponse($message, 400);
             
@@ -374,11 +351,9 @@ class GuestGroupController extends AbstractController
                 }
                 $person->setAttendance(2);
                 $em->persist($person);
-                // dump($person);
-            }
-            
+            }  
         }
-        // dd($contentDecode->attendance);
+
         $em->flush();
         
         $message = 'Les modification ont bien été prise en compte';
