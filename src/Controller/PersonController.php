@@ -176,6 +176,10 @@ class PersonController extends AbstractController
 
             if (isset($contentDecode->attendance)) {
                 $person->setAttendance($contentDecode->attendance);
+                if ($contentDecode->attendance === 2){
+                    $person->setReceptionTable(null);
+                    $person->setSeatNumber(null);
+                }
             }
 
             if (isset($contentDecode->menu)) {
