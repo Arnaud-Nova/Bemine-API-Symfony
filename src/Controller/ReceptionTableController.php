@@ -30,6 +30,11 @@ class ReceptionTableController extends AbstractController
         //je crée la liste des tables
         $tablesList = $receptionTableRepository->findTablesByWedding($userWedding);
 
+        //récupération de la table d'invités initialisée au signup
+        $nameTable = 'Liste des invités';
+        $tableGuestsId = $receptionTableRepository->findTableGuestsId($userWedding, $nameTable);
+        $guestTable = $receptionTableRepository->find($tableGuestsId[0]['id']);
+
         $tablesListToSend = [];
 
         $i = -1;
@@ -56,7 +61,14 @@ class ReceptionTableController extends AbstractController
                     );
                     $arrayGuestIds = [];
                     foreach ($guestPersons as $guestPerson):
-                        $arrayGuestIds[] = $guestPerson->getId();
+                        if ($guestPerson->getAttendance() != 2) {
+                            $arrayGuestIds[] = $guestPerson->getId();
+                        } else {
+                            $guestPerson->setSeatNumber(null);
+                            $guestPerson->setReceptionTable($guestTable);
+                            // $em->persist($guestPerson);
+                            $em->flush();
+                        }
                     endforeach;
                 } 
             endforeach;
