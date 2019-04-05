@@ -65,7 +65,6 @@ class GuestGroupRepository extends ServiceEntityRepository
             ->where('p.wedding = :myId')
             ->setParameter('myId', $id)
             ->getQuery()
-            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
         return $qb->getArrayResult();
@@ -136,37 +135,8 @@ class GuestGroupRepository extends ServiceEntityRepository
             ->where('g.slugUrl = :slugUrl')
             ->setParameter('slugUrl', $slugUrl)
             ->getQuery()
-            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
         return $qb->getArrayResult();
     }
-    // /**
-    //  * @return GuestGroup[] Returns an array of GuestGroup objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('g')
-            ->andWhere('g.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('g.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?GuestGroup
-    {
-        return $this->createQueryBuilder('g')
-            ->andWhere('g.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

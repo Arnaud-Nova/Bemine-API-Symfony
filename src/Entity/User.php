@@ -82,8 +82,6 @@ class User implements UserInterface
     public function getRoles()
     {
         $roles[] = $this->roles;
-      //  $roleCode = json_decode($this->roles)->code;
-      //  $roles = [$roleCode];
 
         return $roles;
     }

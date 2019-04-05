@@ -24,7 +24,6 @@ class ReceptionTableController extends AbstractController
      */
     public function list(Request $request, UserRepository $userRepository, ReceptionTableRepository $receptionTableRepository, PersonRepository $personRepository, EntityManagerInterface $em)
     {
-
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
 
@@ -32,41 +31,36 @@ class ReceptionTableController extends AbstractController
         $tablesList = $receptionTableRepository->findTablesByWedding($userWedding);
 
         $tablesListToSend = [];
-        // dd($tablesList);
+
         $i = -1;
         
         foreach ($tablesList as $table):
             $i += 1;
             $ii = -1;
             $arrayGuestIds = [];
-            // dd($table);
+        
             foreach ($table['people'] as $guest):
                 $ii += 1;
                 if($guest && $table['name'] === 'Liste des invités'){
-                    // dump($ii);
+
                     $guestPerson = $personRepository->find($guest['id']);
                     $guestPerson->setSeatNumber($ii);
                     $em->persist($guestPerson);
                     $em->flush();
                     $arrayGuestIds[$guestPerson->getSeatNumber()] = $guestPerson->getId();
                 } elseif ($guest) {
-                    // $guestPerson = $personRepository->find($guest['id']);
-                    // $arrayGuestIds[$guestPerson->getSeatNumber()] = $guestPerson->getId();
+                   
                     $guestPersons = $personRepository->findBy(
                         ['receptionTable' => $table['id']],
                         ['seatNumber' => 'ASC']
                     );
                     $arrayGuestIds = [];
                     foreach ($guestPersons as $guestPerson):
-                       
                         $arrayGuestIds[] = $guestPerson->getId();
                     endforeach;
-
                 } 
-                
             endforeach;
             
-           
             $tablesListToSend[$i] = [
                 'id' => 'table-'.$table['id'],
                 'title' => $table['name'],
@@ -74,13 +68,9 @@ class ReceptionTableController extends AbstractController
                 'guestIds' => $arrayGuestIds
             ];
         endforeach;
-        // dd($arrayGuestIds);
-        
         
         $data = [
-            // 'guests' => $guestsOfTableGuests,
             'tables' => $tablesListToSend
-    
         ];
         $response = new JsonResponse($data, 200);
         
@@ -116,7 +106,6 @@ class ReceptionTableController extends AbstractController
             return $response;
         }
         
-        // dd($oneTable);
         $data = $oneTable;
         $response = new JsonResponse($data, 200);
         
@@ -143,8 +132,6 @@ class ReceptionTableController extends AbstractController
         $em->persist($table);
         $em->flush();
         
-
-        // dd($oneTable);
         $message = 'La table a bien été ajoutée.';
         $response = new JsonResponse($message, 200);
         
@@ -159,10 +146,10 @@ class ReceptionTableController extends AbstractController
         //je récupère les données du front dans l'objet request.
         $content = $request->getContent();
         $contentDecode = json_decode($content);
-        // dd($contentDecode->guestIds);
+
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
-        // dd($contentDecode);
+
         $table = $receptionTableRepository->find($contentDecode->link);
 
         if (!$table){
@@ -196,7 +183,7 @@ class ReceptionTableController extends AbstractController
         $em->flush();
         
         $tableId = $table->getId();
-        // dd($oneTable);
+        
         $message = "La table avec id : $tableId a bien été modifiée.";
         $response = new JsonResponse($message, 200);
         

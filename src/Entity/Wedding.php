@@ -43,11 +43,6 @@ class Wedding
      */
     private $guestGroups;
 
-    // /**
-    //  * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="weddings")
-    //  */
-    // private $events;
-
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Gift", mappedBy="wedding")
      */
@@ -68,7 +63,6 @@ class Wedding
         $this->photos = new ArrayCollection();
         $this->receptionTables = new ArrayCollection();
         $this->guestGroups = new ArrayCollection();
-        // $this->events = new ArrayCollection();
         $this->gifts = new ArrayCollection();
         $this->people = new ArrayCollection();
         $this->events = new ArrayCollection();

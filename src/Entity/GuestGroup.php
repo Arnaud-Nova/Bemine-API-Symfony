@@ -50,11 +50,6 @@ class GuestGroup
      */
     private $gifts;
 
-    // /**
-    //  * @ORM\OneToMany(targetEntity="App\Entity\MailGuestGroup", mappedBy="guestGroup")
-    //  */
-    // private $mailGuestGroups;
-
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="guestGroups")
      */
@@ -69,9 +64,7 @@ class GuestGroup
     {
         $this->people = new ArrayCollection();
         $this->gifts = new ArrayCollection();
-        // $this->mailGuestGroups = new ArrayCollection();
         $this->event = new ArrayCollection();
-        // $this->event = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -113,10 +106,8 @@ class GuestGroup
 
     public function addPerson(Person $person): self
     {
-        // if (!$this->people->contains($person)) {
             $this->people[] = $person;
             $person->setGuestGroup($this);
-        // }
 
         return $this;
     }
@@ -188,37 +179,6 @@ class GuestGroup
 
         return $this;
     }
-
-    // /**
-    //  * @return Collection|MailGuestGroup[]
-    //  */
-    // public function getMailGuestGroups(): Collection
-    // {
-    //     return $this->mailGuestGroups;
-    // }
-
-    // public function addMailGuestGroup(MailGuestGroup $mailGuestGroup): self
-    // {
-    //     if (!$this->mailGuestGroups->contains($mailGuestGroup)) {
-    //         $this->mailGuestGroups[] = $mailGuestGroup;
-    //         $mailGuestGroup->setGuestGroup($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeMailGuestGroup(MailGuestGroup $mailGuestGroup): self
-    // {
-    //     if ($this->mailGuestGroups->contains($mailGuestGroup)) {
-    //         $this->mailGuestGroups->removeElement($mailGuestGroup);
-    //         // set the owning side to null (unless already changed)
-    //         if ($mailGuestGroup->getGuestGroup() === $this) {
-    //             $mailGuestGroup->setGuestGroup(null);
-    //         }
-    //     }
-
-    //     return $this;
-    // }
 
     /**
      * @return Collection|Event[]

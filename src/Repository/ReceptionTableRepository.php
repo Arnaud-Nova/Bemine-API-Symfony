@@ -32,7 +32,6 @@ class ReceptionTableRepository extends ServiceEntityRepository
             ->setParameter('userWedding', $userWedding)
             ->orderBy('rt.id', 'ASC')
             ->getQuery()
-            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
         return $qb->getArrayResult();
@@ -49,7 +48,6 @@ class ReceptionTableRepository extends ServiceEntityRepository
             ->where('rt.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
-            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
         return $qb->getArrayResult();
@@ -68,7 +66,6 @@ class ReceptionTableRepository extends ServiceEntityRepository
             ->setParameter('userWedding', $userWedding)
             ->setParameter('nameTable', $nameTable)
             ->getQuery()
-            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
         return $qb->getArrayResult();
@@ -88,37 +85,8 @@ class ReceptionTableRepository extends ServiceEntityRepository
             ->setParameter('userWedding', $userWedding)
             ->setParameter('nameTable', $nameTable)
             ->getQuery()
-            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
         return $qb->getArrayResult();
     }
-    // /**
-    //  * @return ReceptionTable[] Returns an array of ReceptionTable objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('r.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?ReceptionTable
-    {
-        return $this->createQueryBuilder('r')
-            ->andWhere('r.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

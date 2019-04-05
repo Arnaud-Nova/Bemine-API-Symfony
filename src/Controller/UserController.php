@@ -39,17 +39,14 @@ class UserController extends AbstractController
             $data = 
             [
                 'message' => 'Il y a déjà un compte associé à cet email. Merci de vous connecter ou de vous inscrire avec une autre adresse email.'
-            ]
-            ;
+            ];
 
             $response = new JsonResponse($data, 400);
         
             return $response;
-            
         }
         
         //je récupère le reste de mes données du front
-        // $urlAvatar = $contentDecode->urlAvatar;
         $firstname = $contentDecode->firstnameUser;
         $lastname = $contentDecode->nameUser;
         $spouseFirstname = $contentDecode->firstnamePartner;
@@ -91,14 +88,12 @@ class UserController extends AbstractController
 
         //je crée mon nouveau user 
         $user = new User();
-        //petite interrogation sur la récupération du password
-        // $encodedPassword = $passwordEncoder->encodePassword($user, $user->getPassword());
+        
         $encodedPassword = $passwordEncoder->encodePassword($user, $contentDecode->password);
         $user->setPassword($encodedPassword);
         $user->setEmail($email);
         // $user->setUrlAvatar($urlAvatar);
         $user->setWedding($wedding);
-        // $user->setRoles(['ROLE_USER']);
         
         //je crée la table représentant le pull d'invités pour le plan de table
         $tableGuests = new ReceptionTable();
@@ -126,8 +121,6 @@ class UserController extends AbstractController
         $personSpouse->setWedding($wedding);
         $personSpouse->setAttendance(1);
         $personSpouse->setReceptionTable($tableGuests);
-
-       
         
         $entityManager->persist($user);
         $entityManager->persist($wedding);
@@ -136,18 +129,10 @@ class UserController extends AbstractController
         
         $entityManager->flush();
         
-        //je set mon flash message avec symfo, voir si c'est fait avec react ou pas
-        $this->addFlash(
-            'success',
-            'Votre compte a bien été crée, merci de vous connecter.'
-        );
-
-        
         $data = 
             [
                 'message' => 'Votre compte a bien été crée.'
-            ]
-        ;
+            ];
 
         $response = new JsonResponse($data, 200);
        
@@ -165,17 +150,14 @@ class UserController extends AbstractController
         //récupération du user id grâce à AuthenticatedListener
         $userId = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getId();
 
-        // je récupère mon user connecté grâce à l'id du user passée en url
         $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
 
-        
         if (!$thisUser){
             
             $data = 
             [
                 'message' => 'Le user id n\'existe pas.'
-            ]
-            ;
+            ];
             
             $response = new JsonResponse($data, 400);
         
@@ -184,20 +166,13 @@ class UserController extends AbstractController
         
         $newlyweds = $personRepository->findByNewlyweds($userWedding);
         $thisWeddingArray = $weddingRepository->findThisWedding($userWedding);
-    //     $renderThisWedding = [];
-
-    //    $renderThisWedding['id'] = $thisWeddingArray[0]['id'];
-    //    $renderThisWedding['date'] = $thisWeddingArray[0]['date']->format('Y-m-d');
-        // dd($renderThisWedding);
-
 
         $data = 
             [
                 'thisUser' => $thisUser,
                 'newlyweds' => $newlyweds,
                 'wedding' => $thisWeddingArray
-            ]
-        ;
+            ];
 
         $response = new JsonResponse($data, 200);
        
@@ -218,7 +193,6 @@ class UserController extends AbstractController
         //récupération du user id grâce à AuthenticatedListener
         $userId = $userRepository->findOneBy(['email' => $request->attributes->get('userEmail')])->getId();
 
-        // je récupère mon user connecté grâce à l'id du user passée en url
         $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
 
         if (!$thisUser){
@@ -226,8 +200,7 @@ class UserController extends AbstractController
             $data = 
             [
                 'message' => 'Le user id n\'existe pas.'
-            ]
-            ;
+            ];
             
             $response = new JsonResponse($data, 400);
         
@@ -235,7 +208,6 @@ class UserController extends AbstractController
         }
 
         $entityManager = $this->getDoctrine()->getManager();
-        
        
         foreach ($contentDecode->thisUser as $thisUser){
             if ($userId != $thisUser->userId){
@@ -251,7 +223,6 @@ class UserController extends AbstractController
                 $entityManager->persist($user);
             }
         }
-        
 
         foreach ($contentDecode->newlyweds as $newlywedDecode){
             $newlywed = $personRepository->find($newlywedDecode->id);
@@ -288,103 +259,17 @@ class UserController extends AbstractController
                 $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $finalDate));
                 $entityManager->persist($thisWedding);
             }
-                
-
         }   
-       
 
         $entityManager->flush();
 
-        // $newlyweds = $personRepository->findByNewlyweds($id);
-        // $thisWeddingArray = $weddingRepository->findThisWedding($id);
-
         $data = 
             [
-                // 'thisUser' => $thisUser,
-                // 'newlyweds' => $newlyweds,
-                // 'wedding' => $thisWeddingArray
                 'message' => 'La modification a bien été prise en compte.'
-            ]
-        ;
+            ];
 
         $response = new JsonResponse($data, 200);
        
         return $response;
     }
-
-    // /**
-    //  * @Route("/brides/profil/edit/{userId}/{id}", name="editProfil", methods={"GET", "POST"})
-    //  */
-    // public function editProfil(UserRepository $userRepository, $userId, $id, PersonRepository $personRepository, WeddingRepository $weddingRepository, Request $request)
-    // {
-
-    //     //je récupère les données du front dans l'objet request.
-    //     $content = $request->getContent();
-    //     $contentDecode = json_decode($content);
-
-    //     // je récupère mon user connecté grâce à l'id du user passée en url
-    //     $thisUser = $userRepository->findUserProfilQueryBuilder($userId);
-
-    //     if (!$thisUser){
-            
-    //         $data = 
-    //         [
-    //             'message' => 'Le user id n\'existe pas.'
-    //         ]
-    //         ;
-            
-    //         $response = new JsonResponse($data, 400);
-        
-    //         return $response;
-    //     }
-
-    //     $entityManager = $this->getDoctrine()->getManager();
-        
-        
-    //     foreach ($contentDecode->thisUser as $thisUser){
-    //         //ajouter la modif d'email
-    //         $user = $userRepository->find($userId);
-    //         $user->setEmail($thisUser->email);
-    //         $entityManager->persist($user);
-    //     }
-
-    //     foreach ($contentDecode->newlyweds as $newlywedDecode){
-    //         $newlywed = $personRepository->find($newlywedDecode->id);
-    //         $newlywed->setFirstname($newlywedDecode->firstname);
-    //         $newlywed->setLastname($newlywedDecode->lastname);
-    //         $entityManager->persist($newlywed);
-    //     }
-
-    //     //j'enregistre la nouvelle date en BDD
-    //     $thisWedding = $weddingRepository->find($id);
-
-    //     foreach($contentDecode->wedding as $oneWedding){
-    //         $weddingDate = $oneWedding->date->date;
-    //         $createDate = new DateTime($weddingDate);
-    //         $finalDate = $createDate->format('Y-m-d');
-    //         // dd($finalDate);
-    //         $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $finalDate));
-    //         $entityManager->persist($thisWedding);
-
-    //     }   
-       
-
-    //     $entityManager->flush();
-
-    //     // $newlyweds = $personRepository->findByNewlyweds($id);
-    //     // $thisWeddingArray = $weddingRepository->findThisWedding($id);
-
-    //     $data = 
-    //         [
-    //             // 'thisUser' => $thisUser,
-    //             // 'newlyweds' => $newlyweds,
-    //             // 'wedding' => $thisWeddingArray
-    //             'message' => 'La modification a bien été prise en compte.'
-    //         ]
-    //     ;
-
-    //     $response = new JsonResponse($data, 200);
-       
-    //     return $response;
-    // }
 }

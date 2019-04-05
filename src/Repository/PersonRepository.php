@@ -71,7 +71,6 @@ class PersonRepository extends ServiceEntityRepository
      */
     public function findAttendanceWaitingCountQueryBuilder($id)
     {
-        //problème null n'est pas compté
         $qb = $this->createQueryBuilder('p')
             ->select('COUNT(p.id)')
             ->where('p.attendance = 0')
@@ -106,7 +105,6 @@ class PersonRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('p')
             ->select('p')
-            // ->leftJoin('p.guestGroup', 'gg')
             ->where('p.wedding = :myId')
             ->setParameter('myId', $id)
             ->getQuery()
@@ -123,7 +121,6 @@ class PersonRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('p')
             ->select('p.id', 'p.firstname', 'p.lastname')
-            // ->leftJoin('p.wedding', 'w')
             ->where('p.wedding = :myId')
             ->andWhere('p.newlyweds = 1')
             ->setParameter('myId', $id)
@@ -139,7 +136,6 @@ class PersonRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('p')
             ->select('p.id as newlywedId', 'p.firstname as newlywedFirstname', 'p.lastname as newlywedLastname')
-            // ->leftJoin('p.wedding', 'w')
             ->where('p.wedding = :myId')
             ->andWhere('p.newlyweds = 1')
             ->setParameter('myId', $id)
@@ -155,40 +151,10 @@ class PersonRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('p')
             ->select('p')
-            // ->leftJoin('p.wedding', 'w')
             ->where('p.receptionTable = :tableGuestId')
             ->setParameter('tableGuestId', $tableGuestId)
             ;
     
         return $qb->getQuery()->getArrayResult();
     }
-
-    // /**
-    //  * @return Person[] Returns an array of Person objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Person
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

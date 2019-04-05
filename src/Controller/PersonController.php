@@ -36,7 +36,6 @@ class PersonController extends AbstractController
         $countTotalGuests = $personRepository->findTotalGuestsCountQueryBuilder($weddingId);
         $countPresent = $personRepository->findAttendancePresentCountQueryBuilder($weddingId);
         $countAbsent = $personRepository->findAttendanceAbsentCountQueryBuilder($weddingId);
-        //problème sur la requête, les autres fonctionnent bien avec le param id du wedding, mais celle-ci renvoie un count incorrect...
         $countWaiting = $personRepository->findAttendanceWaitingCountQueryBuilder($weddingId);
 
         if (!$weddingRepository->find($weddingId)){
@@ -64,8 +63,7 @@ class PersonController extends AbstractController
                 'countPresent' => $countPresent,
                 'countAbsent' => $countAbsent,
                 'countWaiting' => $countWaiting
-            ]
-        ;
+            ];
         $response = new JsonResponse($data, 200);
        
         return $response;
@@ -238,14 +236,11 @@ class PersonController extends AbstractController
      */
     public function planList(PersonRepository $personRepository, WeddingRepository $weddingRepository, UserRepository $userRepo, Request $request)
     {
-
         // récupération du wedding correspondant au user grâce à AuthenticatedListener
         $userWedding = $userRepo->findOneBy(['email' => $request->attributes->get('userEmail')])->getWedding();
         $weddingId = $userWedding->getId();
-
         
         $guests = $personRepository->findPlanList($weddingId);
-        
 
         if (!$weddingRepository->find($weddingId)){
             $message = 'Le wedding id n\'existe pas';

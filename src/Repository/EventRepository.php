@@ -26,9 +26,7 @@ class EventRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('e')
             ->select('e')
-            // ->select('e', 'e.name as eventName')
             ->leftJoin('e.wedding', 'w')
-            // ->leftJoin('we.event', 'e')
             ->where('w.id = :myId')
             ->setParameter('myId', $id)
             ->getQuery()
@@ -45,13 +43,10 @@ class EventRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('e')
             ->select('e.id', 'e.name', 'e.active')
-            // ->select('we', 'e.name as eventName')
             ->leftJoin('e.wedding', 'w')
-            // ->leftJoin('we.event', 'e')
             ->where('w.id = :myId')
             ->setParameter('myId', $id)
             ->getQuery()
-            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
         return $qb->getArrayResult();
@@ -64,14 +59,11 @@ class EventRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('e')
             ->select('e.id as eventId', 'e.name as eventName', 'e.active as eventActive', 'e.address', 'e.postcode', 'e.city', 'e.schedule', 'e.hour', 'e.postcode', 'e.map')
-            // ->select('we', 'e.name as eventName')
             ->leftJoin('e.wedding', 'w')
-            // ->leftJoin('we.event', 'e')
             ->where('w.id = :myId')
             ->andWhere('e.active = 1')
             ->setParameter('myId', $id)
             ->getQuery()
-            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
         return $qb->getArrayResult();
@@ -84,43 +76,12 @@ class EventRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('e')
             ->select('e')
-            // ->select('we', 'e.name as eventName')
             ->leftJoin('e.guestGroups', 'gg')
             ->where('gg.slugUrl = :slugUrl')
             ->setParameter('slugUrl', $slugUrl)
             ->getQuery()
-            // ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
             ;
     
         return $qb->getArrayResult();
     }
-
-    // /**
-    //  * @return WeddingEvent[] Returns an array of WeddingEvent objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('w.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?WeddingEvent
-    {
-        return $this->createQueryBuilder('w')
-            ->andWhere('w.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
