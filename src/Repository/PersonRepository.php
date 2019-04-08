@@ -107,6 +107,7 @@ class PersonRepository extends ServiceEntityRepository
             ->select('p')
             ->where('p.wedding = :myId')
             ->andWhere('p.attendance != 2')
+            ->orderBy('p.newlyweds', 'DESC')
             ->setParameter('myId', $id)
             ->getQuery()
             ->setHint(\Doctrine\ORM\Query::HINT_INCLUDE_META_COLUMNS, true)
