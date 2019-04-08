@@ -252,7 +252,8 @@ class UserController extends AbstractController
             
                 return $response;
             } else {
-                $weddingDate = $oneWedding->date->date;
+                // $weddingDate = $oneWedding->date->date;
+                $weddingDate = $oneWedding->date;
                 $createDate = new DateTime($weddingDate);
                 $finalDate = $createDate->format('Y-m-d');
                 // dd($finalDate);
