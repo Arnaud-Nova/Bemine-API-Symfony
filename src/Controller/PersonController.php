@@ -48,27 +48,14 @@ class PersonController extends AbstractController
             return $response;
         }
 
-         if (!$guests){
-
-            $data = 
-            [
-                'guests' => 'Vous n\'avez pas encore d\'invités ajoutés à votre mariage',
-                'countTotalGuests' => $countTotalGuests,
-                'countPresent' => $countPresent,
-                'countAbsent' => $countAbsent,
-                'countWaiting' => $countWaiting
-            ];
-
-        } else {
-            $data = 
-            [
-                'guests' => $guests,
-                'countTotalGuests' => $countTotalGuests,
-                'countPresent' => $countPresent,
-                'countAbsent' => $countAbsent,
-                'countWaiting' => $countWaiting
-            ];
-        }
+        $data = 
+        [
+            'guests' => $guests,
+            'countTotalGuests' => $countTotalGuests,
+            'countPresent' => $countPresent,
+            'countAbsent' => $countAbsent,
+            'countWaiting' => $countWaiting
+        ];
         
         $response = new JsonResponse($data, 200);
        
