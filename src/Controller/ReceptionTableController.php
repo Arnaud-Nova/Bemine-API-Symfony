@@ -41,18 +41,17 @@ class ReceptionTableController extends AbstractController
         
         foreach ($tablesList as $table):
             $i += 1;
-            $ii = -1;
             $arrayGuestIds = [];
         
             foreach ($table['people'] as $guest):
-                $ii += 1;
+                
                 if($guest && $table['name'] === 'Liste des invités'){
 
                     $guestPerson = $personRepository->find($guest['id']);
-                    $guestPerson->setSeatNumber($ii);
-                    $em->persist($guestPerson);
-                    $em->flush();
-                    $arrayGuestIds[$guestPerson->getSeatNumber()] = $guestPerson->getId();
+                    if ($guestPerson->getAttendance() != 2) {
+                        $arrayGuestIds[] = $guestPerson->getId();
+                    }
+                    
                 } elseif ($guest) {
                    
                     $guestPersons = $personRepository->findBy(
@@ -66,7 +65,6 @@ class ReceptionTableController extends AbstractController
                         } else {
                             $guestPerson->setSeatNumber(null);
                             $guestPerson->setReceptionTable($guestTable);
-                            // $em->persist($guestPerson);
                             $em->flush();
                         }
                     endforeach;

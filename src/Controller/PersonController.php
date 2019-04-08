@@ -49,15 +49,18 @@ class PersonController extends AbstractController
         }
 
          if (!$guests){
-            $message = 'Vous n\'avez pas encore d\'invités ajoutés à votre mariage';
 
-            $response = new Response($message, 200);
-            $response->headers->set('Content-Type', 'application/json');
+            $data = 
+            [
+                'guests' => 'Vous n\'avez pas encore d\'invités ajoutés à votre mariage',
+                'countTotalGuests' => $countTotalGuests,
+                'countPresent' => $countPresent,
+                'countAbsent' => $countAbsent,
+                'countWaiting' => $countWaiting
+            ];
 
-            return $response;
-        }
-        
-        $data = 
+        } else {
+            $data = 
             [
                 'guests' => $guests,
                 'countTotalGuests' => $countTotalGuests,
@@ -65,6 +68,8 @@ class PersonController extends AbstractController
                 'countAbsent' => $countAbsent,
                 'countWaiting' => $countWaiting
             ];
+        }
+        
         $response = new JsonResponse($data, 200);
        
         return $response;
