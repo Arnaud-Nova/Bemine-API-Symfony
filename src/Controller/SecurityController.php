@@ -26,7 +26,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/brides/checkToken", name="checkToken", methods={"POST"})
+     * @Route("/brides/checkToken", name="checkToken", methods={"GET"})
      */
     public function checkToken()
     {
