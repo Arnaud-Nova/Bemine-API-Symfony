@@ -252,13 +252,22 @@ class UserController extends AbstractController
             
                 return $response;
             } else {
-                // $weddingDate = $oneWedding->date->date;
-                $weddingDate = $oneWedding->date;
-                $createDate = new DateTime($weddingDate);
-                $finalDate = $createDate->format('Y-m-d');
-                // dd($finalDate);
-                $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $finalDate));
-                $entityManager->persist($thisWedding);
+                if (isset($oneWedding->date->date)){
+                    if (strlen($oneWedding->date->date) > 10) {
+                        $formatDate = substr($oneWedding->date->date, 0, 10);
+                    } else {
+                        $formatDate = $oneWedding->date->date;
+                    }
+                    
+                    $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $formatDate));
+                } elseif ($oneWedding->date != null){
+                    if (strlen($oneWedding->date) > 10) {
+                        $formatDate = substr($oneWedding->date, 0, 10);
+                    } else {
+                        $formatDate = $oneWedding->date;
+                    }
+                    $thisWedding->setDate(\DateTime::createFromFormat('Y-m-d', $formatDate));
+                }
             }
         }   
 

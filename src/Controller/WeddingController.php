@@ -86,9 +86,7 @@ class WeddingController extends AbstractController
                     }
                     
                     $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d', $formatDate));
-                } elseif ($oneEventDecode->schedule === null){
-                    
-                } else {
+                } elseif ($oneEventDecode->schedule != null){
                     if (strlen($oneEventDecode->schedule) > 10) {
                         $formatDate = substr($oneEventDecode->schedule, 0, 10);
                     } else {
@@ -96,6 +94,9 @@ class WeddingController extends AbstractController
                     }
                     $weddingEvent->setSchedule(\DateTime::createFromFormat('Y-m-d', $formatDate));
                 }
+                //  else {
+                    
+                // }
                
                 if ($oneEventDecode->hour){
                     $weddingEvent->setHour($oneEventDecode->hour);
